@@ -1,7 +1,7 @@
 # SpEnD v3.0
 ## SparQL Endpoint Crawler & Analyzer
 
-Claws various search engines (e.g. Google, Bing, Yahoo, etc.) with given query keywords.  
+Crawls various search engines (e.g. Google, Bing, Yahoo, etc.) with given query keywords.  
 Checks if gathered websites is an Endpoint or not, if so stores them in the database. (i.e. MongoDB)
 
 
@@ -47,4 +47,4 @@ Maximum data so far, in a single execution.
 - GUI
     - User provided query keywords.
     - Search engine selection via GUI
-- More Docstring Conventions will be written.
+- More Docstring Conventions.
