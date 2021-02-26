@@ -4,24 +4,24 @@ from search_engines import *
 
 class Crawler:
 
-    # Default keyword list
-    default_query_list = ['sparql query', '"sparql endpoint"', 'inurl:sparql',
-                          'allintitle: sparql query', 'allinurl: sparql data']
+    # Default keyword to execute queries
+    default_keyword_list = ['sparql query', '"sparql endpoint"', 'inurl:sparql',
+                            'allintitle: sparql query', 'allinurl: sparql data']
 
     # All search engines
     engine_dict = {
-        'google_engine': Google(),
-        'bing_engine': Bing(),
-        'yahoo_engine': Yahoo(),
-        'duckduckgo_engine': Duckduckgo(),
-        'ask_engine': Ask(),
-        'aol_engine': Aol(),
-        'mojeek_engine': Mojeek(),
-        'dogpile_engine': Dogpile()
+        'google': Google(),
+        'bing': Bing(),
+        'yahoo': Yahoo(),
+        'duckduckgo': Duckduckgo(),
+        'ask': Ask(),
+        'aol': Aol(),
+        'mojeek': Mojeek(),
+        'dogpile': Dogpile()
     }
 
     @staticmethod
-    def search_engine_crawler(search_engine, keywords=default_query_list):
+    def search_engine_crawler(search_engine, keywords=default_keyword_list):
         """
         Crawls provided search_engine for every keyword.
 
@@ -42,33 +42,31 @@ class Crawler:
         with provided search engines
 
         :param engine_list: List of search engines to be allocated
-        :return: a Set of crawled links
+        :return: Set of crawled links
         """
         try:
             pool = Pool(4)
-            for engine in engine_list:
-                pool.apply_async(Crawler.search_engine_crawler, (engine,))
+            [pool.apply_async(Crawler.search_engine_crawler, (engine,)) for engine in engine_list]
             pool.close()
             pool.join()
         except Exception as e:
-            print('Error while performing processor pool allocating. - ', e)
+            print('Error while performing processor pool allocating: ', e)
 
-        crawl_results = []
-        for engine in Crawler.engine_dict.values():
-            if not (not engine.results.links()):    # if links() list is not empty
-                crawl_results.extend(engine.results.links())
-        return set(crawl_results)
+        crawling_results = []
+        [crawling_results.extend(engine.results.links()) for engine in engine_list]
+        print('Total link count after filtering: ', len(set(crawling_results)))
+
+        return set(crawling_results)
 
     @staticmethod
-    def single_search_engine(search_engine='google_engine'):
+    def single_search_engine(search_engine='google'):
         """
         Crawls web with user provided search engine.
 
         :param search_engine: Search engine name to be crawled.
         :return: crawl_results: Set of crawled websites.
         """
-        temp_engine_list = [Crawler.engine_dict[search_engine]]
-        return Crawler.engines_to_pool(temp_engine_list)
+        return Crawler.engines_to_pool([Crawler.engine_dict[search_engine]])
 
     @staticmethod
     def multiple_search_engine(*args):
@@ -79,8 +77,7 @@ class Crawler:
         :return: crawl_results: Set of crawled websites.
         """
         temp_engine_list = []
-        for engine in args:
-            temp_engine_list.append(Crawler.engine_dict[engine])
+        [temp_engine_list.append(Crawler.engine_dict[engine]) for engine in args]
 
         return Crawler.engines_to_pool(temp_engine_list)
 

@@ -24,9 +24,9 @@ If needed, client host can be modified in the **Database** class.
 Search engines to be crawled, can be selected.  
 All engines have been defined in the **Sparql** class.
 ```python
-single_search_engine('duckduckgo_engine')
+single_search_engine('duckduckgo')
 
-multiple_search_engine('bing_engine', 'ask_engine')
+multiple_search_engine('bing', 'ask')
 
 all_search_engines()
 ```
@@ -34,15 +34,14 @@ all_search_engines()
 ## Execution
 Run `python main.py` in the project folder.
 
-### The Data Obtained
-Maximum data so far, in a single execution.
-- **699** _unique websites crawled._
-- **46** _Endpoints found._
+### The Data with Numbers
+- **1445 _unique websites_** to crawl, in a single run.
+- **134 _Endpoints_** found.
 
 ### toDo
 - Improvements on 'isEndpoint' function. (There are endpoints that we haven't caught yet.)
 - Custom queries on Endpoints.
-- Multi-Thread support for Sparql class.
+- ~~Multi-Thread support for Sparql class.~~ (Partially done.)
 - More search engine support. (i.e. Baidu, Yandex)
 - GUI
     - User provided query keywords.

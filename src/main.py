@@ -1,6 +1,9 @@
 from src.Controller.database_controller import Database
 from src.Controller.crawler_controller import Crawler
 from src.Controller.sparql_controller import Sparql
+from src.Util.link_filter import Filter
 
 Database.initialize()
-Sparql.is_endpoint(Crawler.multiple_search_engine("google_engine", "bing_engine"))
+Sparql.endpoints_to_pool(
+    Filter.triple_filtering(
+        Crawler.all_search_engines()))
