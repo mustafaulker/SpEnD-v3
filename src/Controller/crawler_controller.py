@@ -1,5 +1,8 @@
 from multiprocessing.pool import ThreadPool as Pool
 from search_engines import *
+from sys import stderr
+from search_engines.engine import SearchEngine
+from src.Util.link_filter import Filter
 
 
 class Crawler:
@@ -21,21 +24,28 @@ class Crawler:
     }
 
     @staticmethod
-    def search_engine_crawler(search_engine, keywords=default_keyword_list):
+    def search_engine_crawler(search_engine: SearchEngine, keywords=default_keyword_list):
         """
         Crawls provided search_engine for every keyword.
 
         :param search_engine: A search engine to be crawled
         :param keywords: List of keywords to be searched
         """
-        for keyword in keywords:
-            try:
-                search_engine.search(keyword)
-            except Exception as e:
-                print('Error while performing search engine queries. - ', e)
+        try:
+            if (isinstance(keywords, str)):
+                search_engine.search(keywords)
+            elif (isinstance(keywords, list)):
+                for keyword in keywords:
+                    search_engine.search(keyword)
+            else:
+                raise ValueError("invalid literal for \"keyword\" argument. \"keyword\" must be str or list")
+        except ValueError as valueError:
+            stderr.write(str(valueError))
+        except Exception as e:
+            print('Error while performing search engine queries : ', e)
 
     @staticmethod
-    def engines_to_pool(engine_list):
+    def engines_to_pool(engine_list: list):
         """
         Gets search engine/engines as a parameter,
         in order to create a pool and execute "search_engine_crawler" func. async
@@ -56,7 +66,7 @@ class Crawler:
         [crawling_results.extend(engine.results.links()) for engine in engine_list]
         print('Total link count after filtering: ', len(set(crawling_results)))
 
-        return set(crawling_results)
+        Filter.triple_filtering(set(crawling_results))
 
     @staticmethod
     def single_search_engine(search_engine='google'):

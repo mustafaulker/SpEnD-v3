@@ -1,3 +1,6 @@
+from src.Controller.sparql_controller import Sparql
+
+
 class Filter:
 
     # Default list to filtering wanted keywords in crawled links
@@ -69,6 +72,6 @@ class Filter:
         :param suffix: Link suffixes to be deleted.
         :return: Filtered search result links.
         """
-        return Filter.filter_suffix(
+        Sparql.endpoints_to_pool(Filter.filter_suffix(
             Filter.filter_unwanted_keywords(
-                Filter.filter_wanted_keywords(links, wanted_keys), unwanted_keys), suffix)
+                Filter.filter_wanted_keywords(links, wanted_keys), unwanted_keys), suffix))
