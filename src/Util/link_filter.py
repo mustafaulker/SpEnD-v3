@@ -1,14 +1,18 @@
 from src.Controller.sparql_controller import Sparql
+from src.Controller.database_controller import Database
+from datetime import datetime
+from urllib.parse import urlparse
 
 
 class Filter:
 
+    Database.initialize()
+
     # Default list to filtering wanted keywords in crawled links
-    default_wanted_keys = ['sparql', 'query', 'endpoint', 'rdf', 'linkeddata', 'opendata']
+    default_wanted_keys = Database.get_keywords("wanted_keys")
 
     # Default list to filtering unwanted keywords in crawled links
-    default_unwanted_keys = ['.html', 'pdf', 'txt', 'tutorial', 'tip', 'hint', 'wikipedia',
-                             'stackoverflow', 'how-to', 'faq', 'learning', 'www.w3.org', 'medium.com']
+    default_unwanted_keys = Database.get_keywords("unwanted_keys")
 
     @staticmethod
     def filter_wanted_keywords(links, wanted_keys=default_wanted_keys):
@@ -62,16 +66,33 @@ class Filter:
         return set(list(links) + arranged_link) - set(to_remove)
 
     @staticmethod
-    def triple_filtering(links, wanted_keys=default_wanted_keys, unwanted_keys=default_unwanted_keys, suffix='?help'):
+    def triple_filtering(crawl_number, links, wanted_keys=default_wanted_keys,
+                         unwanted_keys=default_unwanted_keys, suffix='?help'):
         """
         Method to use wanted/unwanted/suffix methods at once.
 
+        :param crawl_number: Determine which crawl is this. Changes function based on the input.
         :param links: Search result links list.
         :param wanted_keys: Keywords to be applied as a filter to keep links that contains wanted keywords.
         :param unwanted_keys: Keywords to be applied as a filter to remove links that contains unwanted keywords.
         :param suffix: Link suffixes to be deleted.
         :return: Filtered search result links.
         """
-        Sparql.endpoints_to_pool(Filter.filter_suffix(
+        filtered_links = Filter.filter_suffix(
             Filter.filter_unwanted_keywords(
-                Filter.filter_wanted_keywords(links, wanted_keys), unwanted_keys), suffix))
+                Filter.filter_wanted_keywords(links, wanted_keys), unwanted_keys), suffix)
+
+        for link in filtered_links:
+            domain = urlparse(link).netloc
+            if not Database.find_one('Domains', {"domain": domain}):
+                Database.insert_one('Domains',
+                                    {'date_created': datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                     'domain': domain})
+        if crawl_number == 1:
+            Sparql.endpoints_to_pool(filtered_links)
+        elif crawl_number == 2:
+            for link in filtered_links:
+                if not Database.find_one('ReCrawl_Links', {"rc_url": link}):
+                    Database.insert_one('ReCrawl_Links',
+                                        {'date_created': datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                         'rc_url': link})
