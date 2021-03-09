@@ -27,12 +27,16 @@ class Sparql:
                 # Execute query and convert results to the returnFormat which is JSON.
                 query_result = sparql.queryAndConvert()
                 if query_result['boolean']:  # if query_result['boolean'] is True, this website is an Endpoint.
+                    if not Database.find_one('Endpoints', {'url': link}):
 
-                    # Database insertion with Current Date & Query site's URL & Endpoint
-                    Database.insert_one('Endpoints', {'date_created': datetime.utcnow(),
-                                                      'url': link,
-                                                      'endpoint': query_result})
-                    print('Endpoint found & Successfully written to DB.')
+                        # Database insertion with Current Date & Query site's URL & Endpoint
+                        Database.insert_one('Endpoints',
+                                            {'date_created': datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                                             'url': link,
+                                             'endpoint': query_result})
+                        print('Endpoint written to DB.')
+                    else:
+                        print("Endpoint already exists in db.")
                 else:
                     print("This site isn't a SparQL Endpoint.")
             except (HTTPError, URLError) as UrllibError:
@@ -54,6 +58,7 @@ class Sparql:
         try:
             pool = Pool(4)
             [pool.apply_async(Sparql.is_endpoint, (list_piece,)) for list_piece in pieced_lists]
+            # pool.apply_async(Sparql.is_endpoint, (links,))
             pool.close()
             pool.join()
         except Exception as e:
