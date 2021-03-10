@@ -31,10 +31,10 @@ class Crawler:
         try:
             time.sleep(1)
             if isinstance(keywords, str):
-                search_engine.search(keywords, pages=1)
+                search_engine.search(keywords)
             elif isinstance(keywords, list):
                 for keyword in keywords:
-                    search_engine.search(keyword, pages=1)
+                    search_engine.search(keyword)
             else:
                 raise ValueError("Invalid literal for \"keyword\" argument. \"keyword\" must be str or list.")
         except ValueError as valueError:
