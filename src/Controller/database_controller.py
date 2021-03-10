@@ -1,9 +1,18 @@
 import pymongo
 from urllib.parse import urlparse
-
+import os
 
 class Database:
-    URI = 'mongodb://localhost:27017/'
+    URI = ""
+    try:
+        mongohost = os.environ['MONGODB_HOST']
+        mongoport = os.environ['MONGODB_PORT']
+        mongouser = os.environ['MONGODB_USERNAME']
+        mongopass = os.environ['MONGODB_PASSWORD']
+        URI = "mongodb://"+mongouser+ ":" +mongopass+"@"+mongohost+":"+mongoport"
+    except:
+        URI = 'mongodb://localhost:27017/'
+   
     DATABASE = None
 
     @staticmethod
