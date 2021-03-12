@@ -1,8 +1,8 @@
 version: '2'
 services:
   backend:
-    container_name: "spend-crawler"
     image: spend-image
+    container_name: "spend-crawler"
     environment:
       - MONGODB_HOST=mongo
       - MONGODB_PORT=27017
@@ -10,8 +10,21 @@ services:
       - MONGODB_PASSWORD=[password]
     links:
       - mongo
+    restart: on-failure
+
   mongo:
     image: "mongo:latest"
+    container_name: "spend-mongodb"
     environment:
       - MONGODB_ROOT_PASSWORD=[root_pass]
-    container_name: "spend-mongodb"
+    depends_on:
+      - mongoimport
+    restart: unless-stopped
+
+  mongoimport:
+    image: mongo:latest
+    container_name: spend-import
+    volumes:
+      - ./data/keywords.json:/data/keywords.json
+    command: mongoimport --host mongo -d SpEnD-DB -c Keywords --type json --file /data/keywords.json --jsonArray
+    restart: on-failure

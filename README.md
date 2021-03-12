@@ -4,6 +4,7 @@
 Crawls various search engines (e.g. Google, Bing, Yahoo, etc.) with given query keywords.  
 Checks if gathered websites is an Endpoint or not, if so stores them in the database. (i.e. MongoDB)
 
+- Current discovered **_Endpoints:_** **210** 
 
 ### Requirements
 - [SPARQLWrapper](https://github.com/RDFLib/sparqlwrapper)
@@ -22,7 +23,7 @@ If needed, client host can be modified in the **Database** class.
 
 ### Search Engine Configuration
 Search engines to be crawled, can be selected.  
-All engines have been defined in the **Sparql** class.
+All engines have been defined in the **Crawler** class.
 ```python
 single_search_engine('keywords', 'duckduckgo')
 
@@ -32,18 +33,6 @@ all_search_engines('keywords')
 ```
 
 ## Execution
-Run `python main.py` in the project folder.
-
-### The Data with Numbers
-- **6732 _unique websites._**
-- **210 _Endpoints._**
-
-### toDo
-- Improvements on 'isEndpoint' function. (There are endpoints that we haven't caught yet.)
-- Custom queries on Endpoints.
-- ~~Multi-Thread support for Sparql class.~~ (Partially done.)
-- More search engine support. (i.e. Baidu, Yandex)
-- GUI
-    - User provided query keywords.
-    - Search engine selection via GUI
-- ~~More Docstring Conventions.~~
+Run `python main.py` in the project folder.  
+or just  
+Run `docker-compose up` without any configuration.

@@ -56,18 +56,11 @@ class Database:
         :param keys: Desired keyword lists name
         :return: List of keywords
         """
-        list_position = 0
-        if keys == "crawl_keys":
-            list_position = 0
-        elif keys == "recrawl_keys":
-            list_position = 1
-        elif keys == "wanted_keys":
-            list_position = 2
-        elif keys == "unwanted_keys":
-            list_position = 3
-        else:
-            print("Wrong parameter.")
-        return list(Database.DATABASE["Keywords"].find({}, {'_id': 0}))[list_position][keys]
+        all_keys = list(Database.DATABASE["Keywords"].find({}, {'_id': 0}))
+
+        for i in range(len(all_keys)):
+            if keys == list(all_keys[i].keys())[0]:
+                return all_keys[i][keys]
 
     @staticmethod
     def get_endpoints():
