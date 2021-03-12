@@ -1,9 +1,21 @@
 import pymongo
 from urllib.parse import urlparse
+import os
 
 
 class Database:
-    URI = 'mongodb://localhost:27017/'
+    try:
+        mongohost = os.environ['MONGODB_HOST']
+        mongoport = os.environ['MONGODB_PORT']
+        mongouser = os.environ['MONGODB_USERNAME']
+        mongopass = os.environ['MONGODB_PASSWORD']
+        URI = f"mongodb://{mongohost}:{mongoport}/"
+        # Authentication will be added.
+        # URI = f"mongodb://{mongouser}:{mongopass}@{mongohost}:{mongoport}/"
+    except:
+        print('Environment variables not found. Connecting to default URI')
+        URI = 'mongodb://localhost:27017/'
+
     DATABASE = None
 
     @staticmethod
@@ -44,18 +56,11 @@ class Database:
         :param keys: Desired keyword lists name
         :return: List of keywords
         """
-        list_position = 0
-        if keys == "crawl_keys":
-            list_position = 0
-        elif keys == "recrawl_keys":
-            list_position = 1
-        elif keys == "wanted_keys":
-            list_position = 2
-        elif keys == "unwanted_keys":
-            list_position = 3
-        else:
-            print("Wrong parameter.")
-        return list(Database.DATABASE["Keywords"].find({}, {'_id': 0}))[list_position][keys]
+        all_keys = list(Database.DATABASE["Keywords"].find({}, {'_id': 0}))
+
+        for i in range(len(all_keys)):
+            if keys == list(all_keys[i].keys())[0]:
+                return all_keys[i][keys]
 
     @staticmethod
     def get_endpoints():

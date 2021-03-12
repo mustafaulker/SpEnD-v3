@@ -1,0 +1,58 @@
+[{
+  "_id": {
+    "$oid": "603eb55244ef15405013a5c9"
+  },
+  "crawl_keys": [
+    "sparql query",
+    "\"sparql endpoint\"",
+    "virtuoso sparql query",
+    "allintitle: sparql query",
+    "allinurl: sparql data",
+    "inurl:sparql"
+  ]
+},{
+  "_id": {
+    "$oid": "60474e26dd3eab7b3ca075d2"
+  },
+  "recrawl_keys": [
+    "sparql query",
+    "query editor",
+    "virtuoso"
+  ]
+},{
+  "_id": {
+    "$oid": "6047535d8d376a41e8904681"
+  },
+  "wanted_keys": [
+    "sparql",
+    "query",
+    "endpoint",
+    "rdf",
+    "linkeddata",
+    "opendata"
+  ]
+},{
+  "_id": {
+    "$oid": "604753628d376a41e8904682"
+  },
+  "unwanted_keys": [
+    ".html",
+    "pdf",
+    "txt",
+    "tutorial",
+    "tip",
+    "hint",
+    "wikipedia",
+    "stackoverflow",
+    "how-to",
+    "faq",
+    "learning",
+    "www.w3.org",
+    "medium.com",
+    "github.com",
+    "readthedocs.io",
+    "microsoft.com",
+    "quora.com",
+    "linkedin.com"
+  ]
+}]
