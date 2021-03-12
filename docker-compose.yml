@@ -2,16 +2,16 @@ version: '2'
 services:
   backend:
     container_name: "spend-crawler"
-    image: image-name
+    image: spend-image
     environment:
-      - MONGODB_HOST=mongodb-spend
+      - MONGODB_HOST=mongo
       - MONGODB_PORT=27017
       - MONGODB_USERNAME=[username]
       - MONGODB_PASSWORD=[password]
     links:
       - mongo
   mongo:
-    image: "bitnami/mongodb:latest"
+    image: "mongo:latest"
     environment:
-      - MONGODB_ROOT_PASSWORD=[password]
-    container_name: "mongodb-spend"
+      - MONGODB_ROOT_PASSWORD=[root_pass]
+    container_name: "spend-mongodb"

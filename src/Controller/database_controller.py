@@ -2,17 +2,20 @@ import pymongo
 from urllib.parse import urlparse
 import os
 
+
 class Database:
-    URI = ""
     try:
         mongohost = os.environ['MONGODB_HOST']
         mongoport = os.environ['MONGODB_PORT']
         mongouser = os.environ['MONGODB_USERNAME']
         mongopass = os.environ['MONGODB_PASSWORD']
-        URI = "mongodb://"+mongouser+ ":" +mongopass+"@"+mongohost+":"+mongoport"
+        URI = f"mongodb://{mongohost}:{mongoport}/"
+        # Authentication will be added.
+        # URI = f"mongodb://{mongouser}:{mongopass}@{mongohost}:{mongoport}/"
     except:
+        print('Environment variables not found. Connecting to default URI')
         URI = 'mongodb://localhost:27017/'
-   
+
     DATABASE = None
 
     @staticmethod
