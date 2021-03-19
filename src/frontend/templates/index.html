@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Endpoints</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    {% if endpoints|length < 1 %}
+    <h4 style="text-align: center">There are no Endpoints in the DB.</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Endpoints</th>
+            <th>Added</th>
+        </tr>
+        {% for endpoint in endpoints %}
+            <tr>
+                <td>{{ endpoint.url }}</td>
+                <td>{{ endpoint.date_created.date() }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+</div>
+{% endblock %}

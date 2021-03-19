@@ -1,3 +1,6 @@
 SPARQLWrapper~=1.8.5
 pymongo~=3.11.3
 git+git://github.com/tasos-py/Search-Engines-Scraper.git
+Flask~=1.1.2
+openpyxl~=3.0.7
+flask-mongoengine~=1.0.0
