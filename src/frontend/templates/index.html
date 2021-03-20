@@ -1,26 +1,53 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<title>Endpoints</title>
+
 {% endblock %}
 
 {% block body %}
-<div class="content">
+
+<div class="table-container">
+    <div id="table-scroll" style="height: 600px; width: 80%; overflow: auto; margin: auto;">
     {% if endpoints|length < 1 %}
-    <h4 style="text-align: center">There are no Endpoints in the DB.</h4>
+        <h4 style="text-align: center">There are no Endpoints in the DB.</h4>
     {% else %}
-    <table>
+    <table class="table is-fullwidth is-scrollable">
+      <thead>
         <tr>
-            <th>Endpoints</th>
-            <th>Added</th>
+          <th><abbr title="Count">#</abbr></th>
+          <th>Endpoint</th>
+          <th><abbr title="Create Date">Create Date</abbr></th>
+          <th><abbr title="Last Check">Last Check</abbr></th>
+          <th><abbr title="is Alive">is Alive</abbr></th>
         </tr>
+      </thead>
+      <tfoot>
+        <tr>
+          <th><abbr title="Count">#</abbr></th>
+          <th>Endpoint</th>
+          <th><abbr title="Create Date">Create Date</abbr></th>
+          <th><abbr title="Last Check">Last Check</abbr></th>
+          <th><abbr title="is Alive">is Alive</abbr></th>
+        </tr>
+      </tfoot>
+      <tbody >
+
+        {% set count = namespace(value=1) %}
         {% for endpoint in endpoints %}
             <tr>
+                <td>{{ count.value }}</td>
                 <td>{{ endpoint.url }}</td>
                 <td>{{ endpoint.date_created.date() }}</td>
+                <td>{{ None }}</td>
+                <td>{{ None }}</td>
             </tr>
+        {% set count.value = count.value + 1 %}
         {% endfor %}
+
+      </tbody>
     </table>
     {% endif %}
+        </div>
 </div>
+
 {% endblock %}
