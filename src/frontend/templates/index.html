@@ -8,46 +8,52 @@
 
 <div class="table-container">
     <div id="table-scroll" style="height: 600px; width: 80%; overflow: auto; margin: auto;">
-    {% if endpoints|length < 1 %}
+        {% if endpoints|length < 1 %}
         <h4 style="text-align: center">There are no Endpoints in the DB.</h4>
-    {% else %}
-    <table class="table is-fullwidth is-scrollable">
-      <thead>
-        <tr>
-          <th><abbr title="Count">#</abbr></th>
-          <th>Endpoint</th>
-          <th><abbr title="Create Date">Create Date</abbr></th>
-          <th><abbr title="Last Check">Last Check</abbr></th>
-          <th><abbr title="is Alive">is Alive</abbr></th>
-        </tr>
-      </thead>
-      <tfoot>
-        <tr>
-          <th><abbr title="Count">#</abbr></th>
-          <th>Endpoint</th>
-          <th><abbr title="Create Date">Create Date</abbr></th>
-          <th><abbr title="Last Check">Last Check</abbr></th>
-          <th><abbr title="is Alive">is Alive</abbr></th>
-        </tr>
-      </tfoot>
-      <tbody >
+        {% else %}
+        <h1 class="title is-1">Endpoints</h1>
+        <table class="table is-fullwidth">
+            <thead>
+            <tr>
+                <th><abbr title="Order">#</abbr></th>
+                <th>Endpoint</th>
+                <th>Create Date</th>
+                <th>Last Check</th>
+                <th>is Alive</th>
+            </tr>
+            </thead>
+            <tfoot>
+            <tr>
+                <th><abbr title="Order">#</abbr></th>
+                <th>Endpoint</th>
+                <th>Create Date</th>
+                <th>Last Check</th>
+                <th>is Alive</th>
+            </tr>
+            </tfoot>
+            <tbody>
 
-        {% set count = namespace(value=1) %}
-        {% for endpoint in endpoints %}
+            {% set count = namespace(value=1) %}
+            {% set ax = ["https://", "http://"] %}
+            {% for endpoint in endpoints %}
             <tr>
                 <td>{{ count.value }}</td>
-                <td>{{ endpoint.url }}</td>
+                <td>
+                    <a href="{{ endpoint.url }}">
+                        {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
+                    </a>
+                </td>
                 <td>{{ endpoint.date_created.date() }}</td>
                 <td>{{ None }}</td>
                 <td>{{ None }}</td>
             </tr>
-        {% set count.value = count.value + 1 %}
-        {% endfor %}
+            {% set count.value = count.value + 1 %}
+            {% endfor %}
 
-      </tbody>
-    </table>
-    {% endif %}
-        </div>
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
 </div>
 
 {% endblock %}
