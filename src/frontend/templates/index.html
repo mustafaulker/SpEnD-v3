@@ -5,14 +5,32 @@
 {% endblock %}
 
 {% block body %}
+<div style="margin-left: 200px">
+    <h1 class="title is-1 is-center">Endpoints</h1>
+    <div class="control has-icons-left">
+        <label>
+            <input class="input is-rounded" type="text" placeholder="Search"
+                   style="width: 250px" id="endpointSearch" onkeyup="search_filter()">
+            <script type="text/javascript" src="../static/js/filters.js">search_filter();</script>
+        </label>
+        <span class="icon is-left">
+                <i class="fa fa-search"></i>
+            </span>
+        <label class="checkbox" id="alive_checkbox"
+               style="margin-top: 10px; margin-left: 20px">
+            <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">
+            List only alives
+            <script type="text/javascript" src="../static/js/filters.js">alive_filter();</script>
+        </label>
+    </div>
+</div>
 
 <div class="table-container">
     <div id="table-scroll" style="height: 600px; width: 80%; overflow: auto; margin: auto;">
         {% if endpoints|length < 1 %}
         <h4 style="text-align: center">There are no Endpoints in the DB.</h4>
         {% else %}
-        <h1 class="title is-1">Endpoints</h1>
-        <table class="table is-fullwidth">
+        <table class="table is-fullwidth" id="endpointTable">
             <thead>
             <tr>
                 <th><abbr title="Order">#</abbr></th>
@@ -49,7 +67,13 @@
             </tr>
             {% set count.value = count.value + 1 %}
             {% endfor %}
-
+            <tr>
+                <td>{{ "TestObject" }}</td>
+                <td>{{ "TestObject" }}</td>
+                <td>{{ "TestObject" }}</td>
+                <td>{{ "TestObject" }}</td>
+                <td>{{ True }}</td>
+            </tr>
             </tbody>
         </table>
         {% endif %}
