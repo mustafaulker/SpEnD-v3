@@ -4,10 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <!--    <link rel="stylesheet" href="{{ url_for('static', filename='css/bulma.css') }}">-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
           integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-social@2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-divider@1.1.0/dist/bulma-divider.css">
 
     <title>SpEnD - SparQL Endpoints</title>
     {% block head %}{% endblock %}
@@ -31,10 +35,10 @@
 
     <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-            <a class="navbar-item">
+            <a class="navbar-item" href="http://localhost:5000/" target="_self">
                 Home
             </a>
-            <a class="navbar-item">
+            <a class="navbar-item" href="query.html" target="_self">
                 Query
             </a>
             <div class="navbar-item has-dropdown is-hoverable">
@@ -42,15 +46,11 @@
                     More
                 </a>
                 <div class="navbar-dropdown">
-                    <a class="navbar-item">
+                    <a class="navbar-item" href="about.html" target="_self">
                         About
                     </a>
-                    <a class="navbar-item">
-                        Contact
-                    </a>
-                    <hr class="navbar-divider">
-                    <a class="navbar-item">
-                        Report an issue
+                    <a class="navbar-item" href="contact.html" target="_self">
+                        Contact Us
                     </a>
                 </div>
             </div>
@@ -74,7 +74,6 @@
 
 <!-- footer -->
 <footer class="footer">
-
     <div class="container is-fluid">
         <div class="columns">
             <div class="column">

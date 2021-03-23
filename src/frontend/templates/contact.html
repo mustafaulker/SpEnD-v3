@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<section class="hero is-medium">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="columns is-8 is-variable">
+                <div class="column is-two-thirds has-text-left">
+                    <h1 class="title is-1">Contact Us</h1>
+                    <p class="is-size-3">Feel free to contact with us for any of your thoughts.</p>
+                    <p class="is-size-4">Issues can be reported by message or from
+                        <a href="https://github.com/mustafaulker/SpEnD-v3/issues">Github Issues</a>
+                    </p>
+                </div>
+                <div class="column is-one-third has-text-left">
+
+                    <div class="field">
+                        <label class="label">Name</label>
+                        <div class="control">
+                            <label>
+                                <input class="input is-medium" type="text">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Subject</label>
+                        <div class="select is-hoverable">
+                            <label>
+                                <select class="is-hovered">
+                                    <option>Question</option>
+                                    <option>Request</option>
+                                    <option>Feedback</option>
+                                    <option>Report an Issue</option>
+                                    <option>Other</option>
+                                </select>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <div class="control">
+                            <label>
+                                <input class="input is-medium" type="text">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Message</label>
+                        <div class="control">
+                            <label>
+                                <textarea class="textarea is-medium"></textarea>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="control">
+                        <button type="submit" class="button is-link is-fullwidth has-text-weight-medium is-medium">Send
+                            Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
