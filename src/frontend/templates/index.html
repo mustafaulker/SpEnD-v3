@@ -28,7 +28,11 @@
 <div class="table-container">
     <div id="table-scroll" style="height: 600px; width: 80%; overflow: auto; margin: auto;">
         {% if endpoints|length < 1 %}
-        <h4 style="text-align: center">There are no Endpoints in the DB.</h4>
+        <h1 class="title is-2" style="text-align: center">There are no Endpoints in the DB.</h1>
+        <h1 class="subtitle is-4" style="text-align: center">
+            Please report the situation to us at
+            <a href="contact.html">Contact page.</a>
+        </h1>
         {% else %}
         <table class="table is-fullwidth" id="endpointTable">
             <thead>
@@ -57,7 +61,7 @@
             <tr>
                 <td>{{ count.value }}</td>
                 <td>
-                    <a href="{{ endpoint.url }}">
+                    <a href="{{ endpoint.url }}" target="_blank">
                         {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>

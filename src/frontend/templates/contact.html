@@ -16,13 +16,13 @@
                         <a href="https://github.com/mustafaulker/SpEnD-v3/issues">Github Issues</a>
                     </p>
                 </div>
-                <div class="column is-one-third has-text-left">
 
+                <div class="column is-one-third has-text-left">
                     <div class="field">
                         <label class="label">Name</label>
                         <div class="control">
                             <label>
-                                <input class="input is-medium" type="text">
+                                <input class="input is-medium" type="text" id="contact_name" name="name">
                             </label>
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                         <label class="label">Subject</label>
                         <div class="select is-hoverable">
                             <label>
-                                <select class="is-hovered">
+                                <select class="is-hovered" id="contact_subject">
                                     <option>Question</option>
                                     <option>Request</option>
                                     <option>Feedback</option>
@@ -44,7 +44,7 @@
                         <label class="label">Email</label>
                         <div class="control">
                             <label>
-                                <input class="input is-medium" type="text">
+                                <input class="input is-medium" type="text" id="contact_email" name="email">
                             </label>
                         </div>
                     </div>
@@ -52,14 +52,16 @@
                         <label class="label">Message</label>
                         <div class="control">
                             <label>
-                                <textarea class="textarea is-medium"></textarea>
+                                <textarea class="textarea is-medium" id="contact_message" name="message"></textarea>
                             </label>
                         </div>
                     </div>
                     <div class="control">
-                        <button type="submit" class="button is-link is-fullwidth has-text-weight-medium is-medium">Send
-                            Message
+                        <button type="submit" class="button is-focused is-link is-fullwidth has-text-weight-medium is-medium"
+                                onclick="save_message()" id="send_button">
+                            Send Message
                         </button>
+                        <script type="text/javascript" src="../static/js/contact_controller.js">save_message();</script>
                     </div>
                 </div>
             </div>
