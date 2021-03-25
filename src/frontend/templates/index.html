@@ -5,83 +5,83 @@
 {% endblock %}
 
 {% block body %}
-<div style="margin-left: 200px">
-    <h1 class="title is-1 is-center">Endpoints</h1>
-    <div class="control has-icons-left">
-        <label>
-            <input class="input is-rounded" type="text" placeholder="Search"
-                   style="width: 250px" id="endpointSearch" onkeyup="search_filter()">
-            <script type="text/javascript" src="../static/js/filters.js">search_filter();</script>
-        </label>
-        <span class="icon is-left">
+<form action="">
+    <div style="margin-left: 200px">
+        <h1 class="title is-1 is-center">Endpoints</h1>
+        <div class="control has-icons-left">
+            <label>
+                <input class="input is-rounded" type="text" placeholder="Search"
+                       style="width: 250px" id="endpointSearch" onkeyup="search_filter()">
+                <script type="text/javascript" src="../static/js/filter_controller.js">search_filter();</script>
+            </label>
+            <span class="icon is-left">
                 <i class="fa fa-search"></i>
             </span>
-        <label class="checkbox" id="alive_checkbox"
-               style="margin-top: 10px; margin-left: 20px">
-            <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">
-            List only alives
-            <script type="text/javascript" src="../static/js/filters.js">alive_filter();</script>
-        </label>
+            <label class="checkbox" id="alive_checkbox"
+                   style="margin-top: 10px; margin-left: 20px">
+                <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">
+                List only alives
+                <script type="text/javascript" src="../static/js/filter_controller.js">alive_filter();</script>
+            </label>
+        </div>
     </div>
-</div>
 
-<div class="table-container">
-    <div id="table-scroll" style="height: 600px; width: 80%; overflow: auto; margin: auto;">
-        {% if endpoints|length < 1 %}
-        <h1 class="title is-2" style="text-align: center">There are no Endpoints in the DB.</h1>
-        <h1 class="subtitle is-4" style="text-align: center">
-            Please report the situation to us at
-            <a href="contact.html">Contact page.</a>
-        </h1>
-        {% else %}
-        <table class="table is-fullwidth" id="endpointTable">
-            <thead>
-            <tr>
-                <th><abbr title="Order">#</abbr></th>
-                <th>Endpoint</th>
-                <th>Create Date</th>
-                <th>Last Check</th>
-                <th>is Alive</th>
-            </tr>
-            </thead>
-            <tfoot>
-            <tr>
-                <th><abbr title="Order">#</abbr></th>
-                <th>Endpoint</th>
-                <th>Create Date</th>
-                <th>Last Check</th>
-                <th>is Alive</th>
-            </tr>
-            </tfoot>
-            <tbody>
+    <div class="table-container">
+        <div id="table-scroll" style="height: 600px; width: 80%; overflow: auto; margin: auto;">
+            {% if endpoints|length < 1 %}
+            <h1 class="title is-2" style="text-align: center">There are no Endpoints in the DB.</h1>
+            <h1 class="subtitle is-4" style="text-align: center">
+                Please report the situation to us at
+                <a href="contact.html">Contact page.</a>
+            </h1>
+            {% else %}
+            <table class="table is-fullwidth" id="endpointTable">
+                <thead>
+                <tr>
+                    <th><abbr title="Order">#</abbr></th>
+                    <th>Endpoint</th>
+                    <th>Create Date</th>
+                    <th>Last Check</th>
+                    <th>is Alive</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th><abbr title="Order">#</abbr></th>
+                    <th>Endpoint</th>
+                    <th>Create Date</th>
+                    <th>Last Check</th>
+                    <th>is Alive</th>
+                </tr>
+                </tfoot>
+                <tbody>
 
-            {% set count = namespace(value=1) %}
-            {% set ax = ["https://", "http://"] %}
-            {% for endpoint in endpoints %}
-            <tr>
-                <td>{{ count.value }}</td>
-                <td>
-                    <a href="{{ endpoint.url }}" target="_blank">
-                        {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
-                    </a>
-                </td>
-                <td>{{ endpoint.date_created.date() }}</td>
-                <td>{{ None }}</td>
-                <td>{{ None }}</td>
-            </tr>
-            {% set count.value = count.value + 1 %}
-            {% endfor %}
-            <tr>
-                <td>{{ "TestObject" }}</td>
-                <td>{{ "TestObject" }}</td>
-                <td>{{ "TestObject" }}</td>
-                <td>{{ "TestObject" }}</td>
-                <td>{{ True }}</td>
-            </tr>
-            </tbody>
-        </table>
-        {% endif %}
+                {% set count = namespace(value=1) %}
+                {% for endpoint in endpoints %}
+                <tr>
+                    <td>{{ count.value }}</td>
+                    <td>
+                        <a href="{{ endpoint.url }}" target="_blank">
+                            {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
+                        </a>
+                    </td>
+                    <td>{{ endpoint.date_created.date() }}</td>
+                    <td>{{ None }}</td>
+                    <td>{{ None }}</td>
+                </tr>
+                {% set count.value = count.value + 1 %}
+                {% endfor %}
+                <tr>
+                    <td>{{ "TestObject" }}</td>
+                    <td>{{ "TestObject" }}</td>
+                    <td>{{ "TestObject" }}</td>
+                    <td>{{ "TestObject" }}</td>
+                    <td>{{ True }}</td>
+                </tr>
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
     </div>
-</div>
-
+</form>
 {% endblock %}

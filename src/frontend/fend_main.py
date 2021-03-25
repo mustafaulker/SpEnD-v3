@@ -20,15 +20,23 @@ class Endpoints(db.Document):
     endpoint = db.StringField()
 
 
+class Keywords(db.Document):
+    crawl_keys = db.DictField()
+    recrawl_keys = db.DictField()
+    wanted_keys = db.DictField()
+    unwanted_keys = db.DictField()
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     endpoints = Endpoints.objects()
     return render_template('index.html', endpoints=endpoints)
 
 
-@app.route('/query.html')
+@app.route('/query.html', methods=['GET', 'POST'])
 def query():
-    return render_template('query.html')
+    keywords = list(Keywords.objects.exclude("id"))[0]["crawl_keys"]
+    return render_template('query.html', keywords=keywords)
 
 
 @app.route('/about.html')
@@ -36,7 +44,7 @@ def about():
     return render_template('about.html')
 
 
-@app.route('/contact.html')
+@app.route('/contact.html', methods=['GET', 'POST'])
 def contact():
     return render_template('contact.html')
 

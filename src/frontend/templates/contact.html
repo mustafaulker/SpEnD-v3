@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-
+<form action="/contact.html" method="POST">
 <section class="hero is-medium">
     <div class="hero-body">
         <div class="container has-text-centered">
@@ -44,7 +44,7 @@
                         <label class="label">Email</label>
                         <div class="control">
                             <label>
-                                <input class="input is-medium" type="text" id="contact_email" name="email">
+                                <input class="input is-medium" type="email" id="contact_email" name="email">
                             </label>
                         </div>
                     </div>
@@ -68,5 +68,6 @@
         </div>
     </div>
 </section>
+</form>
 
 {% endblock %}

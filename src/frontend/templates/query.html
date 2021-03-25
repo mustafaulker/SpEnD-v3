@@ -5,16 +5,57 @@
 
 {% block body %}
 
-<section class="hero is-large">
-    <div class="hero-body">
+<form action="/query.html" method="POST">
+    <section class="section is-large">
         <div class="container has-text-centered">
-            <div class="column has-text-centered">
-                <h1 class="title is-1">WORK</h1>
-                <h1 class="title is-3">IN</h1>
-                <h1 class="title is-1">PROGRESS</h1>
-            </div>
-        </div>
-    </div>
-</section>
+            <div class="columns is-vcentered">
+                <div class="column is-one-third">
+                    <p class="title is-4">Search Engines</p>
+                    {% set se_list = ['Google', 'Bing', 'Yahoo', 'Duckduckgo',
+                    'Ask', 'Aol', 'Mojeek', 'Dogpile'] %}
 
+                    <span class="control">
+                        {% for se in se_list %}
+                          <label class="is-checkbox is-rounded">
+                            <input id="cb_{{ se }}" type="checkbox" name="cb_se">
+                            <span class="icon checkmark">
+                              <i class="fa fa-check"></i>
+                            </span>
+                            <span>{{ se }}</span>
+                          </label>
+                        {% endfor %}
+                    </span>
+                </div>
+
+                <div class="column is-one-third">
+                    <p class="title is-4">Query Keywords</p>
+                    <span class="control">
+                        {% for crawl_key in keywords %}
+                          <label class="is-checkbox is-rounded">
+                            <input id="cb_{{ crawl_key[1] }}" type="checkbox" name="cb_kw">
+                            <span class="icon checkmark">
+                              <i class="fa fa-check"></i>
+                            </span>
+                            <span>{{ crawl_key }}</span>
+                          </label>
+                        {% endfor %}
+                    </span>
+                </div>
+
+                <div class="column is is-one-third">
+                    <label>
+                        <input class="input" type="text" name="keyword_input" id="kw_input"
+                               placeholder="Split keywords with a comma. (sparql,sparql query)">
+                    </label>
+                </div>
+            </div>
+            <hr>
+            <span class="control">
+                  <button class="button is-rounded is-link" onclick="get_checkboxes()">Crawl</button>
+            </span>
+        </div>
+    </section>
+</form>
+
+<script type="text/javascript" src="../static/js/query_controller.js">get_checkboxes();</script>
 {% endblock %}
