@@ -32,7 +32,7 @@
                     <span class="control">
                         {% for crawl_key in keywords %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ crawl_key[1] }}" type="checkbox" name="cb_kw">
+                            <input id="cb_{{ crawl_key }}" type="checkbox" name="cb_kw">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
@@ -43,19 +43,20 @@
                 </div>
 
                 <div class="column is is-one-third">
+                    <p class="title is-4">Add more query keywords</p>
                     <label>
-                        <input class="input" type="text" name="keyword_input" id="kw_input"
-                               placeholder="Split keywords with a comma. (sparql,sparql query)">
+                        <textarea name="keyword_input" id="kw_input"  cols="60" rows="10" placeholder="Seperate multiple keywords with a line"
+                                  style="resize:none; overflow: auto; font-size: 15px" ></textarea>
                     </label>
                 </div>
             </div>
             <hr>
             <span class="control">
-                  <button class="button is-rounded is-link" onclick="get_checkboxes()">Crawl</button>
+                  <button class="button is-rounded is-link" onclick="get_crawl_parameters()">Crawl</button>
             </span>
         </div>
     </section>
 </form>
 
-<script type="text/javascript" src="../static/js/query_controller.js">get_checkboxes();</script>
+<script type="text/javascript" src="../static/js/crawler_controller.js">get_crawl_parameters();</script>
 {% endblock %}

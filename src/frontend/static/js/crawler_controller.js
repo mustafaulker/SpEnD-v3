@@ -1,4 +1,4 @@
-function get_checkboxes() {
+function get_crawl_parameters() {
     let desired_search_engines = []
     let desired_keywords = []
     let inputs = document.getElementsByTagName("input");
@@ -10,8 +10,7 @@ function get_checkboxes() {
         else if (inputs[i].type === "checkbox" && inputs[i].checked && inputs[i].name === "cb_kw") {
             desired_keywords.push(inputs[i].id)
         }
-        else if (inputs[i].type === "text" && inputs[i].name === "keyword_input") {
-            desired_keywords = desired_keywords.concat(inputs[i].value.split(","))
-        }
     }
+    let textare = document.getElementById("kw_input");
+    desired_keywords = desired_keywords.concat(textare.value.split(/\r?\n/))
 }

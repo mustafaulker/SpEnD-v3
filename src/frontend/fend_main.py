@@ -33,10 +33,10 @@ def index():
     return render_template('index.html', endpoints=endpoints)
 
 
-@app.route('/query.html', methods=['GET', 'POST'])
-def query():
+@app.route('/crawler.html', methods=['GET', 'POST'])
+def crawler():
     keywords = list(Keywords.objects.exclude("id"))[0]["crawl_keys"]
-    return render_template('query.html', keywords=keywords)
+    return render_template('crawler.html', keywords=keywords)
 
 
 @app.route('/about.html')
