@@ -12,7 +12,6 @@
             <label>
                 <input class="input is-rounded" type="text" placeholder="Search"
                        style="width: 250px" id="endpointSearch" onkeyup="search_filter()">
-                <script type="text/javascript" src="../static/js/filter_controller.js">search_filter();</script>
             </label>
             <span class="icon is-left">
                 <i class="fa fa-search"></i>
@@ -21,7 +20,6 @@
                    style="margin-top: 10px; margin-left: 20px">
                 <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">
                 List only alives
-                <script type="text/javascript" src="../static/js/filter_controller.js">alive_filter();</script>
             </label>
         </div>
     </div>
@@ -61,7 +59,7 @@
                 <tr>
                     <td>{{ count.value }}</td>
                     <td>
-                        <a href="{{ endpoint.url }}" target="_blank">
+                        <a class="ep-class" about="{{ endpoint.url }}" href="http://localhost:5000/endpoint/{{endpoint.url}}" target="_blank" onclick="createPage()">
                             {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                         </a>
                     </td>
@@ -84,4 +82,7 @@
         </div>
     </div>
 </form>
+<script type="text/javascript" src="../static/js/filter_controller.js">search_filter();</script>
+<script type="text/javascript" src="../static/js/filter_controller.js">alive_filter();</script>
+<script type="text/javascript" src="../static/js/endpoint_controller.js">createPage();</script>
 {% endblock %}

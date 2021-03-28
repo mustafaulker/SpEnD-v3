@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<form action="/endpoint.html/<ep_url>" method="GET">
+<div>
+
+    {% for endpoint in endpoints %}
+
+        {% if endpoint.url == ep_url %}
+
+        {% endif %}
+
+    {% endfor %}
+
+    </div>
+</form>
+{% endblock %}

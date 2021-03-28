@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_mongoengine import MongoEngine
 from datetime import datetime
 
@@ -47,6 +47,22 @@ def about():
 @app.route('/contact.html', methods=['GET', 'POST'])
 def contact():
     return render_template('contact.html')
+
+
+@app.route('/endpoint/<path:ep_url>', methods=['GET', 'POST'])
+def endpoint(ep_url):
+    endpoints = Endpoints.objects()
+    return render_template('endpoint.html', ep_url=ep_url, endpoints=endpoints)
+
+
+@app.route('/selectedEndpoint', methods=['GET', 'POST'])
+def selectedEndpoint():
+    if request.method == 'POST':
+        try:
+            ep_url = str(list(request.form.values())[0])
+            return redirect(url_for('endpoint', ep_url=ep_url))
+        except:
+            return 'ERROR'
 
 
 if __name__ == "__main__":
