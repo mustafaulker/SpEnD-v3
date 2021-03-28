@@ -6,16 +6,15 @@
 
 {% block body %}
 <form action="/endpoint.html/<ep_url>" method="GET">
-<div>
-
     {% for endpoint in endpoints %}
-
         {% if endpoint.url == ep_url %}
-
+            <div style="margin-left: 200px">
+                <h1 class="title is-1">Endpoint</h1>
+                <h1 class="subtitle is-3">
+                    <a href="{{ ep_url }}">{{ ep_url }}</a>
+                </h1>
+            </div>
         {% endif %}
-
     {% endfor %}
-
-    </div>
 </form>
 {% endblock %}

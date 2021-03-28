@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_mongoengine import MongoEngine
 from datetime import datetime
+from jinja2 import TemplateNotFound
 
 app = Flask(__name__)
 
@@ -29,30 +30,55 @@ class Keywords(db.Document):
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    endpoints = Endpoints.objects()
-    return render_template('index.html', endpoints=endpoints)
+    try:
+        endpoints = Endpoints.objects()
+        return render_template('index.html', endpoints=endpoints)
+    except TemplateNotFound:
+        return render_template('page-404.html'), 404
+    except:
+        return render_template('page-500.html'), 500
 
 
 @app.route('/crawler.html', methods=['GET', 'POST'])
 def crawler():
-    keywords = list(Keywords.objects.exclude("id"))[0]["crawl_keys"]
-    return render_template('crawler.html', keywords=keywords)
+    try:
+        keywords = list(Keywords.objects.exclude("id"))[0]["crawl_keys"]
+        return render_template('crawler.html', keywords=keywords)
+    except TemplateNotFound:
+        return render_template('page-404.html'), 404
+    except:
+        return render_template('page-500.html'), 500
 
 
 @app.route('/about.html')
 def about():
-    return render_template('about.html')
+    try:
+        return render_template('about.html')
+    except TemplateNotFound:
+        return render_template('page-404.html'), 404
+    except:
+        return render_template('page-500.html'), 500
 
 
 @app.route('/contact.html', methods=['GET', 'POST'])
 def contact():
-    return render_template('contact.html')
+    try:
+        return render_template('contact.html')
+    except TemplateNotFound:
+        return render_template('page-404.html'), 404
+    except:
+        return render_template('page-500.html'), 500
 
 
 @app.route('/endpoint/<path:ep_url>', methods=['GET', 'POST'])
 def endpoint(ep_url):
-    endpoints = Endpoints.objects()
-    return render_template('endpoint.html', ep_url=ep_url, endpoints=endpoints)
+    try:
+        endpoints = Endpoints.objects()
+        return render_template('endpoint.html', ep_url=ep_url, endpoints=endpoints)
+    except TemplateNotFound:
+        return render_template('page-404.html'), 404
+    except:
+        return render_template('page-500.html'), 500
 
 
 @app.route('/selectedEndpoint', methods=['GET', 'POST'])
@@ -61,8 +87,10 @@ def selectedEndpoint():
         try:
             ep_url = str(list(request.form.values())[0])
             return redirect(url_for('endpoint', ep_url=ep_url))
+        except TemplateNotFound:
+            return render_template('page-404.html'), 404
         except:
-            return 'ERROR'
+            return render_template('page-500.html'), 500
 
 
 if __name__ == "__main__":

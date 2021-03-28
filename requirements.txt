@@ -4,3 +4,4 @@ git+git://github.com/tasos-py/Search-Engines-Scraper.git
 Flask~=1.1.2
 openpyxl~=3.0.7
 flask-mongoengine~=1.0.0
+Jinja2~=2.11.3

@@ -59,7 +59,7 @@
                 <tr>
                     <td>{{ count.value }}</td>
                     <td>
-                        <a class="ep-class" about="{{ endpoint.url }}" href="http://localhost:5000/endpoint/{{endpoint.url}}" target="_blank" onclick="createPage()">
+                        <a class="ep-class" about="{{ endpoint.url }}" href="endpoint/{{endpoint.url}}" target="_blank" onclick="createPage()">
                             {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                         </a>
                     </td>
