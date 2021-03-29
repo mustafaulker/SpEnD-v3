@@ -8,12 +8,37 @@
 <form action="/endpoint.html/<ep_url>" method="GET">
     {% for endpoint in endpoints %}
         {% if endpoint.url == ep_url %}
-            <div style="margin-left: 200px">
-                <h1 class="title is-1">Endpoint</h1>
-                <h1 class="subtitle is-3">
-                    <a href="{{ ep_url }}">{{ ep_url }}</a>
-                </h1>
+        <section class="hero is-large">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-2">Endpoint</h1>
+                        <hr style="width:20%; height: 2px; margin-left: auto; margin-right: auto;" />
+                        <h1 class="subtitle is-4">
+                            <a href="{{ ep_url }}">{{ ep_url }}</a>
+                        </h1>
+                    </div>
+                    <hr class="hr"/>
+                    <div class="columns is-variable">
+                        <div class="column is-one-third">
+                            <p class="title is-5">Create Date</p>
+                            <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;" />
+                            {{ endpoint.date_created.date() }}
+                        </div>
+                        <div class="column is-one-third">
+                            <p class="title is-5">Last Check</p>
+                            <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;" />
+                            {{ None }}
+                        </div>
+                        <div class="column is-one-third">
+                            <p class="title is-5">is Alive</p>
+                            <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;" />
+                            {{ None }}
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
         {% endif %}
     {% endfor %}
 </form>
