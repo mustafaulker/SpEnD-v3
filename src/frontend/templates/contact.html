@@ -4,70 +4,72 @@
 {% endblock %}
 
 {% block body %}
-<form action="/contact.html" method="POST">
-<section class="hero is-medium">
-    <div class="hero-body">
-        <div class="container has-text-centered">
-            <div class="columns is-8 is-variable">
-                <div class="column is-two-thirds has-text-left">
-                    <h1 class="title is-1">Contact Us</h1>
-                    <p class="is-size-3">Feel free to contact with us for any of your thoughts.</p>
-                    <p class="is-size-4">Issues can be reported by message or from
-                        <a href="https://github.com/mustafaulker/SpEnD-v3/issues">Github Issues</a>
-                    </p>
-                </div>
+<form action="contact.html" method="POST" name="contact_form">
+    <section class="hero is-medium">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="columns is-8 is-variable">
+                    <div class="column is-two-thirds has-text-left">
+                        <h1 class="title is-1">Contact Us</h1>
+                        <p class="is-size-3">Feel free to contact with us for any of your thoughts.</p>
+                        <p class="is-size-4">Issues can be reported by message or from
+                            <a href="https://github.com/mustafaulker/SpEnD-v3/issues">Github Issues</a>
+                        </p>
+                    </div>
 
-                <div class="column is-one-third has-text-left">
-                    <div class="field">
-                        <label class="label">Name</label>
+                    <div class="column is-one-third has-text-left">
+                        <div class="field">
+                            <label class="label" for="contact_name">Name</label>
+                            <div class="control">
+                                <label>
+                                    <input class="input is-medium" type="text" id="contact_name" name="cont_name"
+                                           required>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="contact_subject">Subject</label>
+                            <div class="select is-hoverable">
+                                <label>
+                                    <select class="is-hovered" id="contact_subject" name="cont_subject" required>
+                                        <option value="Question">Question</option>
+                                        <option value="Request">Request</option>
+                                        <option value="Feedback">Feedback</option>
+                                        <option value="Issue">Issue</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="contact_email">Email</label>
+                            <div class="control">
+                                <label>
+                                    <input class="input is-medium" type="email" id="contact_email" name="cont_email"
+                                           required>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label" for="contact_message">Message</label>
+                            <div class="control">
+                                <label>
+                                    <textarea class="textarea is-medium" id="contact_message"
+                                              name="cont_message" required></textarea>
+                                </label>
+                            </div>
+                        </div>
                         <div class="control">
-                            <label>
-                                <input class="input is-medium" type="text" id="contact_name" name="name">
-                            </label>
+                            <button type="submit" class="button is-focused is-link is-fullwidth
+                            has-text-weight-medium is-medium" id="send_button">
+                                Send Message
+                            </button>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Subject</label>
-                        <div class="select is-hoverable">
-                            <label>
-                                <select class="is-hovered" id="contact_subject">
-                                    <option>Question</option>
-                                    <option>Request</option>
-                                    <option>Feedback</option>
-                                    <option>Issue</option>
-                                    <option>Other</option>
-                                </select>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Email</label>
-                        <div class="control">
-                            <label>
-                                <input class="input is-medium" type="email" id="contact_email" name="email">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Message</label>
-                        <div class="control">
-                            <label>
-                                <textarea class="textarea is-medium" id="contact_message" name="message"></textarea>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="control">
-                        <button type="submit" class="button is-focused is-link is-fullwidth has-text-weight-medium is-medium"
-                                onclick="save_message()" id="send_button">
-                            Send Message
-                        </button>
-                        <script type="text/javascript" src="../static/js/contact_controller.js">save_message();</script>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 </form>
 
 {% endblock %}

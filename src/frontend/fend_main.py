@@ -63,6 +63,8 @@ def about():
 @app.route('/contact.html', methods=['GET', 'POST'])
 def contact():
     try:
+        if request.method == 'POST':
+            form = list(request.form.values())
         return render_template('contact.html')
     except TemplateNotFound:
         return render_template('page-404.html'), 404
