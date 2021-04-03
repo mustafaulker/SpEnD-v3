@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SpEnD - Admin</title>
+    <link rel="icon" href="https://i.imgur.com/wgzjCcl.png">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.2/css/bulma.min.css"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+
+<body>
+<nav class="navbar is-white">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item brand-text" href="../index.html">
+                Bulma Admin
+            </a>
+            <div class="navbar-burger burger" data-target="adminNavMenu"
+                 onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div id="adminNavMenu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="admin.html">
+                    Admin Home
+                </a>
+                <a class="navbar-item" href="admin.html">
+                    Site Home
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="columns">
+        <div class="column is-3 ">
+            <aside class="menu is-hidden-mobile">
+                <p class="menu-label">
+                    General
+                </p>
+                <ul class="menu-list">
+                    <li><a>Dashboard</a></li>
+                    <li><a>Endpoints</a></li>
+                    <li><a>Messages</a></li>
+                    <li><a>Other</a></li>
+                </ul>
+            </aside>
+        </div>
+        <div class="column is-9">
+            <section class="info-tiles">
+                <div class="tile is-ancestor has-text-centered">
+                    <div class="tile is-parent">
+                        <article class="tile is-child box">
+                            <p class="title">0</p>
+                            <p class="subtitle">Endpoints</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child box">
+                            <p class="title">0</p>
+                            <p class="subtitle">Live</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child box">
+                            <p class="title">0</p>
+                            <p class="subtitle">Live in last 30 days</p>
+                        </article>
+                    </div>
+                    <div class="tile is-parent">
+                        <article class="tile is-child box">
+                            <p class="title">0</p>
+                            <p class="subtitle">Live in last 180 days</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <div class="column is-vcentered">
+                <div class="card">
+                    <header class="card-header">
+                        <p class="card-header-title">
+                            Endpoint Search
+                        </p>
+                    </header>
+
+                    <div class="card-content">
+                        <div class="content">
+                            <div class="control has-icons-left has-icons-right">
+                                <label for="adminEpSearch">
+                                    <input class="input is-medium" type="text" placeholder="" id="adminEpSearch">
+                                    <span class="icon is-medium is-left">
+                                      <i class="fa fa-search"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="column is-vcentered">
+                <div class="card events-card">
+                    <header class="card-header">
+                        <p class="card-header-title is-centered title is-5">
+                            Approved Endpoints (Shown in the site)
+                        </p>
+                    </header>
+
+                    <hr style="width: 2px">
+
+                    <div class="card-table">
+                        <div class="content">
+                            <table class="table is-fullwidth is-striped">
+                                <tbody>
+                                <tr>
+                                    <td>EP - 1</td>
+                                    <td class="level-right" style="margin-right:5px;">
+                                        <a class="button is-small is-warning" href="#" style="margin:5px;">
+                                            Inspect
+                                        </a>
+                                        <a class="button is-small is-danger" href="#">
+                                            Archive
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+
+</html>
