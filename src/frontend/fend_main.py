@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_mongoengine import MongoEngine
 from datetime import datetime
+
+from flask import Flask, render_template, request, redirect, url_for
+from flask_bcrypt import check_password_hash
+from flask_login import LoginManager, current_user, login_required, login_user, UserMixin
+from flask_mongoengine import MongoEngine
 from jinja2 import TemplateNotFound
+from werkzeug.urls import url_parse
 
 app = Flask(__name__)
 
@@ -11,8 +15,13 @@ app.config['MONGODB_SETTINGS'] = {
     'port': 27017
 }
 
+app.secret_key = 'super_secret_key'
+
 db = MongoEngine()
 db.init_app(app)
+
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
 
 class Endpoints(db.Document):
@@ -28,6 +37,28 @@ class Keywords(db.Document):
     unwanted_keys = db.DictField()
 
 
+class User(UserMixin, db.Document):
+    meta = {'collection': 'users'}
+    username = db.StringField(unique=True)
+    password = db.StringField(default=True)
+    active = db.BooleanField(default=True)
+
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     try:
@@ -39,7 +70,7 @@ def index():
         return render_template('page-500.html'), 500
 
 
-@app.route('/crawler.html', methods=['GET', 'POST'])
+@app.route('/crawler', methods=['GET', 'POST'])
 def crawler():
     try:
         keywords = list(Keywords.objects.exclude("id"))[0]["crawl_keys"]
@@ -50,7 +81,7 @@ def crawler():
         return render_template('page-500.html'), 500
 
 
-@app.route('/about.html')
+@app.route('/about')
 def about():
     try:
         return render_template('about.html')
@@ -60,7 +91,7 @@ def about():
         return render_template('page-500.html'), 500
 
 
-@app.route('/contact.html', methods=['GET', 'POST'])
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
     try:
         if request.method == 'POST':
@@ -93,6 +124,45 @@ def selectedEndpoint():
             return render_template('page-404.html'), 404
         except:
             return render_template('page-500.html'), 500
+
+
+@login_manager.user_loader
+def load_user(pk):
+    return User.objects.get(pk=pk)
+
+
+@app.route('/login.html', methods=('GET', 'POST'))
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard'))
+    if request.method == 'POST':
+        form_username = request.form['username']
+        form_password = request.form['userpass']
+
+        user = User.objects(username=form_username).first()
+
+        if user is None or not user.check_password(form_password):
+            return redirect(url_for('login'))
+        login_user(user)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('dashboard')
+        return redirect(next_page)
+
+    return render_template('login.html')
+
+
+@app.route('/dashboard', methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    if not current_user.is_authenticated():
+        return render_template('index.html')
+    return render_template('dashboard.html')
+
+
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return render_template('page-403.html'), 403
 
 
 if __name__ == "__main__":
