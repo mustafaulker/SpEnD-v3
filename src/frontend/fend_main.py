@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_bcrypt import check_password_hash
 from flask_login import LoginManager, current_user, login_required, login_user, UserMixin, logout_user
+from flask_mail import Mail, Message
 from flask_mongoengine import MongoEngine
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
@@ -15,6 +16,15 @@ app.config['MONGODB_SETTINGS'] = {
     'port': 27017
 }
 
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME='-',
+    MAIL_PASSWORD='-',
+    MAIL_RECIPIENTS=['-', '-']
+)
+
 app.secret_key = 'super_secret_key'
 
 db = MongoEngine()
@@ -22,6 +32,7 @@ db.init_app(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
+mail = Mail(app)
 
 
 class Endpoints(db.Document):
@@ -65,9 +76,9 @@ def index():
         endpoints = Endpoints.objects()
         return render_template('index.html', endpoints=endpoints)
     except TemplateNotFound:
-        return render_template('page-404.html'), 404
+        return render_template('/errors/page-404.html'), 404
     except:
-        return render_template('page-500.html'), 500
+        return render_template('/errors/page-500.html'), 500
 
 
 @app.route('/crawler', methods=['GET', 'POST'])
@@ -76,9 +87,9 @@ def crawler():
         keywords = list(Keywords.objects.exclude("id"))[0]["crawl_keys"]
         return render_template('crawler.html', keywords=keywords)
     except TemplateNotFound:
-        return render_template('page-404.html'), 404
+        return render_template('/errors/page-404.html'), 404
     except:
-        return render_template('page-500.html'), 500
+        return render_template('/errors/page-500.html'), 500
 
 
 @app.route('/about')
@@ -86,21 +97,37 @@ def about():
     try:
         return render_template('about.html')
     except TemplateNotFound:
-        return render_template('page-404.html'), 404
+        return render_template('/errors/page-404.html'), 404
     except:
-        return render_template('page-500.html'), 500
+        return render_template('/errors/page-500.html'), 500
 
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact():
     try:
         if request.method == 'POST':
-            form = list(request.form.values())
+            cont_name = request.form.get('cont_name')
+            cont_subject = request.form.get('cont_subject')
+            cont_email = request.form.get('cont_email')
+            cont_message = request.form.get('cont_message')
+            msg = Message(
+                subject=cont_subject,
+                sender=app.config['MAIL_USERNAME'][0],
+                recipients=app.config['MAIL_RECIPIENTS'],
+                body=f"""
+                      From: {cont_name}
+                      Mail: {cont_email}
+                      Message: {cont_message}
+                      """
+            )
+            mail.send(msg)
+            flash('Your message has been sent successfully.')
+            return redirect(url_for("contact"))
         return render_template('contact.html')
     except TemplateNotFound:
-        return render_template('page-404.html'), 404
+        return render_template('/errors/page-404.html'), 404
     except:
-        return render_template('page-500.html'), 500
+        return render_template('/errors/page-500.html'), 500
 
 
 @app.route('/endpoint/<path:ep_url>', methods=['GET', 'POST'])
@@ -109,9 +136,9 @@ def endpoint(ep_url):
         endpoints = Endpoints.objects()
         return render_template('endpoint.html', ep_url=ep_url, endpoints=endpoints)
     except TemplateNotFound:
-        return render_template('page-404.html'), 404
+        return render_template('/errors/page-404.html'), 404
     except:
-        return render_template('page-500.html'), 500
+        return render_template('/errors/page-500.html'), 500
 
 
 @app.route('/selectedEndpoint', methods=['GET', 'POST'])
@@ -121,9 +148,9 @@ def selectedEndpoint():
             ep_url = str(list(request.form.values())[0])
             return redirect(url_for('endpoint', ep_url=ep_url))
         except TemplateNotFound:
-            return render_template('page-404.html'), 404
+            return render_template('/errors/page-404.html'), 404
         except:
-            return render_template('page-500.html'), 500
+            return render_template('/errors/page-500.html'), 500
 
 
 @login_manager.user_loader
@@ -149,7 +176,7 @@ def login():
             next_page = url_for('dashboard')
         return redirect(next_page)
 
-    return render_template('login.html')
+    return render_template('/auth/login.html')
 
 
 @app.route('/logout')
@@ -168,7 +195,7 @@ def dashboard():
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return render_template('page-403.html'), 403
+    return render_template('/errors/page-403.html'), 403
 
 
 if __name__ == "__main__":

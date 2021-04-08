@@ -4,7 +4,7 @@
 {% endblock %}
 
 {% block body %}
-<form action="contact.html" method="POST" name="contact_form">
+<form method="POST" name="contact_form">
     <section class="hero is-medium">
         <div class="hero-body">
             <div class="container has-text-centered">
@@ -65,6 +65,16 @@
                                 Send Message
                             </button>
                         </div>
+                        <hr>
+                        {% with messages = get_flashed_messages() %}
+                          {% if messages %}
+                            <ul class=flashes>
+                            {% for message in messages %}
+                              <li>{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                          {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
             </div>
