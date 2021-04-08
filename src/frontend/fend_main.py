@@ -10,22 +10,9 @@ from werkzeug.urls import url_parse
 
 app = Flask(__name__)
 
-app.config['MONGODB_SETTINGS'] = {
-    'db': 'frontend',
-    'host': 'localhost',
-    'port': 27017
-}
-
-app.config.update(
-    MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT=465,
-    MAIL_USE_SSL=True,
-    MAIL_USERNAME='-',
-    MAIL_PASSWORD='-',
-    MAIL_RECIPIENTS=['-', '-']
-)
-
-app.secret_key = 'super_secret_key'
+app.config.from_object('config')
+app.config.from_object('config.MongoConfig')
+app.config.from_object('config.MailConfig')
 
 db = MongoEngine()
 db.init_app(app)
@@ -160,42 +147,62 @@ def load_user(pk):
 
 @app.route('/login.html', methods=('GET', 'POST'))
 def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
-    if request.method == 'POST':
-        form_username = request.form['username']
-        form_password = request.form['userpass']
+    try:
+        if current_user.is_authenticated:
+            return redirect(url_for('dashboard'))
+        if request.method == 'POST':
+            form_username = request.form['username']
+            form_password = request.form['userpass']
 
-        user = User.objects(username=form_username).first()
+            user = User.objects(username=form_username).first()
 
-        if user is None or not user.check_password(form_password):
-            return redirect(url_for('login'))
-        login_user(user)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('dashboard')
-        return redirect(next_page)
+            if user is None or not user.check_password(form_password):
+                return redirect(url_for('login'))
+            login_user(user)
+            next_page = request.args.get('next')
+            if not next_page or url_parse(next_page).netloc != '':
+                next_page = url_for('dashboard')
+            return redirect(next_page)
 
-    return render_template('/auth/login.html')
+        return render_template('/auth/login.html')
+    except TemplateNotFound:
+        return render_template('/errors/page-404.html'), 404
+    except:
+        return render_template('/errors/page-500.html'), 500
 
 
 @app.route('/logout')
 def logout():
-    logout_user()
-    return redirect(url_for('index'))
+    try:
+        logout_user()
+        return redirect(url_for('index'))
+    except TemplateNotFound:
+        return render_template('/errors/page-404.html'), 404
+    except:
+        return render_template('/errors/page-500.html'), 500
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    if not current_user.is_authenticated():
-        return render_template('index.html')
-    return render_template('dashboard.html')
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+        return render_template('dashboard.html')
+    except TemplateNotFound:
+        return render_template('/errors/page-404.html'), 404
+    except:
+        return render_template('/errors/page-500.html'), 500
 
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    return render_template('/errors/page-403.html'), 403
+    try:
+        return render_template('/errors/page-403.html'), 403
+    except TemplateNotFound:
+        return render_template('/errors/page-404.html'), 404
+    except:
+        return render_template('/errors/page-500.html'), 500
 
 
 if __name__ == "__main__":
