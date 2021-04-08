@@ -2,7 +2,7 @@ from datetime import datetime
 
 from flask import Flask, render_template, request, redirect, url_for
 from flask_bcrypt import check_password_hash
-from flask_login import LoginManager, current_user, login_required, login_user, UserMixin
+from flask_login import LoginManager, current_user, login_required, login_user, UserMixin, logout_user
 from flask_mongoengine import MongoEngine
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
@@ -150,6 +150,12 @@ def login():
         return redirect(next_page)
 
     return render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route('/dashboard', methods=['GET', 'POST'])
