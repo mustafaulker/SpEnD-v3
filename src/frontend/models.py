@@ -11,6 +11,12 @@ class Endpoints(db.Document):
     endpoint = db.StringField()
 
 
+class NewEndpoints(db.Document):
+    date_created = db.DateTimeField(default=datetime.now())
+    url = db.StringField()
+    endpoint = db.StringField()
+
+
 class Keywords(db.Document):
     crawl_keys = db.DictField()
     recrawl_keys = db.DictField()

@@ -26,13 +26,13 @@
     <div class="table-container" style="margin-top: 2%;">
         <div id="table-scroll" style="height: 600px; width: 80%; overflow: auto; margin: auto;">
             {% if endpoints|length < 1 %}
-            <h1 class="title is-2" style="text-align: center">There are no Endpoints in the DB.</h1>
+            <h1 class="title is-2" style="text-align: center">There are no Endpoints.</h1>
             <h1 class="subtitle is-4" style="text-align: center">
-                Please report the situation to us at
-                <a href="contact.html">Contact page.</a>
+                This must be a mistake. Please let us know about this situation at
+                <a href="/contact">Contact page.</a>
             </h1>
             {% else %}
-            <table class="table is-fullwidth" id="endpointTable">
+            <table class="table is-fullwidth is-striped is-hoverable" id="endpointTable">
                 <thead>
                 <tr>
                     <th><abbr title="Order">#</abbr></th>

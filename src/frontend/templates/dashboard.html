@@ -16,30 +16,23 @@
 <nav class="navbar is-white">
     <div class="container">
         <div class="navbar-brand">
-            <a class="navbar-item brand-text" href="/">
+            <a class="navbar-item brand-text" href="/dashboard">
                 SpEnD | Dashboard
             </a>
-            <div class="navbar-burger burger" data-target="adminNavMenu"
+            <div class="navbar-burger burger" data-target="dashboardNavMenu"
                  onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
                 <span></span>
                 <span></span>
                 <span></span>
             </div>
         </div>
-        <div id="adminNavMenu" class="navbar-menu">
-            <div class="navbar-start">
-                <a class="navbar-item" href="/dashboard">
-                    Admin Home
-                </a>
-                <a class="navbar-item" href="/">
-                    Site Home
-                </a>
-            </div>
+        <div id="dashboardNavMenu" class="navbar-menu">
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <a class="navbar-item" href="{{ url_for('logout') }}">
-                        Logout
-                    </a>
+                    <a href="/">Site Home</a>
+                </div>
+                <div class="navbar-item">
+                    <a href="{{ url_for('logout') }}">Logout</a>
                 </div>
             </div>
         </div>
@@ -49,15 +42,14 @@
 <div class="container">
     <div class="columns">
         <div class="column is-3 ">
-            <aside class="menu is-hidden-mobile">
+            <aside class="menu">
                 <p class="menu-label">
                     General
                 </p>
                 <ul class="menu-list">
-                    <li><a>Dashboard</a></li>
-                    <li><a>Endpoints</a></li>
-                    <li><a>Messages</a></li>
-                    <li><a>Other</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a>Live Endpoints</a></li>
+                    <li><a>Archived Endpoints</a></li>
                 </ul>
             </aside>
         </div>
@@ -66,7 +58,7 @@
                 <div class="tile is-ancestor has-text-centered">
                     <div class="tile is-parent">
                         <article class="tile is-child box">
-                            <p class="title">0</p>
+                            <p class="title">{{ new_endpoints|length }}</p>
                             <p class="subtitle">Endpoints</p>
                         </article>
                     </div>
@@ -94,53 +86,69 @@
             <div class="column is-vcentered">
                 <div class="card">
                     <header class="card-header">
-                        <p class="card-header-title">
-                            Endpoint Search
-                        </p>
-                    </header>
-
-                    <div class="card-content">
-                        <div class="content">
-                            <div class="control has-icons-left has-icons-right">
-                                <label for="adminEpSearch">
-                                    <input class="input is-medium" type="text" placeholder="" id="adminEpSearch">
-                                    <span class="icon is-medium is-left">
-                                      <i class="fa fa-search"></i>
-                                    </span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="column is-vcentered">
-                <div class="card events-card">
-                    <header class="card-header">
                         <p class="card-header-title is-centered title is-5">
-                            Approved Endpoints (Shown in the site)
+                            Pending Approval
                         </p>
                     </header>
-
-                    <hr style="width: 2px">
-
+                    <hr>
                     <div class="card-table">
                         <div class="content">
-                            <table class="table is-fullwidth is-striped">
-                                <tbody>
-                                <tr>
-                                    <td>EP - 1</td>
-                                    <td class="level-right" style="margin-right:5px;">
-                                        <a class="button is-small is-warning" href="#" style="margin:5px;">
-                                            Inspect
-                                        </a>
-                                        <a class="button is-small is-danger" href="#">
-                                            Archive
-                                        </a>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                            <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                                {% if new_endpoints|length < 1 %}
+                                <h1 class="title is-4" style="text-align: center">There are no Endpoint that awaits for
+                                    approval.</h1>
+                                {% else %}
+                                <table class="table is-fullwidth is-striped" id="dashboardEpTable">
+                                    <thead>
+                                    <tr>
+                                        <th><abbr title="Order">#</abbr></th>
+                                        <th>Endpoint</th>
+                                        <th>Create Date</th>
+                                        <th style="text-align: center">Actions</th>
+                                    </tr>
+                                    </thead>
+                                    <tfoot>
+                                    <tr>
+                                        <th><abbr title="Order">#</abbr></th>
+                                        <th>Endpoint</th>
+                                        <th>Create Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                    </tfoot>
+                                    <tbody>
+                                    {% set count = namespace(value=1) %}
+                                    {% for endpoint in new_endpoints %}
+                                    <tr>
+                                        <td>{{ count.value }}</td>
+                                        <td>
+                                            <a class="ep-class" about="{{ endpoint.url }}"
+                                               href="endpoint/{{endpoint.url}}" target="_blank"
+                                               onclick="createPage()">
+                                                {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
+                                            </a>
+                                        </td>
+                                        <td>{{ endpoint.date_created.date() }}</td>
+                                        <td class="level-right" style="margin-right:5px;">
+                                            <a class="button is-small is-success" href="#" style="margin:5px;">
+                                                Approve
+                                            </a>
+                                            <a class="button is-small is-info" href="#" style="margin:5px;">
+                                                Inspect
+                                            </a>
+                                            <a class="button is-small is-warning" href="#" style="margin:5px;">
+                                                Archive
+                                            </a>
+                                            <a class="button is-small is-danger" href="#">
+                                                Remove
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% set count.value = count.value + 1 %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -141,9 +141,10 @@ def logout():
 @login_required
 def dashboard():
     try:
+        new_endpoints = models.NewEndpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('dashboard.html')
+        return render_template('dashboard.html', new_endpoints=new_endpoints)
     except TemplateNotFound:
         abort(404)
     except:
@@ -152,9 +153,4 @@ def dashboard():
 
 @login_manager.unauthorized_handler
 def unauthorized_callback():
-    try:
-        return abort(403)
-    except TemplateNotFound:
-        abort(404)
-    except:
-        abort(500)
+    return abort(403)
