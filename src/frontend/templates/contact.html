@@ -12,7 +12,7 @@
                     <div class="column is-two-thirds has-text-left">
                         <h1 class="title is-1">Contact Us</h1>
                         <p class="is-size-3">Feel free to contact with us for any of your thoughts.</p>
-                        <p class="is-size-4">Issues can be reported by message or from
+                        <p class="is-size-4">Issues can be reported by message or on
                             <a href="https://github.com/mustafaulker/SpEnD-v3/issues">Github Issues</a>
                         </p>
                     </div>
@@ -69,13 +69,13 @@
                         </div>
                         <hr>
                         {% with messages = get_flashed_messages() %}
-                          {% if messages %}
-                            <ul class=flashes>
+                        {% if messages %}
+                        <ul class=flashes>
                             {% for message in messages %}
-                              <li>{{ message }}</li>
+                            <li>{{ message }}</li>
                             {% endfor %}
-                            </ul>
-                          {% endif %}
+                        </ul>
+                        {% endif %}
                         {% endwith %}
                     </div>
                 </div>

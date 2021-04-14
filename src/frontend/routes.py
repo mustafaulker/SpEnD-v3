@@ -100,7 +100,7 @@ def load_user(pk):
     return models.User.objects.get(pk=pk)
 
 
-@app.route('/login.html', methods=('GET', 'POST'))
+@app.route('/login', methods=('GET', 'POST'))
 def login():
     try:
         if current_user.is_authenticated:
@@ -112,6 +112,7 @@ def login():
             user = models.User.objects(username=form_username).first()
 
             if user is None or not user.check_password(form_password):
+                flash('Invalid username or password.')
                 return redirect(url_for('login'))
             login_user(user)
             next_page = request.args.get('next')
@@ -144,7 +145,35 @@ def dashboard():
         new_endpoints = models.NewEndpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('dashboard.html', new_endpoints=new_endpoints)
+        return render_template('/admin/dashboard.html', new_endpoints=new_endpoints)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/pending', methods=['GET', 'POST'])
+@login_required
+def pending():
+    try:
+        new_endpoints = models.NewEndpoints.objects()
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+        return render_template('/admin/pending_endpoints.html', new_endpoints=new_endpoints)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/suspended', methods=['GET', 'POST'])
+@login_required
+def suspended():
+    try:
+        new_endpoints = models.NewEndpoints.objects()
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+        return render_template('/admin/suspended_endpoints.html', new_endpoints=new_endpoints)
     except TemplateNotFound:
         abort(404)
     except:
