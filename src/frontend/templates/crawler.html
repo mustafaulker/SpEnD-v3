@@ -17,7 +17,7 @@
                     <span class="control">
                         {% for i in range(0, 4) %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ se_list[i] }}_1" type="checkbox" name="cb_se">
+                            <input id="cb_{{ se_list[i] }}_1" type="checkbox" name="cb_se" value="{{ se_list[i] }}">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
@@ -29,7 +29,7 @@
                     <span class="control">
                         {% for i in range(4, 8) %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ se_list[i] }}_2" type="checkbox" name="cb_se">
+                            <input id="cb_{{ se_list[i] }}_2" type="checkbox" name="cb_se" value="{{ se_list[i] }}">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
@@ -44,7 +44,7 @@
                     <span class="control">
                         {% for i in range(0, 2) %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ keywords[i] }}_1" type="checkbox" name="cb_kw">
+                            <input id="cb_{{ keywords[i] }}_1" type="checkbox" name="cb_kw" value="{{ keywords[i] }}">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
@@ -56,7 +56,7 @@
                     <span class="control">
                         {% for i in range(2, 4) %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ keywords[i] }}_2" type="checkbox" name="cb_kw">
+                            <input id="cb_{{ keywords[i] }}_2" type="checkbox" name="cb_kw" value="{{ keywords[i] }}">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
@@ -68,7 +68,7 @@
                     <span class="control">
                         {% for i in range(4, 6) %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ keywords[i] }}_3" type="checkbox" name="cb_kw">
+                            <input id="cb_{{ keywords[i] }}_3" type="checkbox" name="cb_kw" value="{{ keywords[i] }}">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
@@ -89,11 +89,20 @@
             </div>
             <hr>
             <span class="control">
-                  <button class="button is-rounded is-link" onclick="get_crawl_parameters()">Crawl</button>
+                  <button class="button is-rounded is-link">Crawl</button>
             </span>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <hr style="width: 40%; margin-left: auto; margin-right: auto;">
+            <ul class=flashes>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
         </div>
     </section>
 </form>
 
-<script type="text/javascript" src="../static/js/crawler_controller.js">get_crawl_parameters();</script>
 {% endblock %}

@@ -23,6 +23,16 @@ def crawler():
     try:
         keywords = list(models.Keywords.objects.exclude("id"))[0]["crawl_keys"]
         if request.method == 'POST':
+            selected_se = request.form.getlist("cb_se")
+            selected_keywords = request.form.getlist("cb_kw")
+            keyword_input = request.form.get("keyword_input").split("\r\n")
+
+            user_inputs = []
+            [user_inputs.append(keyword.strip()) for keyword in keyword_input]
+            selected_keywords.extend(list(filter(None, user_inputs)))
+
+            flash(f"Selected Search Engines: {selected_se}")
+            flash(f"Selected Keywords: {selected_keywords}")
             return redirect(url_for("crawler", keywords=keywords))
         return render_template('crawler.html', keywords=keywords)
     except TemplateNotFound:

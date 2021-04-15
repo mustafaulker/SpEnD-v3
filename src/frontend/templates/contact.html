@@ -67,9 +67,9 @@
                                 Send Message
                             </button>
                         </div>
-                        <hr>
                         {% with messages = get_flashed_messages() %}
                         {% if messages %}
+                        <hr>
                         <ul class=flashes>
                             {% for message in messages %}
                             <li>{{ message }}</li>
