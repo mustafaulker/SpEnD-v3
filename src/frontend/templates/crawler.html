@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<form action="/crawler" method="POST">
+    <section class="section is-large">
+        <div class="container has-text-centered">
+            <div class="columns is-vcentered">
+                <div class="column is-one-third">
+                    <p class="title is-4">Search Engines</p>
+                    {% set se_list = ['Google', 'Bing', 'Yahoo', 'Duckduckgo',
+                    'Ask', 'Aol', 'Mojeek', 'Dogpile'] %}
+
+                    <span class="control">
+                        {% for i in range(0, 4) %}
+                          <label class="is-checkbox is-rounded">
+                            <input id="cb_{{ se_list[i] }}_1" type="checkbox" name="cb_se" value="{{ se_list[i] }}">
+                            <span class="icon checkmark">
+                              <i class="fa fa-check"></i>
+                            </span>
+                            <span>{{ se_list[i] }}</span>
+                          </label>
+                        {% endfor %}
+                    </span>
+                    <br><br>
+                    <span class="control">
+                        {% for i in range(4, 8) %}
+                          <label class="is-checkbox is-rounded">
+                            <input id="cb_{{ se_list[i] }}_2" type="checkbox" name="cb_se" value="{{ se_list[i] }}">
+                            <span class="icon checkmark">
+                              <i class="fa fa-check"></i>
+                            </span>
+                            <span>{{ se_list[i] }}</span>
+                          </label>
+                        {% endfor %}
+                    </span>
+                </div>
+
+                <div class="column is-one-third">
+                    <p class="title is-4">Query Keywords</p>
+                    <span class="control">
+                        {% for i in range(0, 2) %}
+                          <label class="is-checkbox is-rounded">
+                            <input id="cb_{{ keywords[i] }}_1" type="checkbox" name="cb_kw" value="{{ keywords[i] }}">
+                            <span class="icon checkmark">
+                              <i class="fa fa-check"></i>
+                            </span>
+                            <span>{{ keywords[i] }}</span>
+                          </label>
+                        {% endfor %}
+                    </span>
+                    <br><br>
+                    <span class="control">
+                        {% for i in range(2, 4) %}
+                          <label class="is-checkbox is-rounded">
+                            <input id="cb_{{ keywords[i] }}_2" type="checkbox" name="cb_kw" value="{{ keywords[i] }}">
+                            <span class="icon checkmark">
+                              <i class="fa fa-check"></i>
+                            </span>
+                            <span>{{ keywords[i] }}</span>
+                          </label>
+                        {% endfor %}
+                    </span>
+                    <br><br>
+                    <span class="control">
+                        {% for i in range(4, 6) %}
+                          <label class="is-checkbox is-rounded">
+                            <input id="cb_{{ keywords[i] }}_3" type="checkbox" name="cb_kw" value="{{ keywords[i] }}">
+                            <span class="icon checkmark">
+                              <i class="fa fa-check"></i>
+                            </span>
+                            <span>{{ keywords[i] }}</span>
+                          </label>
+                        {% endfor %}
+                    </span>
+                </div>
+
+                <div class="column is is-one-third">
+                    <p class="title is-4">Add more query keywords</p>
+                    <label>
+                        <textarea name="keyword_input" id="kw_input" cols="50" rows="10"
+                                  placeholder="Seperate multiple keywords with a line"
+                                  style="resize:none; overflow: auto; font-size: 15px"></textarea>
+                    </label>
+                </div>
+            </div>
+            <hr>
+            <span class="control">
+                  <button class="button is-rounded is-link">Crawl</button>
+            </span>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <hr style="width: 40%; margin-left: auto; margin-right: auto;">
+            <ul class=flashes>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </section>
+</form>
+
+{% endblock %}
