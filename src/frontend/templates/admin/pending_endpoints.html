@@ -1,0 +1,82 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+<section class="info-tiles">
+    <div class="tile is-ancestor has-text-centered">
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <p class="title">{{ new_endpoints|length }}</p>
+                <p class="subtitle">Pending Endpoints</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<div class="column is-vcentered">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title is-centered title is-5">
+                Pending Approval
+            </p>
+        </header>
+        <hr>
+        <div class="card-table">
+            <div class="content">
+                <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                    {% if new_endpoints|length < 1 %}
+                    <h1 class="title is-4" style="text-align: center">There are no Endpoint that awaits for
+                        approval.</h1>
+                    {% else %}
+                    <table class="table is-fullwidth is-striped" id="dashboardEpTable">
+                        <thead>
+                        <tr>
+                            <th><abbr title="Order">#</abbr></th>
+                            <th>Endpoint</th>
+                            <th>Create Date</th>
+                            <th style="text-align: center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% set count = namespace(value=1) %}
+                        {% for endpoint in new_endpoints %}
+                        <tr>
+                            <td>{{ count.value }}</td>
+                            <td>
+                                <a class="ep-class" about="{{ endpoint.url }}"
+                                   href="endpoint/{{endpoint.url}}" target="_blank"
+                                   onclick="createPage()">
+                                    {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
+                                </a>
+                            </td>
+                            <td>{{ endpoint.date_created.date() }}</td>
+                            <td class="level-right" style="margin-right:5px;">
+                                <a class="button is-small is-success" href="#" style="margin:5px;">
+                                    Approve
+                                </a>
+                                <a class="button is-small is-info" href="#" style="margin:5px;">
+                                    Inspect
+                                </a>
+                                <a class="button is-small is-warning" href="#" style="margin:5px;">
+                                    Suspend
+                                </a>
+                                <a class="button is-small is-danger" href="#">
+                                    Remove
+                                </a>
+                            </td>
+                        </tr>
+                        {% set count.value = count.value + 1 %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

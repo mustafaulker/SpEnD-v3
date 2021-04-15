@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth/login.css') }}">
+{% endblock %}
+
+{% block body %}
+<form method="POST">
+    <section class="hero is-success is-fullheight">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <div class="column is-4 is-offset-4">
+                    <h3 class="title has-text-black">Login</h3>
+                    <hr class="login-hr">
+                    <div class="box">
+                        <form>
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <label for="loginEmail">
+                                        <input class="input is-large" type="text" autofocus="" id="loginEmail"
+                                               placeholder="username" name="username" required>
+                                        <span class="icon is-small is-left">
+                                      <i class="fa fa-user"></i>
+                                    </span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <label for="loginPassword">
+                                        <input class="input is-large" type="password" id="loginPassword"
+                                               placeholder="password" name="userpass" required>
+                                        <span class="icon is-small is-left">
+                                      <i class="fa fa-lock"></i>
+                                    </span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="button is-block is-info is-large is-fullwidth">Login</button>
+                            {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                            <hr>
+                            <ul class=flashes>
+                                {% for message in messages %}
+                                <li>{{ message }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                            {% endwith %}
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+{% endblock %}
