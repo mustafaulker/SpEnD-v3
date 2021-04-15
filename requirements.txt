@@ -1,6 +1,10 @@
 SPARQLWrapper
 pymongo
-git+git://github.com/tasos-py/Search-Engines-Scraper.git
+Scrapy
+itemadapter
+requests
+urllib3
+schedule
 Flask
 flask-mongoengine
 Jinja2
