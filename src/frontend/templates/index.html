@@ -63,7 +63,7 @@
                             {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                         </a>
                     </td>
-                    <td>{{ endpoint.date_created.date() }}</td>
+                    <td>{{ endpoint.date_created.strftime("%d-%m-%Y %H:%M:%S") }}</td>
                     <td>{{ None }}</td>
                     <td>{{ None }}</td>
                 </tr>

@@ -1,6 +1,6 @@
 import pymongo
 import os
-from datetime import datetime
+import datetime
 
 
 class Database:
@@ -78,10 +78,15 @@ class Database:
 
     @staticmethod
     def insert_to_endpoints_collection(link: str, link_domain: str):
-        Database.insert_one("endpoints",
-                            {"date_created": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-                             "url": link,
-                             "domain": link_domain})
+        Database.insert_one("endpoints", {
+            "url": link,
+            "domain": link_domain,
+            "date_created": datetime.datetime.now(),
+            "date_checked": datetime.datetime.now(),
+            "date_alive": datetime.datetime.now(),
+            "up_now": True,
+            "tag": "pending",
+        })
 
     @staticmethod
     def insert_to_second_crawl_domains_collection(link_domain: str):

@@ -9,7 +9,7 @@ class Config(object):
 class MongoConfig(Config):
     MONGODB_HOST = 'localhost'
     MONGODB_PORT = 27017
-    MONGODB_DB = 'frontend'
+    MONGODB_DB = 'SpEnD-DB'
 
 
 class MailConfig(Config):

@@ -9,7 +9,7 @@
     <div class="tile is-ancestor has-text-centered">
         <div class="tile is-parent">
             <article class="tile is-child box">
-                <p class="title">{{ new_endpoints|length }}</p>
+                <p class="title">{{ endpoints|length }}</p>
                 <p class="subtitle">Suspended Endpoints</p>
             </article>
         </div>
@@ -27,7 +27,7 @@
         <div class="card-table">
             <div class="content">
                 <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
-                    {% if new_endpoints|length < 1 %}
+                    {% if endpoints|length < 1 %}
                     <h1 class="title is-4" style="text-align: center">There are no Endpoint that awaits for
                         approval.</h1>
                     {% else %}
@@ -42,7 +42,7 @@
                         </thead>
                         <tbody>
                         {% set count = namespace(value=1) %}
-                        {% for endpoint in new_endpoints %}
+                        {% for endpoint in endpoints %}
                         <tr>
                             <td>{{ count.value }}</td>
                             <td>
@@ -52,7 +52,7 @@
                                     {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                                 </a>
                             </td>
-                            <td>{{ endpoint.date_created.date() }}</td>
+                            <td>{{ endpoint.date_created.strftime("%d-%m-%Y %H:%M:%S") }}</td>
                             <td class="level-right" style="margin-right:5px;">
                                 <a class="button is-small is-primary" href="#" style="margin:5px;">
                                     Unsuspend
