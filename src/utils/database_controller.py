@@ -91,7 +91,7 @@ class Database:
     @staticmethod
     def insert_to_second_crawl_domains_collection(link_domain: str):
         Database.insert_one("second_crawl_domains",
-                            {"date_created": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+                            {"date_created": datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                              "domain": link_domain})
 
     @staticmethod

@@ -32,6 +32,9 @@ def crawler():
             [user_inputs.append(keyword.strip()) for keyword in keyword_input]
             selected_keywords.extend(list(filter(None, user_inputs)))
 
+            flash(f"Selected Search Engines: {selected_search_engines}")
+            flash(f"Selected Keywords: {selected_keywords}")
+
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
             for spider in spiders:
@@ -42,8 +45,6 @@ def crawler():
 
             process.start()
 
-            flash(f"Selected Search Engines: {selected_search_engines}")
-            flash(f"Selected Keywords: {selected_keywords}")
             return redirect(url_for("crawler", keywords=keywords, s_engines=list(search_engine_dict.keys())))
         return render_template('crawler.html', keywords=keywords, s_engines=list(search_engine_dict.keys()))
     except TemplateNotFound:
