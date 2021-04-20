@@ -160,14 +160,22 @@ def logout():
         abort(500)
 
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return abort(403)
+
+
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     try:
-        endpoints = models.Endpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('/admin/dashboard.html', endpoints=endpoints)
+
+        endpoints = models.Endpoints.objects.filter(tag="approved")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/dashboard.html', endpoints=endpoints, pending_count=pending_count)
     except TemplateNotFound:
         abort(404)
     except:
@@ -178,10 +186,12 @@ def dashboard():
 @login_required
 def pending():
     try:
-        endpoints = models.Endpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('/admin/pending_endpoints.html', endpoints=endpoints)
+
+        endpoints = models.Endpoints.objects.filter(tag="pending")
+
+        return render_template('/admin/pending_endpoints.html', endpoints=endpoints, pending_count=len(endpoints))
     except TemplateNotFound:
         abort(404)
     except:
@@ -192,16 +202,94 @@ def pending():
 @login_required
 def suspended():
     try:
-        endpoints = models.Endpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('/admin/suspended_endpoints.html', endpoints=endpoints)
+
+        endpoints = models.Endpoints.objects.filter(tag="suspended")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/suspended_endpoints.html', endpoints=endpoints, pending_count=pending_count)
     except TemplateNotFound:
         abort(404)
     except:
         abort(500)
 
 
-@login_manager.unauthorized_handler
-def unauthorized_callback():
-    return abort(403)
+@app.route('/approve', methods=['GET', 'POST'])
+@login_required
+def approve():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
+    return redirect(url_for("pending"))
+
+
+@app.route('/inspect_dashboard', methods=['GET', 'POST'])
+@login_required
+def inspect_dashboard():
+    if request.method == 'POST':
+        print(request.form.get("inspect"))
+    return redirect(url_for("dashboard"))
+
+
+@app.route('/inspect_pending', methods=['GET', 'POST'])
+@login_required
+def inspect_pending():
+    if request.method == 'POST':
+        print(request.form.get("inspect"))
+    return redirect(url_for("pending"))
+
+
+@app.route('/inspect_suspended', methods=['GET', 'POST'])
+@login_required
+def inspect_suspended():
+    if request.method == 'POST':
+        print(request.form.get("inspect"))
+    return redirect(url_for("suspended"))
+
+
+@app.route('/suspend_dashboard', methods=['GET', 'POST'])
+@login_required
+def suspend_dashboard():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+    return redirect(url_for("dashboard"))
+
+
+@app.route('/suspend_pending', methods=['GET', 'POST'])
+@login_required
+def suspend_pending():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+    return redirect(url_for("pending"))
+
+
+@app.route('/unsuspend', methods=['GET', 'POST'])
+@login_required
+def unsuspend():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
+    return redirect(url_for("suspended"))
+
+
+@app.route('/remove_dashboard', methods=['GET', 'POST'])
+@login_required
+def remove_dashboard():
+    if request.method == 'POST':
+        Database.delete_one("endpoints", {"url": request.form.get('remove')})
+    return redirect(url_for("dashboard"))
+
+
+@app.route('/remove_pending', methods=['GET', 'POST'])
+@login_required
+def remove_pending():
+    if request.method == 'POST':
+        Database.delete_one("endpoints", {"url": request.form.get('remove')})
+    return redirect(url_for("pending"))
+
+
+@app.route('/remove_suspended', methods=['GET', 'POST'])
+@login_required
+def remove_suspended():
+    if request.method == 'POST':
+        Database.delete_one("endpoints", {"url": request.form.get('remove')})
+    return redirect(url_for("suspended"))

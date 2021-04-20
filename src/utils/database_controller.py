@@ -63,6 +63,14 @@ class Database:
                 return all_keys[i][keys]
 
     @staticmethod
+    def update(collection, query, update):
+        return Database.DATABASE[collection].update_one(query, update)
+
+    @staticmethod
+    def delete_one(collection, query):
+        return Database.DATABASE[collection].delete_one(query)
+
+    @staticmethod
     def get_endpoints():
         endpoints = list()
         [endpoints.append(endpoint["url"]) for endpoint

@@ -80,15 +80,24 @@
                             </td>
                             <td>{{ endpoint.date_created.strftime("%d-%m-%Y %H:%M:%S") }}</td>
                             <td class="level-right" style="margin-right:5px;">
-                                <a class="button is-small is-info" href="#" style="margin:5px;">
-                                    Inspect
-                                </a>
-                                <a class="button is-small is-warning" href="#" style="margin:5px;">
-                                    Suspend
-                                </a>
-                                <a class="button is-small is-danger" href="#">
-                                    Remove
-                                </a>
+                                <form action="/inspect_dashboard" method="POST">
+                                    <button class="button is-small is-info" name="inspect"
+                                       value="{{ endpoint.url }}" style="margin:5px;">
+                                        Inspect
+                                    </button>
+                                </form>
+                                <form action="/suspend_dashboard" method="POST">
+                                    <button class="button is-small is-warning" name="suspend"
+                                       value="{{ endpoint.url }}" style="margin:5px;">
+                                        Suspend
+                                    </button>
+                                </form>
+                                <form action="/remove_dashboard" method="POST">
+                                    <button class="button is-small is-danger" name="remove"
+                                            value="{{ endpoint.url }}">
+                                        Remove
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                         {% set count.value = count.value + 1 %}
