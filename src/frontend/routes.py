@@ -97,8 +97,8 @@ def contact():
 @app.route('/endpoint/<path:ep_url>', methods=['GET', 'POST'])
 def endpoint(ep_url):
     try:
-        endpoints = models.Endpoints.objects()
-        return render_template('endpoint.html', ep_url=ep_url, endpoints=endpoints)
+        selected_endpoint = models.Endpoints.objects(url=ep_url).first()
+        return render_template('endpoint.html', ep_url=ep_url, endpoint=selected_endpoint)
     except TemplateNotFound:
         abort(404)
     except:
@@ -109,8 +109,8 @@ def endpoint(ep_url):
 def selectedEndpoint():
     if request.method == 'POST':
         try:
-            ep_url = str(list(request.form.values())[0])
-            return redirect(url_for('endpoint', ep_url=ep_url))
+            endpoint_url = request.form.get('inspect')
+            return redirect(url_for('endpoint', ep_url=endpoint_url))
         except TemplateNotFound:
             abort(404)
         except:
@@ -221,30 +221,6 @@ def approve():
     if request.method == 'POST':
         Database.update("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
     return redirect(url_for("pending"))
-
-
-@app.route('/inspect_dashboard', methods=['GET', 'POST'])
-@login_required
-def inspect_dashboard():
-    if request.method == 'POST':
-        print(request.form.get("inspect"))
-    return redirect(url_for("dashboard"))
-
-
-@app.route('/inspect_pending', methods=['GET', 'POST'])
-@login_required
-def inspect_pending():
-    if request.method == 'POST':
-        print(request.form.get("inspect"))
-    return redirect(url_for("pending"))
-
-
-@app.route('/inspect_suspended', methods=['GET', 'POST'])
-@login_required
-def inspect_suspended():
-    if request.method == 'POST':
-        print(request.form.get("inspect"))
-    return redirect(url_for("suspended"))
 
 
 @app.route('/suspend_dashboard', methods=['GET', 'POST'])

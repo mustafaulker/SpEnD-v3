@@ -4,7 +4,6 @@
 {% endblock %}
 
 {% block body %}
-
 <section class="info-tiles">
     <div class="tile is-ancestor has-text-centered">
         <div class="tile is-parent">
@@ -72,15 +71,13 @@
                         <tr>
                             <td>{{ count.value }}</td>
                             <td>
-                                <a class="ep-class" about="{{ endpoint.url }}"
-                                   href="endpoint/{{endpoint.url}}" target="_blank"
-                                   onclick="createPage()">
+                                <a href="{{ endpoint.url }}" target="_blank">
                                     {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                                 </a>
                             </td>
                             <td>{{ endpoint.date_created.strftime("%d-%m-%Y %H:%M:%S") }}</td>
                             <td class="level-right" style="margin-right:5px;">
-                                <form action="/inspect_dashboard" method="POST">
+                                <form action="/selectedEndpoint" method="POST" target="_blank">
                                     <button class="button is-small is-info" name="inspect"
                                        value="{{ endpoint.url }}" style="margin:5px;">
                                         Inspect
@@ -110,5 +107,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}

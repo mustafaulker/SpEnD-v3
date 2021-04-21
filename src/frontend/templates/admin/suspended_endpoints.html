@@ -4,7 +4,6 @@
 {% endblock %}
 
 {% block body %}
-
 <section class="info-tiles">
     <div class="tile is-ancestor has-text-centered">
         <div class="tile is-parent">
@@ -46,9 +45,7 @@
                         <tr>
                             <td>{{ count.value }}</td>
                             <td>
-                                <a class="ep-class" about="{{ endpoint.url }}"
-                                   href="endpoint/{{endpoint.url}}" target="_blank"
-                                   onclick="createPage()">
+                                <a href="{{ endpoint.url }}" target="_blank">
                                     {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                                 </a>
                             </td>
@@ -60,7 +57,7 @@
                                         Unsuspend
                                     </button>
                                 </form>
-                                <form action="/inspect_suspended" method="POST">
+                                <form action="/selectedEndpoint" method="POST" target="_blank">
                                     <button class="button is-small is-info" name="inspect"
                                             value="{{ endpoint.url }}" style="margin:5px;">
                                         Inspect
@@ -84,5 +81,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}
