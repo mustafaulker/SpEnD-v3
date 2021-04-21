@@ -12,7 +12,7 @@ from src.frontend import app, models, login_manager, mail, recaptcha, process, s
 @app.route('/', methods=['GET', 'POST'])
 def index():
     try:
-        endpoints = models.Endpoints.objects()
+        endpoints = models.Endpoints.objects.filter(tag="approved")
         return render_template('index.html', endpoints=endpoints)
     except TemplateNotFound:
         abort(404)

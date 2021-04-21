@@ -4,7 +4,7 @@ tr:hover {
 }
 /* Header Logo */
 #header-logo{
-  background: url(https://i.imgur.com/eydFe5r.png) no-repeat center center;
+  background: url(../images/header_logo.png) no-repeat center center;
   background-size: cover;
   width: 152px
 }

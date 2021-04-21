@@ -63,19 +63,17 @@
                             {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                         </a>
                     </td>
-                    <td>{{ endpoint.date_created.strftime("%d-%m-%Y %H:%M:%S") }}</td>
-                    <td>{{ None }}</td>
-                    <td>{{ None }}</td>
+                    <td>{{ endpoint.date_created.date().strftime("%d-%m-%Y") }}</td>
+                    <td>{{ endpoint.date_checked.strftime("%d-%m-%Y %H:%M:%S") }}</td>
+                    <td>{% if endpoint.up_now %}
+                             <img src="{{ url_for('static', filename='images/thick.png') }}" alt="True">
+                        {% else %}
+                             <img src="{{ url_for('static', filename='images/cross.png') }}" alt="False">
+                        {% endif %}
+                    </td>
                 </tr>
                 {% set count.value = count.value + 1 %}
                 {% endfor %}
-                <tr>
-                    <td>{{ "TestObject" }}</td>
-                    <td>{{ "TestObject" }}</td>
-                    <td>{{ "TestObject" }}</td>
-                    <td>{{ "TestObject" }}</td>
-                    <td>{{ True }}</td>
-                </tr>
                 </tbody>
             </table>
             {% endif %}
