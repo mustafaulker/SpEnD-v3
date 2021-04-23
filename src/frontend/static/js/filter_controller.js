@@ -36,7 +36,7 @@ function search_filter() {
 }
 
 function alive_filter() {
-    let table, tr, td, i, txtValue, checkBox
+    let table, tr, td, i, checkBox, is_alive
     let alive_list = []
 
     table = document.getElementById("endpointTable")
@@ -47,8 +47,8 @@ function alive_filter() {
         for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[4]
             if (td) {
-                txtValue = td.textContent || td.innerText
-                if (txtValue === "True") {
+                is_alive = td.getElementsByTagName("img")[0].alt
+                if (is_alive === "True") {
                     tr[i].style.display = ""
                     alive_list.push(tr[i])
                 } else {

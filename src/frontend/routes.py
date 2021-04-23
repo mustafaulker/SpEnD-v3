@@ -1,3 +1,5 @@
+import datetime
+
 from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_mail import Message
@@ -173,9 +175,21 @@ def dashboard():
             return render_template('index.html')
 
         endpoints = models.Endpoints.objects.filter(tag="approved")
+        alive_count = len(models.Endpoints.objects.filter(tag="approved", up_now=True))
         pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
-        return render_template('/admin/dashboard.html', endpoints=endpoints, pending_count=pending_count)
+        start = datetime.datetime.now()
+        ago_30 = (start - datetime.timedelta(30))
+        ago_180 = (start - datetime.timedelta(180))
+
+        last_30 = {'date_alive': {'$gte': ago_30}}
+        last_180 = {'date_alive': {'$gte': ago_180}}
+
+        alive_30_count = len(models.Endpoints.objects(tag="approved", __raw__=last_30))
+        alive_180_count = len(models.Endpoints.objects(tag="approved", __raw__=last_180))
+
+        return render_template('/admin/dashboard.html', endpoints=endpoints, pending_count=pending_count,
+                               alive_30_count=alive_30_count, alive_180_count=alive_180_count, alive_count=alive_count)
     except TemplateNotFound:
         abort(404)
     except:
@@ -223,20 +237,15 @@ def approve():
     return redirect(url_for("pending"))
 
 
-@app.route('/suspend_dashboard', methods=['GET', 'POST'])
+@app.route('/suspend', methods=['GET', 'POST'])
 @login_required
-def suspend_dashboard():
+def suspend():
     if request.method == 'POST':
         Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
-    return redirect(url_for("dashboard"))
-
-
-@app.route('/suspend_pending', methods=['GET', 'POST'])
-@login_required
-def suspend_pending():
-    if request.method == 'POST':
-        Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
-    return redirect(url_for("pending"))
+    if request.referrer.endswith("dashboard"):
+        return redirect(url_for("dashboard"))
+    if request.referrer.endswith("pending"):
+        return redirect(url_for("pending"))
 
 
 @app.route('/unsuspend', methods=['GET', 'POST'])
@@ -247,25 +256,14 @@ def unsuspend():
     return redirect(url_for("suspended"))
 
 
-@app.route('/remove_dashboard', methods=['GET', 'POST'])
+@app.route('/remove', methods=['GET', 'POST'])
 @login_required
-def remove_dashboard():
+def remove():
     if request.method == 'POST':
         Database.delete_one("endpoints", {"url": request.form.get('remove')})
-    return redirect(url_for("dashboard"))
-
-
-@app.route('/remove_pending', methods=['GET', 'POST'])
-@login_required
-def remove_pending():
-    if request.method == 'POST':
-        Database.delete_one("endpoints", {"url": request.form.get('remove')})
-    return redirect(url_for("pending"))
-
-
-@app.route('/remove_suspended', methods=['GET', 'POST'])
-@login_required
-def remove_suspended():
-    if request.method == 'POST':
-        Database.delete_one("endpoints", {"url": request.form.get('remove')})
-    return redirect(url_for("suspended"))
+    if request.referrer.endswith("dashboard"):
+        return redirect(url_for("dashboard"))
+    elif request.referrer.endswith("pending"):
+        return redirect(url_for("pending"))
+    elif request.referrer.endswith("suspended"):
+        return redirect(url_for("suspended"))

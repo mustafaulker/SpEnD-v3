@@ -27,29 +27,32 @@
             <div class="content">
                 <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
                     {% if endpoints|length < 1 %}
-                    <h1 class="title is-4" style="text-align: center">There are no Endpoint that awaits for
-                        approval.</h1>
+                    <h1 class="title is-4" style="text-align: center">There are no suspended Endpoint.</h1>
                     {% else %}
-                    <table class="table is-fullwidth is-striped" id="dashboardEpTable">
+                    <table class="table is-fullwidth is-striped is-hoverable" id="dashboardEpTable">
                         <thead>
                         <tr>
-                            <th><abbr title="Order">#</abbr></th>
                             <th>Endpoint</th>
                             <th>Create Date</th>
+                            <th>Alive</th>
                             <th style="text-align: center">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {% set count = namespace(value=1) %}
                         {% for endpoint in endpoints %}
                         <tr>
-                            <td>{{ count.value }}</td>
                             <td>
                                 <a href="{{ endpoint.url }}" target="_blank">
                                     {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                                 </a>
                             </td>
                             <td>{{ endpoint.date_created.strftime("%d-%m-%Y %H:%M:%S") }}</td>
+                            <td>{% if endpoint.up_now %}
+                                <img src="{{ url_for('static', filename='images/thick.png') }}" alt="True">
+                                {% else %}
+                                <img src="{{ url_for('static', filename='images/cross.png') }}" alt="False">
+                                {% endif %}
+                            </td>
                             <td class="level-right" style="margin-right:5px;">
                                 <form action="/unsuspend" method="POST">
                                     <button class="button is-small is-primary" name="unsuspend"
@@ -63,7 +66,7 @@
                                         Inspect
                                     </button>
                                 </form>
-                                <form action="/remove_suspended" method="POST">
+                                <form action="/remove" method="POST">
                                     <button class="button is-small is-danger" name="remove"
                                             value="{{ endpoint.url }}">
                                         Remove
@@ -71,7 +74,6 @@
                                 </form>
                             </td>
                         </tr>
-                        {% set count.value = count.value + 1 %}
                         {% endfor %}
                         </tbody>
                     </table>
