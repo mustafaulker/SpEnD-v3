@@ -1,6 +1,7 @@
-import pymongo
-import os
 import datetime
+import os
+
+import pymongo
 
 
 class Database:
@@ -109,3 +110,13 @@ class Database:
     @staticmethod
     def in_the_second_crawl_domains_collection(link_domain: str) -> bool:
         return Database.find_one("second_crawl_domains", {"domain": link_domain})
+
+    @staticmethod
+    def endpoint_alive(endpoint):
+        Database.update("endpoints", {"url": endpoint},
+                        {"$set": {"date_checked": datetime.datetime.now(), "up_now": True}})
+
+    @staticmethod
+    def endpoint_not_alive(endpoint):
+        Database.update("endpoints", {"url": endpoint},
+                        {"$set": {"date_checked": datetime.datetime.now(), "up_now": False}})

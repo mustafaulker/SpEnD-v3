@@ -2,6 +2,7 @@ from datetime import datetime
 
 from flask_bcrypt import check_password_hash
 from flask_login import UserMixin
+
 from src.frontend import db
 
 

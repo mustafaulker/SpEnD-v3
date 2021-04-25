@@ -6,9 +6,9 @@ from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.utils.database_controller import Database
-from src.utils import util
 from src.frontend import app, models, login_manager, mail, recaptcha, process, search_engine_dict
+from src.utils import util
+from src.utils.database_controller import Database
 
 
 @app.route('/', methods=['GET', 'POST'])

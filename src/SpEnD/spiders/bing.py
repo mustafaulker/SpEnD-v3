@@ -1,5 +1,6 @@
 import scrapy
 from scrapy import Request
+
 from src.utils import util
 from src.utils.sparql_controller import Sparql
 
@@ -12,7 +13,6 @@ class Bing(scrapy.Spider):
     start_urls = []
 
     def parse(self, response):
-
         links = response.css("div.b_title a.sh_favicon::attr(href)").getall()
 
         Sparql.is_endpoint(util.link_filter(links), first_crawl=Bing.is_first_crawl)

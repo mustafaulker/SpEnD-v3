@@ -1,5 +1,6 @@
 import scrapy
 from scrapy import Request
+
 from src.utils import util
 from src.utils.sparql_controller import Sparql
 

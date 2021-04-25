@@ -1,15 +1,18 @@
 from flask import Flask
+from flask_apscheduler import APScheduler
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_mongoengine import MongoEngine
 from flask_recaptcha import ReCaptcha
 from scrapy.crawler import CrawlerProcess
+
 from src.SpEnD.spiders.aol import Aol
+from src.SpEnD.spiders.ask import Ask
+from src.SpEnD.spiders.bing import Bing
 from src.SpEnD.spiders.google import Google
 from src.SpEnD.spiders.mojeek import Mojeek
 from src.SpEnD.spiders.yippy import Yippy
-from src.SpEnD.spiders.ask import Ask
-from src.SpEnD.spiders.bing import Bing
+from src.utils.sparql_controller import Sparql
 
 app = Flask(__name__)
 app.config.from_object('src.frontend.config')
@@ -36,6 +39,11 @@ search_engine_dict = {
     "Yippy": Yippy,
     "Aol": Aol
 }
+
+scheduler = APScheduler()
+
+scheduler.add_job(id='endpoint_check', func=Sparql.check_endpoints, trigger="interval", minutes=30)
+scheduler.start()
 
 from src.frontend import models
 from src.frontend import routes

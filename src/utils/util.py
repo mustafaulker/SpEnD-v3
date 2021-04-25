@@ -1,8 +1,10 @@
-from src.utils.database_controller import Database
 import urllib.parse
-import requests
 from sys import stderr
+
+import requests
 from urllib3.exceptions import *
+
+from src.utils.database_controller import Database
 
 Database.initialize()
 
