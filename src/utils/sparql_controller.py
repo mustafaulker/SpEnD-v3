@@ -126,19 +126,6 @@ class Sparql:
     def check_endpoints():
         for endpoint in Database.get_endpoints():
             if is_alive(endpoint):
-                sparql = SPARQLWrapper(f"{endpoint}", returnFormat=JSON)
-                sparql.setQuery("ASK WHERE { ?s ?p ?o. }")
-                sparql.setTimeout(30)
-                sparql.setOnlyConneg(True)
-
-                try:
-                    query_result = sparql.queryAndConvert()
-                    if query_result["boolean"]:
-                        Database.endpoint_alive(endpoint)
-                    else:
-                        Database.endpoint_not_alive(endpoint)
-
-                except (TimeoutError, NewConnectionError, MaxRetryError):
-                    print("Err - EP not responding.")
+                Database.endpoint_alive(endpoint)
             else:
-                print("Err - Site not responding")
+                Database.endpoint_not_alive(endpoint)
