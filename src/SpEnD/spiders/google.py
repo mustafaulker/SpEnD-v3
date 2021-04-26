@@ -10,6 +10,12 @@ class Google(scrapy.Spider):
     base_url = "https://www.google.com/search?q="
     is_first_crawl = True
 
+    custom_settings = {
+        "CONCURRENT_REQUESTS": 1,
+        "CONCURRENT_REQUESTS_PER_IP": 1,
+        "DOWNLOAD_DELAY": 40,
+    }
+
     start_urls = []
 
     def parse(self, response):
@@ -20,9 +26,11 @@ class Google(scrapy.Spider):
 
         next_page = response.css("a.nBDE1b.G5eFlf::attr(href)").get()
 
-        if "start=10&" in response.url:
-            next_page = response.css("a.nBDE1b.G5eFlf::attr(href)").getall()[1]
+        if "&start=50" in response.url:
+            if len(response.css("a.nBDE1b.G5eFlf::attr(href)").getall()) == 1:
+                next_page = None
+            else:
+                next_page = response.css("a.nBDE1b.G5eFlf::attr(href)").getall()[1]
 
         if next_page is not None:
-            # yield response.follow(next_page, callback=self.parse)
             yield Request(response.urljoin(next_page), callback=self.parse)
