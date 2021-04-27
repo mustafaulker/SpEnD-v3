@@ -6,9 +6,9 @@ from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.frontend import app, models, login_manager, mail, recaptcha, process, search_engine_dict
-from src.utils import util
+from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict
 from src.utils.database_controller import Database
+from src.main_crawl import crawl
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -39,13 +39,7 @@ def crawler():
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
-            for spider in spiders:
-                util.fill_start_urls_list(spider, selected_keywords)
-
-            for spider in spiders:
-                process.crawl(spider)
-
-            process.start()
+            crawl(spiders=spiders, query=selected_keywords)
 
             return redirect(url_for("crawler", keywords=keywords, s_engines=list(search_engine_dict.keys())))
         return render_template('crawler.html', keywords=keywords, s_engines=list(search_engine_dict.keys()))

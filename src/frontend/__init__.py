@@ -11,7 +11,6 @@ from src.SpEnD.spiders.ask import Ask
 from src.SpEnD.spiders.bing import Bing
 from src.SpEnD.spiders.google import Google
 from src.SpEnD.spiders.mojeek import Mojeek
-from src.SpEnD.spiders.yippy import Yippy
 from src.utils.sparql_controller import Sparql
 
 app = Flask(__name__)
@@ -36,7 +35,6 @@ search_engine_dict = {
     "Bing": Bing,
     "Ask": Ask,
     "Mojeek": Mojeek,
-    "Yippy": Yippy,
     "Aol": Aol
 }
 
