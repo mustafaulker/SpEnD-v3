@@ -5,10 +5,11 @@ itemadapter
 requests
 urllib3
 Flask
-flask-mongoengine
-flask_recaptcha
-flask_mail
-flask_apscheduler
-flask_login
+Flask-MongoEngine
+Flask-reCaptcha
+Flask-Mail
+Flask-APScheduler
+Flask-Login
+Flask-Bcrypt
 Jinja2
 Werkzeug
