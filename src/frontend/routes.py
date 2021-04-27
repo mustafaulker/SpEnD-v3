@@ -7,8 +7,8 @@ from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
 from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict
-from src.utils.database_controller import Database
 from src.main_crawl import crawl
+from src.utils.database_controller import Database
 
 
 @app.route('/', methods=['GET', 'POST'])

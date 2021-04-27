@@ -4,8 +4,8 @@ from flask_login import LoginManager
 from flask_mail import Mail
 from flask_mongoengine import MongoEngine
 from flask_recaptcha import ReCaptcha
-from scrapy.crawler import CrawlerProcess
 
+import src.main_crawl
 from src.SpEnD.spiders.aol import Aol
 from src.SpEnD.spiders.ask import Ask
 from src.SpEnD.spiders.bing import Bing
@@ -28,8 +28,6 @@ mail = Mail(app)
 
 recaptcha = ReCaptcha(app)
 
-process = CrawlerProcess()
-
 search_engine_dict = {
     "Google": Google,
     "Bing": Bing,
@@ -40,7 +38,8 @@ search_engine_dict = {
 
 scheduler = APScheduler()
 
-scheduler.add_job(id='endpoint_check', func=Sparql.check_endpoints, trigger="interval", minutes=30)
+scheduler.add_job(id='endpoint_check', func=Sparql.check_endpoints, trigger="interval", hours=1)
+scheduler.add_job(id='scheduled_crawl', func=src.main_crawl.crawl, trigger="interval", days=1)
 scheduler.start()
 
 from src.frontend import models

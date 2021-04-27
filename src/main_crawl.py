@@ -1,4 +1,7 @@
 import os
+import subprocess
+
+from scrapy.crawler import CrawlerProcess
 
 from src.SpEnD.spiders.aol import Aol
 from src.SpEnD.spiders.ask import Ask
@@ -7,14 +10,15 @@ from src.SpEnD.spiders.google import Google
 from src.SpEnD.spiders.mojeek import Mojeek
 from src.utils import util
 from src.utils.database_controller import Database
-from src.frontend import process
 
 spiders = [Aol, Ask, Bing, Google, Mojeek]
+
 Database.initialize()
+
+process = CrawlerProcess()
 
 
 def crawl(spiders=spiders, query=Database.get_keywords("crawl_keys")):
-
     for spider in spiders:
         util.fill_start_urls_list(spider, query)
 
@@ -22,4 +26,5 @@ def crawl(spiders=spiders, query=Database.get_keywords("crawl_keys")):
         process.crawl(spider)
 
     process.start()
-    os.system("python second_crawl.py")
+
+    subprocess.call('PYTHONPATH=/app/ python3 /app/src/second_crawl.py', shell=True)

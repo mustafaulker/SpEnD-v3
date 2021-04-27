@@ -1,4 +1,5 @@
 from scrapy.crawler import CrawlerProcess
+
 from SpEnD.spiders.aol import Aol
 from SpEnD.spiders.ask import Ask
 from SpEnD.spiders.bing import Bing
