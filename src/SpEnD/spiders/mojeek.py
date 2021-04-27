@@ -17,7 +17,10 @@ class Mojeek(scrapy.Spider):
 
         Sparql.is_endpoint(util.link_filter(links), first_crawl=Mojeek.is_first_crawl)
 
-        next_page = response.css("div.pagination a::attr(href)").getall()[-1]
+        if not response.css("div.pagination a::attr(href)").getall():
+            next_page = None
+        else:
+            next_page = response.css("div.pagination a::attr(href)").getall()[-1]
 
         if next_page is not None:
             yield Request(response.urljoin(next_page), callback=self.parse)
