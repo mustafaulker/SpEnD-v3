@@ -1,0 +1,128 @@
+[{
+  "_id": {
+    "$oid": "603eb55244ef15405013a5c9"
+  },
+  "crawl_keys": [
+    "sparql endpoint",
+    "sparql query",
+    "virtuoso sparql query",
+    "allintitle: sparql query",
+    "allinurl: sparql data",
+    "inurl:sparql"
+  ]
+},{
+  "_id": {
+    "$oid": "60474e26dd3eab7b3ca075d2"
+  },
+  "second_crawl_keys": [
+    "sparql query",
+    "query editor",
+    "virtuoso"
+  ]
+},{
+  "_id": {
+    "$oid": "6047535d8d376a41e8904681"
+  },
+  "wanted_keys": [
+    "sparql",
+    "query",
+    "endpoint",
+    "rdf",
+    "linkeddata",
+    "opendata"
+  ]
+},{
+  "_id": {
+    "$oid": "6062177761d80f61fcd148df"
+  },
+  "unwanted_keys": [
+    "w3.org",
+    "stackoverflow.com",
+    "medium.com",
+    "wikipedia.org",
+    "youtube.com",
+    "quora.com",
+    "microsoft.com",
+    "linkedin.com",
+    "github.com",
+    "support.google",
+    "video",
+    "pdf",
+    "txt",
+    "article",
+    "data.europa.eu",
+    "tutorial",
+    "document",
+    "amazon",
+    "how-to",
+    ".html",
+    "pro.europeana.eu",
+    "spec.pub",
+    "udemy",
+    "reddit",
+    "doc",
+    "docs",
+    "wordpress",
+    "android",
+    "how",
+    "glossary",
+    "slide",
+    "jobs",
+    "eclipse",
+    "tag",
+    "question",
+    "rubygems.org",
+    "visualdataweb.org",
+    "awesomeopensource.com",
+    "how",
+    "slide",
+    "job",
+    "label",
+    "rdflib.dev",
+    "linuxbeach.net",
+    "henripoincare.fr",
+    "sourceforge.net",
+    "humanum.ephe.fr",
+    "cancerdata.org",
+    "qc-bench.inrialpes.fr",
+    "filedesc.com",
+    "packagist.org",
+    "sparqle.eu",
+    "toptal.com",
+    "tobyinkster.co.uk",
+    "ahp-numerique.fr",
+    "sparql-wrapper.sf.net",
+    "sparqles.ai.wu.ac.at",
+    "researchgate.net",
+    "pypi.org",
+    "lesliesikos.com",
+    "plugin",
+    "category",
+    "categories",
+    "danbri.org",
+    "keyworddensitychecker.com",
+    "thomasrebele.org",
+    "xyz.org",
+    "ex.com",
+    "msc2010.org",
+    "api.",
+    "github",
+    "blog",
+    "apache",
+    "introduction",
+    "learn",
+    "resource",
+    "information",
+    "list",
+    "fishesoftexas.org",
+    "madfileformatscience.garymcgath.com",
+    "linkwerk.com",
+    "openars.org",
+    "jibbering.com",
+    "logilab.org",
+    "sparql-playground.sib.swiss",
+    "www.ariadne.ac.uk",
+    "sparql.nextprot.org",
+    "uniprot.org/help"
+  ]
+}]

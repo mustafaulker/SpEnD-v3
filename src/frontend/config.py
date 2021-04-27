@@ -7,7 +7,7 @@ class Config(object):
 
 
 class MongoConfig(Config):
-    MONGODB_HOST = 'localhost'
+    MONGODB_HOST = 'mongo'
     MONGODB_PORT = 27017
     MONGODB_DB = 'SpEnD-DB'
 
