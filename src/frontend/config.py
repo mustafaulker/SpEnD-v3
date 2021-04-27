@@ -1,15 +1,21 @@
+import os
+
+
 class Config(object):
     DEBUG = True
     DEVELOPMENT = True
     SECRET_KEY = 'super-secret-key'
     FLASK_SECRET = SECRET_KEY
-    DB_HOST = 'database'  # a docker link
 
 
 class MongoConfig(Config):
-    MONGODB_HOST = 'mongo'
-    MONGODB_PORT = 27017
     MONGODB_DB = 'SpEnD-DB'
+    try:
+        MONGODB_HOST = os.environ["MONGODB_HOST"]
+        MONGODB_PORT = int(os.environ["MONGODB_PORT"])
+    except:
+        MONGODB_HOST = 'localhost'
+        MONGODB_PORT = 27017
 
 
 class MailConfig(Config):
