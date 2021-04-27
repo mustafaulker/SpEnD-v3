@@ -30,7 +30,8 @@ class Sparql:
                     print("Endpoint written on DB.")
                 else:
                     if Database.in_the_endpoints_collection(link_domain):
-                        Database.endpoint_alive(link)
+                        if query_result["boolean"]:
+                            Database.endpoint_alive(link)
                         print("Endpoint already exist in DB.")
                     else:
                         print("This site isn't a SPARQL endpoint.")
