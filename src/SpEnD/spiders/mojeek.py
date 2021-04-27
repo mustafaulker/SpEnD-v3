@@ -1,5 +1,6 @@
 import scrapy
 from scrapy import Request
+
 from src.utils import util
 from src.utils.sparql_controller import Sparql
 
@@ -12,12 +13,14 @@ class Mojeek(scrapy.Spider):
     start_urls = []
 
     def parse(self, response):
-
         links = response.css("a.ob::attr(href)").getall()
 
         Sparql.is_endpoint(util.link_filter(links), first_crawl=Mojeek.is_first_crawl)
 
-        next_page = response.css("div.pagination a::attr(href)").getall()[-1]
+        if not response.css("div.pagination a::attr(href)").getall():
+            next_page = None
+        else:
+            next_page = response.css("div.pagination a::attr(href)").getall()[-1]
 
         if next_page is not None:
             yield Request(response.urljoin(next_page), callback=self.parse)

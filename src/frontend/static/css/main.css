@@ -2,12 +2,14 @@
 tr:hover {
     background-color: #f5f5f5;
 }
+
 /* Header Logo */
-#header-logo{
-  background: url(https://i.imgur.com/eydFe5r.png) no-repeat center center;
-  background-size: cover;
-  width: 152px
+#header-logo {
+    background: url(../images/header_logo.png) no-repeat center center;
+    background-size: cover;
+    width: 152px
 }
+
 /* checkboxes */
 label.is-checkbox {
     background: #3273dc;

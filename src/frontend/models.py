@@ -2,24 +2,23 @@ from datetime import datetime
 
 from flask_bcrypt import check_password_hash
 from flask_login import UserMixin
+
 from src.frontend import db
 
 
 class Endpoints(db.Document):
-    date_created = db.DateTimeField(default=datetime.now())
     url = db.StringField()
-    endpoint = db.StringField()
-
-
-class NewEndpoints(db.Document):
+    domain = db.StringField()
     date_created = db.DateTimeField(default=datetime.now())
-    url = db.StringField()
-    endpoint = db.StringField()
+    date_checked = db.DateTimeField(default=datetime.now())
+    date_alive = db.DateTimeField(default=datetime.now())
+    up_now = db.BooleanField()
+    tag = db.StringField()
 
 
 class Keywords(db.Document):
     crawl_keys = db.DictField()
-    recrawl_keys = db.DictField()
+    second_crawl_keys = db.DictField()
     wanted_keys = db.DictField()
     unwanted_keys = db.DictField()
 

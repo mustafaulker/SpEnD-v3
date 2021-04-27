@@ -1,8 +1,8 @@
-version: '2'
+version: '3.8'
 services:
-  backend:
-    image: spend-image
-    container_name: "spend-crawler"
+  spend:
+    build: .
+    container_name: spend
     environment:
       - MONGODB_HOST=mongo
       - MONGODB_PORT=27017
@@ -10,21 +10,21 @@ services:
       - MONGODB_PASSWORD=[password]
     links:
       - mongo
+    ports:
+    - 5000:5000
     restart: on-failure
 
   mongo:
-    image: "mongo:latest"
-    container_name: "spend-mongodb"
-    environment:
-      - MONGODB_ROOT_PASSWORD=[root_pass]
-    depends_on:
-      - mongoimport
+    image: mongo:latest
+    container_name: spend-mongodb
     restart: unless-stopped
 
   mongoimport:
     image: mongo:latest
     container_name: spend-import
     volumes:
-      - ./data/keywords.json:/data/keywords.json
-    command: mongoimport --host mongo -d SpEnD-DB -c Keywords --type json --file /data/keywords.json --jsonArray
+      - ./mongo-seed/keywords.json:/mongo-seed/keywords.json
+      - ./mongo-seed/users.json:/mongo-seed/users.json
+    command: bash -c "mongoimport --host mongo -d SpEnD-DB -c keywords --type json --file /mongo-seed/keywords.json --jsonArray
+                      && mongoimport --host mongo -d SpEnD-DB -c users --type json --file /mongo-seed/users.json --jsonArray"
     restart: on-failure

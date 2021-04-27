@@ -4,8 +4,12 @@ Scrapy
 itemadapter
 requests
 urllib3
-schedule
 Flask
-flask-mongoengine
+Flask-MongoEngine
+Flask-reCaptcha
+Flask-Mail
+Flask-APScheduler
+Flask-Login
+Flask-Bcrypt
 Jinja2
 Werkzeug

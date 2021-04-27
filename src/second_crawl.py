@@ -1,14 +1,14 @@
 from scrapy.crawler import CrawlerProcess
+
 from SpEnD.spiders.aol import Aol
 from SpEnD.spiders.ask import Ask
 from SpEnD.spiders.bing import Bing
 from SpEnD.spiders.google import Google
 from SpEnD.spiders.mojeek import Mojeek
-from SpEnD.spiders.yippy import Yippy
 from utils import util
 from utils.database_controller import Database
 
-spiders = [Aol, Ask, Bing, Google, Mojeek, Yippy]
+spiders = [Aol, Ask, Bing, Google, Mojeek]
 Database.initialize()
 
 for spider in spiders:

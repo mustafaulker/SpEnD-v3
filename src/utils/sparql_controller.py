@@ -1,9 +1,11 @@
+from urllib.error import *
+from urllib.parse import urlparse
+
 from SPARQLWrapper import SPARQLWrapper, JSON
 from SPARQLWrapper.SPARQLExceptions import *
-from urllib.parse import urlparse
-from src.utils.database_controller import Database
-from urllib.error import *
 from urllib3.exceptions import *
+
+from src.utils.database_controller import Database
 from src.utils.util import is_alive
 
 
@@ -28,6 +30,8 @@ class Sparql:
                     print("Endpoint written on DB.")
                 else:
                     if Database.in_the_endpoints_collection(link_domain):
+                        if query_result["boolean"]:
+                            Database.endpoint_alive(link)
                         print("Endpoint already exist in DB.")
                     else:
                         print("This site isn't a SPARQL endpoint.")
@@ -89,7 +93,8 @@ class Sparql:
         path = urlparse(link).path
         domain = urlparse(link).netloc
 
-        if not (path == "/sparql/" or path == "/sparql" or path.endswith("/sparql") or path.endswith("/sparql/") or domain.startswith("sparql.")):
+        if not (path == "/sparql/" or path == "/sparql" or path.endswith("/sparql") or
+                path.endswith("/sparql/") or domain.startswith("sparql.")):
             missed = False
 
         return missed
@@ -118,3 +123,11 @@ class Sparql:
             if Sparql.is_missed_endpoint(link) and not Database.in_the_endpoints_collection(link_domain):
                 Database.insert_to_endpoints_collection(link, link_domain)
                 print("Endpoint written on DB.")
+
+    @staticmethod
+    def check_endpoints():
+        for endpoint in Database.get_endpoints():
+            if is_alive(endpoint):
+                Database.endpoint_alive(endpoint)
+            else:
+                Database.endpoint_not_alive(endpoint)

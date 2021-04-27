@@ -1,6 +1,7 @@
-import pymongo
+import datetime
 import os
-from datetime import datetime
+
+import pymongo
 
 
 class Database:
@@ -63,6 +64,14 @@ class Database:
                 return all_keys[i][keys]
 
     @staticmethod
+    def update(collection, query, update):
+        return Database.DATABASE[collection].update_one(query, update)
+
+    @staticmethod
+    def delete_one(collection, query):
+        return Database.DATABASE[collection].delete_one(query)
+
+    @staticmethod
     def get_endpoints():
         endpoints = list()
         [endpoints.append(endpoint["url"]) for endpoint
@@ -78,15 +87,20 @@ class Database:
 
     @staticmethod
     def insert_to_endpoints_collection(link: str, link_domain: str):
-        Database.insert_one("endpoints",
-                            {"date_created": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-                             "url": link,
-                             "domain": link_domain})
+        Database.insert_one("endpoints", {
+            "url": link,
+            "domain": link_domain,
+            "date_created": datetime.datetime.now(),
+            "date_checked": datetime.datetime.now(),
+            "date_alive": datetime.datetime.now(),
+            "up_now": True,
+            "tag": "pending",
+        })
 
     @staticmethod
     def insert_to_second_crawl_domains_collection(link_domain: str):
         Database.insert_one("second_crawl_domains",
-                            {"date_created": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
+                            {"date_created": datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
                              "domain": link_domain})
 
     @staticmethod
@@ -96,3 +110,13 @@ class Database:
     @staticmethod
     def in_the_second_crawl_domains_collection(link_domain: str) -> bool:
         return Database.find_one("second_crawl_domains", {"domain": link_domain})
+
+    @staticmethod
+    def endpoint_alive(endpoint):
+        Database.update("endpoints", {"url": endpoint},
+                        {"$set": {"date_checked": datetime.datetime.now(), "up_now": True}})
+
+    @staticmethod
+    def endpoint_not_alive(endpoint):
+        Database.update("endpoints", {"url": endpoint},
+                        {"$set": {"date_checked": datetime.datetime.now(), "up_now": False}})

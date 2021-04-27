@@ -11,29 +11,27 @@
             <div class="columns is-vcentered">
                 <div class="column is-one-third">
                     <p class="title is-4">Search Engines</p>
-                    {% set se_list = ['Google', 'Bing', 'Yahoo', 'Duckduckgo',
-                    'Ask', 'Aol', 'Mojeek', 'Dogpile'] %}
 
                     <span class="control">
-                        {% for i in range(0, 4) %}
+                        {% for i in range(0, 3) %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ se_list[i] }}_1" type="checkbox" name="cb_se" value="{{ se_list[i] }}">
+                            <input id="cb_{{ s_engines[i] }}_1" type="checkbox" name="cb_se" value="{{ s_engines[i] }}">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
-                            <span>{{ se_list[i] }}</span>
+                            <span>{{ s_engines[i] }}</span>
                           </label>
                         {% endfor %}
                     </span>
                     <br><br>
                     <span class="control">
-                        {% for i in range(4, 8) %}
+                        {% for i in range(3, 5) %}
                           <label class="is-checkbox is-rounded">
-                            <input id="cb_{{ se_list[i] }}_2" type="checkbox" name="cb_se" value="{{ se_list[i] }}">
+                            <input id="cb_{{ s_engines[i] }}_2" type="checkbox" name="cb_se" value="{{ s_engines[i] }}">
                             <span class="icon checkmark">
                               <i class="fa fa-check"></i>
                             </span>
-                            <span>{{ se_list[i] }}</span>
+                            <span>{{ s_engines[i] }}</span>
                           </label>
                         {% endfor %}
                     </span>

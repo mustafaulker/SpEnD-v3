@@ -1,16 +1,20 @@
+import datetime
+
 from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.frontend import app, models, login_manager, mail, recaptcha
+from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict
+from src.main_crawl import crawl
+from src.utils.database_controller import Database
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     try:
-        endpoints = models.Endpoints.objects()
+        endpoints = models.Endpoints.objects.filter(tag="approved")
         return render_template('index.html', endpoints=endpoints)
     except TemplateNotFound:
         abort(404)
@@ -21,20 +25,24 @@ def index():
 @app.route('/crawler', methods=['GET', 'POST'])
 def crawler():
     try:
-        keywords = list(models.Keywords.objects.exclude("id"))[0]["crawl_keys"]
+        keywords = Database.get_keywords("crawl_keys")
         if request.method == 'POST':
-            selected_se = request.form.getlist("cb_se")
+            selected_search_engines = request.form.getlist("cb_se")
             selected_keywords = request.form.getlist("cb_kw")
             keyword_input = request.form.get("keyword_input").split("\r\n")
-
             user_inputs = []
             [user_inputs.append(keyword.strip()) for keyword in keyword_input]
             selected_keywords.extend(list(filter(None, user_inputs)))
 
-            flash(f"Selected Search Engines: {selected_se}")
+            flash(f"Selected Search Engines: {selected_search_engines}")
             flash(f"Selected Keywords: {selected_keywords}")
-            return redirect(url_for("crawler", keywords=keywords))
-        return render_template('crawler.html', keywords=keywords)
+
+            spiders = list(map(search_engine_dict.get, selected_search_engines))
+
+            crawl(spiders=spiders, query=selected_keywords)
+
+            return redirect(url_for("crawler", keywords=keywords, s_engines=list(search_engine_dict.keys())))
+        return render_template('crawler.html', keywords=keywords, s_engines=list(search_engine_dict.keys()))
     except TemplateNotFound:
         abort(404)
     except:
@@ -85,8 +93,8 @@ def contact():
 @app.route('/endpoint/<path:ep_url>', methods=['GET', 'POST'])
 def endpoint(ep_url):
     try:
-        endpoints = models.Endpoints.objects()
-        return render_template('endpoint.html', ep_url=ep_url, endpoints=endpoints)
+        selected_endpoint = models.Endpoints.objects(url=ep_url).first()
+        return render_template('endpoint.html', ep_url=ep_url, endpoint=selected_endpoint)
     except TemplateNotFound:
         abort(404)
     except:
@@ -97,8 +105,8 @@ def endpoint(ep_url):
 def selectedEndpoint():
     if request.method == 'POST':
         try:
-            ep_url = str(list(request.form.values())[0])
-            return redirect(url_for('endpoint', ep_url=ep_url))
+            endpoint_url = request.form.get('inspect')
+            return redirect(url_for('endpoint', ep_url=endpoint_url))
         except TemplateNotFound:
             abort(404)
         except:
@@ -148,14 +156,34 @@ def logout():
         abort(500)
 
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return abort(403)
+
+
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     try:
-        new_endpoints = models.NewEndpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('/admin/dashboard.html', new_endpoints=new_endpoints)
+
+        endpoints = models.Endpoints.objects.filter(tag="approved")
+        alive_count = len(models.Endpoints.objects.filter(tag="approved", up_now=True))
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        start = datetime.datetime.now()
+        ago_30 = (start - datetime.timedelta(30))
+        ago_180 = (start - datetime.timedelta(180))
+
+        last_30 = {'date_alive': {'$gte': ago_30}}
+        last_180 = {'date_alive': {'$gte': ago_180}}
+
+        alive_30_count = len(models.Endpoints.objects(tag="approved", __raw__=last_30))
+        alive_180_count = len(models.Endpoints.objects(tag="approved", __raw__=last_180))
+
+        return render_template('/admin/dashboard.html', endpoints=endpoints, pending_count=pending_count,
+                               alive_30_count=alive_30_count, alive_180_count=alive_180_count, alive_count=alive_count)
     except TemplateNotFound:
         abort(404)
     except:
@@ -166,10 +194,12 @@ def dashboard():
 @login_required
 def pending():
     try:
-        new_endpoints = models.NewEndpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('/admin/pending_endpoints.html', new_endpoints=new_endpoints)
+
+        endpoints = models.Endpoints.objects.filter(tag="pending")
+
+        return render_template('/admin/pending_endpoints.html', endpoints=endpoints, pending_count=len(endpoints))
     except TemplateNotFound:
         abort(404)
     except:
@@ -180,16 +210,54 @@ def pending():
 @login_required
 def suspended():
     try:
-        new_endpoints = models.NewEndpoints.objects()
         if not current_user.is_authenticated():
             return render_template('index.html')
-        return render_template('/admin/suspended_endpoints.html', new_endpoints=new_endpoints)
+
+        endpoints = models.Endpoints.objects.filter(tag="suspended")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/suspended_endpoints.html', endpoints=endpoints, pending_count=pending_count)
     except TemplateNotFound:
         abort(404)
     except:
         abort(500)
 
 
-@login_manager.unauthorized_handler
-def unauthorized_callback():
-    return abort(403)
+@app.route('/approve', methods=['GET', 'POST'])
+@login_required
+def approve():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
+    return redirect(url_for("pending"))
+
+
+@app.route('/suspend', methods=['GET', 'POST'])
+@login_required
+def suspend():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+    if request.referrer.endswith("dashboard"):
+        return redirect(url_for("dashboard"))
+    if request.referrer.endswith("pending"):
+        return redirect(url_for("pending"))
+
+
+@app.route('/unsuspend', methods=['GET', 'POST'])
+@login_required
+def unsuspend():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
+    return redirect(url_for("suspended"))
+
+
+@app.route('/remove', methods=['GET', 'POST'])
+@login_required
+def remove():
+    if request.method == 'POST':
+        Database.delete_one("endpoints", {"url": request.form.get('remove')})
+    if request.referrer.endswith("dashboard"):
+        return redirect(url_for("dashboard"))
+    elif request.referrer.endswith("pending"):
+        return redirect(url_for("pending"))
+    elif request.referrer.endswith("suspended"):
+        return redirect(url_for("suspended"))

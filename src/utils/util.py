@@ -1,8 +1,10 @@
-from src.utils.database_controller import Database
 import urllib.parse
-import requests
 from sys import stderr
+
+import requests
 from urllib3.exceptions import *
+
+from src.utils.database_controller import Database
 
 Database.initialize()
 
@@ -42,11 +44,17 @@ def fill_start_urls_list(spider, query):
     try:
         if isinstance(query, str):
             query = urllib.parse.quote_plus(query)
-            spider.start_urls.append(spider.base_url + query)
+            if spider.name == "google":
+                spider.start_urls.append(spider.base_url + query + "&num=50")
+            else:
+                spider.start_urls.append(spider.base_url + query)
         elif isinstance(query, list):
             for key in query:
                 key = urllib.parse.quote_plus(key)
-                spider.start_urls.append(spider.base_url + key)
+                if spider.name == "google":
+                    spider.start_urls.append(spider.base_url + key + "&num=50")
+                else:
+                    spider.start_urls.append(spider.base_url + key)
         else:
             raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or list.")
     except ValueError as valueError:
@@ -58,12 +66,18 @@ def fill_start_urls_list_for_second_crawl(spider, query):
         if isinstance(query, str):
             for domain in second_crawl_domains:
                 query = urllib.parse.quote_plus(f"{query} site:{domain}")
-                spider.start_urls.append(spider.base_url + query)
+                if spider.name == "google":
+                    spider.start_urls.append(spider.base_url + query + "&num=50")
+                else:
+                    spider.start_urls.append(spider.base_url + query)
         elif isinstance(query, list):
             for domain in second_crawl_domains:
                 for key in query:
                     key = urllib.parse.quote_plus(f"{key} site:{domain}")
-                    spider.start_urls.append(spider.base_url + key)
+                    if spider.name == "google":
+                        spider.start_urls.append(spider.base_url + key + "&num=50")
+                    else:
+                        spider.start_urls.append(spider.base_url + key)
         else:
             raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or list.")
     except ValueError as valueError:
