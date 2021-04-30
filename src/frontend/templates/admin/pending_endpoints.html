@@ -47,7 +47,7 @@
                                     {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
                                 </a>
                             </td>
-                            <td>{{ endpoint.date_created.strftime("%d-%m-%Y %H:%M:%S") }}</td>
+                            <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
                             <td>{% if endpoint.up_now %}
                                 <img src="../static/images/thick.png" alt="True">
                                 {% else %}
