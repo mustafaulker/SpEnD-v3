@@ -20,12 +20,12 @@
                     <div class="column is-one-third">
                         <p class="title is-5">Create Date</p>
                         <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
-                        {{ endpoint.date_created.date().strftime("%d-%m-%Y") }}
+                        {{ endpoint.date_created.date().strftime("%d.%m.%Y") }}
                     </div>
                     <div class="column is-one-third">
                         <p class="title is-5">Last Check</p>
                         <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
-                        {{ endpoint.date_checked.strftime("%d-%m-%Y %H:%M:%S") }}
+                        {{ endpoint.date_checked.strftime("%d.%m.%Y %H:%M:%S") }}
                     </div>
                     <div class="column is-one-third">
                         <p class="title is-5">is Alive</p>

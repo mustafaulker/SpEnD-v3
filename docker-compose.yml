@@ -12,7 +12,7 @@ services:
       - mongo
     ports:
     - 5000:5000
-    restart: on-failure
+    restart: unless-stopped
 
   mongo:
     image: mongo:latest
