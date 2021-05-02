@@ -7,7 +7,7 @@ from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
 from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict
-from src.main_crawl import crawl
+from src.main_crawl import endpoint_crawler
 from src.utils.database_controller import Database
 
 
@@ -39,7 +39,7 @@ def crawler():
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
-            crawl(spiders=spiders, query=selected_keywords)
+            endpoint_crawler(spiders=spiders, query=selected_keywords)
 
             return redirect(url_for("crawler", keywords=keywords, s_engines=list(search_engine_dict.keys())))
         return render_template('crawler.html', keywords=keywords, s_engines=list(search_engine_dict.keys()))

@@ -1,5 +1,5 @@
-import os
 import subprocess
+from multiprocessing import Process
 
 from scrapy.crawler import CrawlerProcess
 
@@ -18,7 +18,7 @@ Database.initialize()
 process = CrawlerProcess()
 
 
-def crawl(spiders=spiders, query=Database.get_keywords("crawl_keys")):
+def crawl(spiders, query):
     for spider in spiders:
         util.fill_start_urls_list(spider, query)
 
@@ -28,3 +28,9 @@ def crawl(spiders=spiders, query=Database.get_keywords("crawl_keys")):
     process.start()
 
     subprocess.call('PYTHONPATH=/app/ python3 /app/src/second_crawl.py', shell=True)
+
+
+def endpoint_crawler(spiders=spiders, query=Database.get_keywords("crawl_keys")):
+    p = Process(target=crawl, args=(spiders, query))
+    p.start()
+    p.join()
