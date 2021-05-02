@@ -57,7 +57,7 @@
                 <td>{{ count.value }}</td>
                 <td>
                     <a href="endpoint/{{ endpoint.url }}" target="_blank">
-                        {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
+                        {{ endpoint.url | truncate(150, True) | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>
                 <td>{{ endpoint.date_created.date().strftime("%d.%m.%Y") }}</td>

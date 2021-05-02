@@ -43,7 +43,7 @@
                         <tr>
                             <td>
                                 <a href="{{ endpoint.url }}" target="_blank">
-                                    {{ endpoint.url | replace("https://", "") | replace("http://", "") }}
+                                    {{ endpoint.url | truncate(45, True) | replace("https://", "") | replace("http://", "") }}
                                 </a>
                             </td>
                             <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
@@ -53,7 +53,7 @@
                                 <img src="../static/images/cross.png" alt="False">
                                 {% endif %}
                             </td>
-                            <td class="level-right" style="margin-right:5px;">
+                            <td class="level-right">
                                 <form action="/unsuspend" method="POST">
                                     <button class="button is-small is-primary" name="unsuspend"
                                             value="{{ endpoint.url }}" style="margin:5px;">
