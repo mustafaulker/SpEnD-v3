@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import os
 
 import pymongo
@@ -90,9 +90,9 @@ class Database:
         Database.insert_one("endpoints", {
             "url": link,
             "domain": link_domain,
-            "date_created": datetime.datetime.now(),
-            "date_checked": datetime.datetime.now(),
-            "date_alive": datetime.datetime.now(),
+            "date_created": datetime.utcnow(),
+            "date_checked": datetime.utcnow(),
+            "date_alive": datetime.utcnow(),
             "up_now": True,
             "tag": "pending",
         })
@@ -100,7 +100,7 @@ class Database:
     @staticmethod
     def insert_to_second_crawl_domains_collection(link_domain: str):
         Database.insert_one("second_crawl_domains",
-                            {"date_created": datetime.datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+                            {"date_created": datetime.utcnow().strftime("%d-%m-%Y %H:%M:%S"),
                              "domain": link_domain})
 
     @staticmethod
@@ -114,9 +114,9 @@ class Database:
     @staticmethod
     def endpoint_alive(endpoint):
         Database.update("endpoints", {"url": endpoint},
-                        {"$set": {"date_checked": datetime.datetime.now(), "up_now": True}})
+                        {"$set": {"date_checked": datetime.utcnow(), "up_now": True}})
 
     @staticmethod
     def endpoint_not_alive(endpoint):
         Database.update("endpoints", {"url": endpoint},
-                        {"$set": {"date_checked": datetime.datetime.now(), "up_now": False}})
+                        {"$set": {"date_checked": datetime.utcnow(), "up_now": False}})
