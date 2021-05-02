@@ -6,6 +6,8 @@ class Config(object):
     DEVELOPMENT = True
     SECRET_KEY = 'super-secret-key'
     FLASK_SECRET = SECRET_KEY
+    STATIC_URL_PATH = '/static/'
+    STATIC_FOLDER = 'static'
 
 
 class MongoConfig(Config):

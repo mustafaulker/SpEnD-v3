@@ -63,9 +63,9 @@
                 <td>{{ endpoint.date_created.date().strftime("%d.%m.%Y") }}</td>
                 <td>{{ endpoint.date_checked.strftime("%d.%m.%Y %H:%M:%S") }}</td>
                 <td>{% if endpoint.up_now %}
-                    <img src="../static/images/thick.png" alt="True">
+                    <img src="/static/images/thick.png" alt="True">
                     {% else %}
-                    <img src="../static/images/cross.png" alt="False">
+                    <img src="/static/images/cross.png" alt="False">
                     {% endif %}
                 </td>
             </tr>
