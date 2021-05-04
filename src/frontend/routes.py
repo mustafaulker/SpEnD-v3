@@ -254,7 +254,7 @@ def unsuspend():
 @login_required
 def remove():
     if request.method == 'POST':
-        Database.delete_one("endpoints", {"url": request.form.get('remove')})
+        Database.update("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
     if request.referrer.endswith("dashboard"):
         return redirect(url_for("dashboard"))
     elif request.referrer.endswith("pending"):
