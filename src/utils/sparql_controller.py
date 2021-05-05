@@ -26,7 +26,7 @@ class Sparql:
                 # Execute query and convert results to the returnFormat which is JSON.
                 query_result = sparql.queryAndConvert()
                 if query_result["boolean"] and not Database.in_the_collection("endpoints", link_domain):
-                    Database.insert_to_endpoints_collection(link, link_domain)
+                    Database.insert_endpoint(link, link_domain)
                     print("Endpoint written on DB.")
                 else:
                     if Database.in_the_collection("endpoints", link_domain):
@@ -40,7 +40,7 @@ class Sparql:
                 if first_crawl:  # first crawl
                     if is_alive(link) and not Database.in_the_collection("endpoints", link_domain) \
                             and not Database.in_the_collection("second_crawl_domains", link_domain):
-                        Database.insert_to_second_crawl_domains_collection(link_domain)
+                        Database.insert_crawl_domain(link_domain)
                         print(f"This site's domain is added for second crawl. site : {link_domain}")
                     elif Database.in_the_collection("endpoints", link_domain) \
                             or Database.in_the_collection("second_crawl_domains", link_domain):
@@ -58,7 +58,7 @@ class Sparql:
                     elif "certificate verify failed" in str(UrllibError) \
                             and not Database.in_the_collection("endpoints", link_domain) \
                             and not Database.in_the_collection("second_crawl_domains", link_domain):
-                        Database.insert_to_second_crawl_domains_collection(link_domain)
+                        Database.insert_crawl_domain(link_domain)
                         print(f"This site's domain is added for second crawl. site : {link_domain}")
                     else:
                         Sparql.general_control_for_missed_endpoint(link, link_domain)
@@ -106,13 +106,13 @@ class Sparql:
         if alive:
             if Sparql.is_missed_endpoint(link) and not Database.in_the_collection("endpoints", link_domain) \
                     and not Database.in_the_collection("second_crawl_domains", link_domain):
-                Database.insert_to_endpoints_collection(link, link_domain)
+                Database.insert_endpoint(link, link_domain)
                 print("Endpoint written on DB.")
             elif Database.in_the_collection("endpoints", link_domain) \
                     or Database.in_the_collection("second_crawl_domains", link_domain):
                 print("This domain already exist in DB.")
             else:
-                Database.insert_to_second_crawl_domains_collection(link_domain)
+                Database.insert_crawl_domain(link_domain)
                 print(f"This site's domain is added for second crawl. site : {link_domain}")
 
     @staticmethod
@@ -121,7 +121,7 @@ class Sparql:
 
         if alive:
             if Sparql.is_missed_endpoint(link) and not Database.in_the_collection("endpoints", link_domain):
-                Database.insert_to_endpoints_collection(link, link_domain)
+                Database.insert_endpoint(link, link_domain)
                 print("Endpoint written on DB.")
 
     @staticmethod
