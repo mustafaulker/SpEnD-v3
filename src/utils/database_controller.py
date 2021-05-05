@@ -6,13 +6,13 @@ import pymongo
 
 class Database:
     try:
-        mongohost = os.environ["MONGODB_HOST"]
-        mongoport = os.environ["MONGODB_PORT"]
-        mongouser = os.environ["MONGODB_USERNAME"]
-        mongopass = os.environ["MONGODB_PASSWORD"]
-        URI = f"mongodb://{mongohost}:{mongoport}/"
+        MONGODB_HOST = os.environ["MONGODB_HOST"]
+        MONGODB_PORT = os.environ["MONGODB_PORT"]
+        MONGODB_USERNAME = os.environ["MONGODB_USERNAME"]
+        MONGODB_PASSWORD = os.environ["MONGODB_PASSWORD"]
+        URI = f"mongodb://{MONGODB_HOST}:{MONGODB_PORT}/"
         # Authentication will be added.
-        # URI = f"mongodb://{mongouser}:{mongopass}@{mongohost}:{mongoport}/"
+        # URI = f"mongodb://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}:{MONGODB_PORT}/"
     except:
         print("Environment variables not found. Connecting to default URI")
         URI = "mongodb://localhost:27017/"
@@ -104,19 +104,10 @@ class Database:
                              "domain": link_domain})
 
     @staticmethod
-    def in_the_endpoints_collection(link_domain: str) -> bool:
-        return Database.find_one("endpoints", {"domain": link_domain})
+    def in_the_collection(collection: str, link_domain: str) -> bool:
+        return Database.find_one(collection, {"domain": link_domain})
 
     @staticmethod
-    def in_the_second_crawl_domains_collection(link_domain: str) -> bool:
-        return Database.find_one("second_crawl_domains", {"domain": link_domain})
-
-    @staticmethod
-    def endpoint_alive(endpoint):
+    def endpoint_alive_or_not(endpoint, up_now: bool):
         Database.update("endpoints", {"url": endpoint},
-                        {"$set": {"date_checked": datetime.utcnow(), "up_now": True}})
-
-    @staticmethod
-    def endpoint_not_alive(endpoint):
-        Database.update("endpoints", {"url": endpoint},
-                        {"$set": {"date_checked": datetime.utcnow(), "up_now": False}})
+                        {"$set": {"date_checked": datetime.utcnow(), "up_now": up_now}})
