@@ -1,12 +1,14 @@
 import datetime
+from itertools import chain
 
+from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict
+from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict, logger
 from src.main_crawl import endpoint_crawler
 from src.utils.database_controller import Database
 
@@ -15,6 +17,7 @@ from src.utils.database_controller import Database
 def index():
     try:
         endpoints = models.Endpoints.objects.filter(tag="approved")
+        logger.info(f"{request.environ.get('REMOTE_ADDR')}")
         return render_template('index.html', endpoints=endpoints)
     except TemplateNotFound:
         abort(404)
@@ -39,7 +42,9 @@ def crawler():
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
+            logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}")
             endpoint_crawler(spiders=spiders, query=selected_keywords)
+            logger.info(f"Manuel crawl has ended.")
 
             return redirect(url_for("crawler", keywords=keywords, s_engines=list(search_engine_dict.keys())))
         return render_template('crawler.html', keywords=keywords, s_engines=list(search_engine_dict.keys()))
@@ -131,8 +136,12 @@ def login():
 
             if user is None or not user.check_password(form_password):
                 flash('Invalid username or password.')
+                logger.error(f"Failed authentication: {request.environ.get('REMOTE_ADDR')}")
                 return redirect(url_for('login'))
             login_user(user)
+
+            logger.info(f"User({request.environ.get('REMOTE_ADDR')}) has logged-in.")
+
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('dashboard')
@@ -149,6 +158,7 @@ def login():
 def logout():
     try:
         logout_user()
+        logger.info(f"User({request.environ.get('REMOTE_ADDR')}) has logged-out.")
         return redirect(url_for('index'))
     except TemplateNotFound:
         abort(404)
@@ -161,7 +171,7 @@ def unauthorized_callback():
     return abort(403)
 
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/admin/dashboard', methods=['GET', 'POST'])
 @login_required
 def dashboard():
     try:
@@ -190,7 +200,7 @@ def dashboard():
         abort(500)
 
 
-@app.route('/approved', methods=['GET', 'POST'])
+@app.route('/admin/endpoints/approved', methods=['GET', 'POST'])
 @login_required
 def approved():
     try:
@@ -207,7 +217,7 @@ def approved():
         abort(500)
 
 
-@app.route('/pending', methods=['GET', 'POST'])
+@app.route('/admin/endpoints/pending', methods=['GET', 'POST'])
 @login_required
 def pending():
     try:
@@ -223,7 +233,7 @@ def pending():
         abort(500)
 
 
-@app.route('/suspended', methods=['GET', 'POST'])
+@app.route('/admin/endpoints/suspended', methods=['GET', 'POST'])
 @login_required
 def suspended():
     try:
@@ -240,7 +250,7 @@ def suspended():
         abort(500)
 
 
-@app.route('/removed', methods=['GET', 'POST'])
+@app.route('/admin/endpoints/removed', methods=['GET', 'POST'])
 @login_required
 def removed():
     try:
@@ -257,49 +267,158 @@ def removed():
         abort(500)
 
 
+@app.route('/admin/logs/exceptions', methods=['GET', 'POST'])
+@login_required
+def log_exceptions():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        logs = models.Logs.objects.filter(levelname="ERROR")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/log_exceptions.html', logs=logs, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/logs/crawler', methods=['GET', 'POST'])
+@login_required
+def log_crawler():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        logs = models.Logs.objects.filter(funcName="crawler")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/log_crawler.html', logs=logs, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/logs/authentications', methods=['GET', 'POST'])
+@login_required
+def log_authentications():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        logs = sorted(chain(models.Logs.objects.filter(funcName="login"),
+                            models.Logs.objects.filter(funcName="logout")),
+                      key=lambda instance: instance.time, reverse=True)
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/log_authentications.html', logs=logs, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/logs/guests', methods=['GET', 'POST'])
+@login_required
+def log_guests():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        logs = list(models.Logs.objects.filter(funcName="index").aggregate(
+            [{"$sortByCount": "$message"}]))
+        total_count = len(list(logs))
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/log_guests.html', logs=logs,
+                               total_count=total_count, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
 @app.route('/approve', methods=['GET', 'POST'])
 @login_required
 def approve():
-    if request.method == 'POST':
-        Database.update("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
-    return redirect(url_for("pending"))
+    try:
+        if request.method == 'POST':
+            Database.update("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
+        return redirect(url_for("pending"))
+    except Exception as e:
+        logger.error(f"Err, Approve_EP. {e}")
 
 
 @app.route('/suspend', methods=['GET', 'POST'])
 @login_required
 def suspend():
-    if request.method == 'POST':
-        Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
-    if request.referrer.endswith("approved"):
-        return redirect(url_for("approved"))
-    if request.referrer.endswith("pending"):
-        return redirect(url_for("pending"))
+    try:
+        if request.method == 'POST':
+            Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+        if request.referrer.endswith("approved"):
+            return redirect(url_for("approved"))
+        if request.referrer.endswith("pending"):
+            return redirect(url_for("pending"))
+    except Exception as e:
+        logger.error(f"Err, Suspend_EP. {e}")
 
 
 @app.route('/unsuspend', methods=['GET', 'POST'])
 @login_required
 def unsuspend():
-    if request.method == 'POST':
-        Database.update("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
-    return redirect(url_for("suspended"))
+    try:
+        if request.method == 'POST':
+            Database.update("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
+        return redirect(url_for("suspended"))
+    except Exception as e:
+        logger.error(f"Err, Unsuspend_EP. {e}")
 
 
 @app.route('/remove', methods=['GET', 'POST'])
 @login_required
 def remove():
-    if request.method == 'POST':
-        Database.update("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
-    if request.referrer.endswith("approved"):
-        return redirect(url_for("approved"))
-    elif request.referrer.endswith("pending"):
-        return redirect(url_for("pending"))
-    elif request.referrer.endswith("suspended"):
-        return redirect(url_for("suspended"))
+    try:
+        if request.method == 'POST':
+            Database.update("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
+        if request.referrer.endswith("approved"):
+            return redirect(url_for("approved"))
+        elif request.referrer.endswith("pending"):
+            return redirect(url_for("pending"))
+        elif request.referrer.endswith("suspended"):
+            return redirect(url_for("suspended"))
+    except Exception as e:
+        logger.error(f"Err, Remove_EP. {e}")
 
 
 @app.route('/recover', methods=['GET', 'POST'])
 @login_required
 def recover():
-    if request.method == 'POST':
-        Database.update("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
-    return redirect(url_for("removed"))
+    try:
+        if request.method == 'POST':
+            Database.update("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
+        return redirect(url_for("removed"))
+    except Exception as e:
+        logger.error(f"Err, Recover_EP. {e}")
+
+
+@app.route('/remove_log', methods=['GET', 'POST'])
+@login_required
+def remove_log():
+    try:
+        if request.method == 'POST':
+            if request.referrer.endswith("addresses"):
+                Database.delete_many("logs", {"msg": request.form.get("remove_log")})
+            else:
+                Database.delete_one("logs", {"_id": ObjectId(request.form.get("remove_log"))})
+        if request.referrer.endswith("exceptions"):
+            return redirect(url_for("log_exceptions"))
+        elif request.referrer.endswith("crawler"):
+            return redirect(url_for("log_crawler"))
+        elif request.referrer.endswith("authentications"):
+            return redirect(url_for("log_authentications"))
+        elif request.referrer.endswith("addresses"):
+            return redirect(url_for("log_guests"))
+    except Exception as e:
+        logger.error(f"Err, Remove_Log. {e}")

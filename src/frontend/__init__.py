@@ -1,9 +1,12 @@
+import logging
+
 from flask import Flask
 from flask_apscheduler import APScheduler
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_mongoengine import MongoEngine
 from flask_recaptcha import ReCaptcha
+from mongolog.handlers import MongoHandler
 
 import src.main_crawl
 from src.SpEnD.spiders.aol import Aol
@@ -41,6 +44,9 @@ scheduler = APScheduler()
 scheduler.add_job(id='endpoint_check', func=Sparql.check_endpoints, trigger="interval", hours=1)
 scheduler.add_job(id='scheduled_crawl', func=src.main_crawl.endpoint_crawler, trigger="interval", days=1)
 scheduler.start()
+
+logger = logging.getLogger(__name__)
+logger.addHandler(MongoHandler.to(db='SpEnD-DB', collection='logs'))
 
 from src.frontend import models
 from src.frontend import routes

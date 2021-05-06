@@ -13,3 +13,4 @@ Flask-Login
 Flask-Bcrypt
 Jinja2
 Werkzeug
+mongolog

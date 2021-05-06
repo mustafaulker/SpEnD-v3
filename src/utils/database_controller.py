@@ -1,5 +1,5 @@
-from datetime import datetime
 import os
+from datetime import datetime
 
 import pymongo
 
@@ -75,6 +75,10 @@ class Database:
     @staticmethod
     def delete_one(collection: str, query):
         Database.DATABASE[collection].delete_one(query)
+
+    @staticmethod
+    def delete_many(collection: str, query):
+        Database.DATABASE[collection].delete_many(query)
 
     @staticmethod
     def get_endpoints() -> list:

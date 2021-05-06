@@ -18,7 +18,7 @@
 <nav class="navbar is-white">
     <div class="container">
         <div class="navbar-brand">
-            <a class="navbar-item brand-text" href="/dashboard">
+            <a class="navbar-item brand-text" href="/admin/dashboard">
                 SpEnD | Dashboard
             </a>
             <div class="navbar-burger burger" data-target="dashboardNavMenu"
@@ -50,11 +50,20 @@
                     Endpoint Management
                 </p>
                 <ul class="menu-list">
-                    <li><a href="/dashboard">Dashboard</a></li>
-                    <li><a href="/approved">Approved</a></li>
-                    <li><a href="/pending">Pending ({{ pending_count }})</a></li>
-                    <li><a href="/suspended">Suspended</a></li>
-                    <li><a href="/removed">Removed</a></li>
+                    <li><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="/admin/endpoints/approved">Approved</a></li>
+                    <li><a href="/admin/endpoints/pending">Pending ({{ pending_count }})</a></li>
+                    <li><a href="/admin/endpoints/suspended">Suspended</a></li>
+                    <li><a href="/admin/endpoints/removed">Removed</a></li>
+                </ul>
+                <p class="menu-label">
+                    Logs
+                </p>
+                <ul class="menu-list">
+                    <li><a href="/admin/logs/exceptions">Exceptions/Errors</a></li>
+                    <li><a href="/admin/logs/crawler">Crawler Logs</a></li>
+                    <li><a href="/admin/logs/authentications">Authentications</a></li>
+                    <li><a href="/admin/logs/guests">Guests</a></li>
                 </ul>
             </aside>
         </div>
