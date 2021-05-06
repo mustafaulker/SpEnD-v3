@@ -22,7 +22,8 @@ class Database:
     @staticmethod
     def initialize():
         client = pymongo.MongoClient(Database.URI)
-        Database.DATABASE = client["SpEnD-DB"]
+        # Database.DATABASE = client["SpEnD-DB"]
+        Database.DATABASE = client["Latest_Test"]
 
     @staticmethod
     def insert(collection: str, data):
@@ -96,8 +97,7 @@ class Database:
         :return: List of second crawl domains
         """
         domains = list()
-        [domains.append(domain["domain"]) for domain
-         in Database.find("second_crawl_domains", {}, {"_id": 0, "domain": 1})]
+        [domains.append(domain) for domain in Database.find("second_crawl_domains", {})]
         return domains
 
     @staticmethod

@@ -26,7 +26,7 @@ class Google(scrapy.Spider):
 
         next_page = response.css("a.nBDE1b.G5eFlf::attr(href)").get()
 
-        if "&start=50" in response.url:
+        if "&start=100" in response.url:
             if len(response.css("a.nBDE1b.G5eFlf::attr(href)").getall()) == 1:
                 next_page = None
             else:
