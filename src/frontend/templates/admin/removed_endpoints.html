@@ -9,7 +9,7 @@
         <div class="tile is-parent">
             <article class="tile is-child box">
                 <p class="title">{{ endpoints|length }}</p>
-                <p class="subtitle">Suspended Endpoints</p>
+                <p class="subtitle">Removed Objects</p>
             </article>
         </div>
     </div>
@@ -19,7 +19,7 @@
     <div class="card">
         <header class="card-header">
             <p class="card-header-title is-centered title is-5">
-                Suspended
+                Removed
             </p>
         </header>
         <hr>
@@ -27,14 +27,13 @@
             <div class="content">
                 <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
                     {% if endpoints|length < 1 %}
-                    <h1 class="title is-4" style="text-align: center">There are no suspended Endpoint.</h1>
+                    <h1 class="title is-4" style="text-align: center">There are no removed objects.</h1>
                     {% else %}
-                    <table class="table is-fullwidth is-striped is-hoverable" id="suspendedEpTable">
+                    <table class="table is-fullwidth is-striped is-hoverable" id="dashboardEpTable">
                         <thead>
                         <tr>
-                            <th>Endpoint</th>
+                            <th>Link</th>
                             <th>Create Date</th>
-                            <th>Alive</th>
                             <th style="text-align: center">Actions</th>
                         </tr>
                         </thead>
@@ -48,29 +47,17 @@
                                 </a>
                             </td>
                             <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
-                            <td>{% if endpoint.up_now %}
-                                <img src="/static/images/thick.png" alt="True">
-                                {% else %}
-                                <img src="/static/images/cross.png" alt="False">
-                                {% endif %}
-                            </td>
                             <td class="level-right">
-                                <form action="/unsuspend" method="POST">
-                                    <button class="button is-small is-primary" name="unsuspend"
+                                <form action="/recover" method="POST">
+                                    <button class="button is-small is-primary" name="recover"
                                             value="{{ endpoint.url }}" style="margin:5px;">
-                                        Unsuspend
+                                        Recover
                                     </button>
                                 </form>
                                 <form action="/selectedEndpoint" method="POST" target="_blank">
                                     <button class="button is-small is-info" name="inspect"
                                             value="{{ endpoint.url }}" style="margin:5px;">
                                         Inspect
-                                    </button>
-                                </form>
-                                <form action="/remove" method="POST">
-                                    <button class="button is-small is-danger" name="remove"
-                                            value="{{ endpoint.url }}">
-                                        Remove
                                     </button>
                                 </form>
                             </td>

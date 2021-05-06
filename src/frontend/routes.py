@@ -190,6 +190,23 @@ def dashboard():
         abort(500)
 
 
+@app.route('/approved', methods=['GET', 'POST'])
+@login_required
+def approved():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        endpoints = models.Endpoints.objects.filter(tag="approved")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/approved_endpoints.html', endpoints=endpoints, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
 @app.route('/pending', methods=['GET', 'POST'])
 @login_required
 def pending():
@@ -223,6 +240,23 @@ def suspended():
         abort(500)
 
 
+@app.route('/removed', methods=['GET', 'POST'])
+@login_required
+def removed():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        endpoints = models.Endpoints.objects.filter(tag="removed")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/removed_endpoints.html', endpoints=endpoints, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
 @app.route('/approve', methods=['GET', 'POST'])
 @login_required
 def approve():
@@ -236,8 +270,8 @@ def approve():
 def suspend():
     if request.method == 'POST':
         Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
-    if request.referrer.endswith("dashboard"):
-        return redirect(url_for("dashboard"))
+    if request.referrer.endswith("approved"):
+        return redirect(url_for("approved"))
     if request.referrer.endswith("pending"):
         return redirect(url_for("pending"))
 
@@ -255,9 +289,17 @@ def unsuspend():
 def remove():
     if request.method == 'POST':
         Database.update("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
-    if request.referrer.endswith("dashboard"):
-        return redirect(url_for("dashboard"))
+    if request.referrer.endswith("approved"):
+        return redirect(url_for("approved"))
     elif request.referrer.endswith("pending"):
         return redirect(url_for("pending"))
     elif request.referrer.endswith("suspended"):
         return redirect(url_for("suspended"))
+
+
+@app.route('/recover', methods=['GET', 'POST'])
+@login_required
+def recover():
+    if request.method == 'POST':
+        Database.update("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
+    return redirect(url_for("removed"))
