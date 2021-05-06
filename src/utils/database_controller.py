@@ -22,8 +22,7 @@ class Database:
     @staticmethod
     def initialize():
         client = pymongo.MongoClient(Database.URI)
-        # Database.DATABASE = client["SpEnD-DB"]
-        Database.DATABASE = client["Latest_Test"]
+        Database.DATABASE = client["SpEnD-DB"]
 
     @staticmethod
     def insert(collection: str, data):
