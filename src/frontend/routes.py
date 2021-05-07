@@ -408,7 +408,7 @@ def recover():
 def remove_log():
     try:
         if request.method == 'POST':
-            if request.referrer.endswith("addresses"):
+            if request.referrer.endswith("guests"):
                 Database.delete_many("logs", {"msg": request.form.get("remove_log")})
             else:
                 Database.delete_one("logs", {"_id": ObjectId(request.form.get("remove_log"))})
@@ -418,7 +418,7 @@ def remove_log():
             return redirect(url_for("log_crawler"))
         elif request.referrer.endswith("authentications"):
             return redirect(url_for("log_authentications"))
-        elif request.referrer.endswith("addresses"):
+        elif request.referrer.endswith("guests"):
             return redirect(url_for("log_guests"))
     except Exception as e:
         logger.error(f"Err, Remove_Log. {e}")
