@@ -25,35 +25,6 @@ def index():
         abort(500)
 
 
-@app.route('/crawler', methods=['GET', 'POST'])
-def crawler():
-    try:
-        keywords = Database.get_keywords("crawl_keys")
-        if request.method == 'POST':
-            selected_search_engines = request.form.getlist("cb_se")
-            selected_keywords = request.form.getlist("cb_kw")
-            keyword_input = request.form.get("keyword_input").split("\r\n")
-            user_inputs = []
-            [user_inputs.append(keyword.strip()) for keyword in keyword_input]
-            selected_keywords.extend(list(filter(None, user_inputs)))
-
-            flash(f"Selected Search Engines: {selected_search_engines}")
-            flash(f"Selected Keywords: {selected_keywords}")
-
-            spiders = list(map(search_engine_dict.get, selected_search_engines))
-
-            logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}")
-            endpoint_crawler(spiders=spiders, query=selected_keywords)
-            logger.info(f"Manuel crawl has ended.")
-
-            return redirect(url_for("crawler", keywords=keywords, s_engines=list(search_engine_dict.keys())))
-        return render_template('crawler.html', keywords=keywords, s_engines=list(search_engine_dict.keys()))
-    except TemplateNotFound:
-        abort(404)
-    except:
-        abort(500)
-
-
 @app.route('/about')
 def about():
     try:
@@ -169,6 +140,41 @@ def logout():
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return abort(403)
+
+
+@app.route('/admin/crawler', methods=['GET', 'POST'])
+@login_required
+def crawler():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+        keywords = Database.get_keywords("crawl_keys")
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+        if request.method == 'POST':
+            selected_search_engines = request.form.getlist("cb_se")
+            selected_keywords = request.form.getlist("cb_kw")
+            keyword_input = request.form.get("keyword_input").split("\r\n")
+            user_inputs = []
+            [user_inputs.append(keyword.strip()) for keyword in keyword_input]
+            selected_keywords.extend(list(filter(None, user_inputs)))
+
+            flash(f"Selected Search Engines: {selected_search_engines}")
+            flash(f"Selected Keywords: {selected_keywords}")
+
+            spiders = list(map(search_engine_dict.get, selected_search_engines))
+
+            logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}")
+            endpoint_crawler(spiders=spiders, query=selected_keywords)
+            logger.info(f"Manuel crawl has ended.")
+
+            return redirect(url_for("crawler", s_engines=list(search_engine_dict.keys()),
+                                    keywords=keywords, pending_count=pending_count))
+        return render_template('/admin/crawler.html', s_engines=list(search_engine_dict.keys()),
+                               keywords=keywords, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
 
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
