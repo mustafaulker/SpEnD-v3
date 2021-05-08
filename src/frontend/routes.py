@@ -17,7 +17,7 @@ from src.utils.database_controller import Database
 def index():
     try:
         endpoints = models.Endpoints.objects.filter(tag="approved")
-        logger.info(f"{request.environ.get('REMOTE_ADDR')}")
+        logger.info(f"{request.remote_addr}")
         return render_template('index.html', endpoints=endpoints)
     except TemplateNotFound:
         abort(404)
@@ -136,7 +136,7 @@ def login():
 
             if user is None or not user.check_password(form_password):
                 flash('Invalid username or password.')
-                logger.error(f"Failed authentication: {request.environ.get('REMOTE_ADDR')}")
+                logger.error(f"Failed authentication: {request.remote_addr}")
                 return redirect(url_for('login'))
             login_user(user)
 
@@ -158,7 +158,7 @@ def login():
 def logout():
     try:
         logout_user()
-        logger.info(f"User({request.environ.get('REMOTE_ADDR')}) has logged-out.")
+        logger.info(f"User({request.remote_addr}) has logged-out.")
         return redirect(url_for('index'))
     except TemplateNotFound:
         abort(404)
@@ -410,6 +410,7 @@ def remove_log():
         if request.method == 'POST':
             if request.referrer.endswith("guests"):
                 Database.delete_many("logs", {"msg": request.form.get("remove_log")})
+                return redirect(url_for("log_guests"))
             else:
                 Database.delete_one("logs", {"_id": ObjectId(request.form.get("remove_log"))})
         if request.referrer.endswith("exceptions"):
@@ -418,7 +419,5 @@ def remove_log():
             return redirect(url_for("log_crawler"))
         elif request.referrer.endswith("authentications"):
             return redirect(url_for("log_authentications"))
-        elif request.referrer.endswith("guests"):
-            return redirect(url_for("log_guests"))
     except Exception as e:
         logger.error(f"Err, Remove_Log. {e}")

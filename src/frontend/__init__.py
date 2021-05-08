@@ -15,6 +15,7 @@ from src.SpEnD.spiders.bing import Bing
 from src.SpEnD.spiders.google import Google
 from src.SpEnD.spiders.mojeek import Mojeek
 from src.utils.sparql_controller import Sparql
+from src.frontend.config import MongoConfig
 
 app = Flask(__name__)
 app.config.from_object('src.frontend.config')
@@ -46,7 +47,8 @@ scheduler.add_job(id='scheduled_crawl', func=src.main_crawl.endpoint_crawler, tr
 scheduler.start()
 
 logger = logging.getLogger(__name__)
-logger.addHandler(MongoHandler.to(db='SpEnD-DB', collection='logs'))
+logger.addHandler(MongoHandler.to(db='SpEnD-DB', collection='logs', host=MongoConfig.MONGODB_HOST,
+                                  port=MongoConfig.MONGODB_PORT))
 
 from src.frontend import models
 from src.frontend import routes

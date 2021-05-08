@@ -11,7 +11,7 @@ def page_not_found(e):
 
 @app.errorhandler(403)
 def page_forbidden(e):
-    logger.error(f"403, Page: {request.url}, IP:{request.environ.get('REMOTE_ADDR')}")
+    logger.error(f"403, Page: {request.url}, IP:{request.remote_addr}")
     return render_template('/errors/page-403.html'), 403
 
 
