@@ -15,60 +15,59 @@
     </div>
 </section>
 
-<div class="column is-vcentered">
-    <div class="card">
-        <header class="card-header">
-            <p class="card-header-title is-centered title is-5">
-                Removed
-            </p>
-        </header>
-        <hr>
-        <div class="card-table">
-            <div class="content">
-                <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
-                    {% if endpoints|length < 1 %}
-                    <h1 class="title is-4" style="text-align: center">There are no removed objects.</h1>
-                    {% else %}
-                    <table class="table is-fullwidth is-striped is-hoverable" id="dashboardEpTable">
-                        <thead>
-                        <tr>
-                            <th>Link</th>
-                            <th>Create Date</th>
-                            <th style="text-align: center">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for endpoint in endpoints %}
-                        <tr>
-                            <td>
-                                <a href="{{ endpoint.url }}" target="_blank">
-                                    {{ endpoint.url | truncate(45, True) |
-                                    replace("https://", "") | replace("http://", "") }}
-                                </a>
-                            </td>
-                            <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
-                            <td class="level-right">
-                                <form action="/recover" method="POST">
+<form action="/removed_endpoints" method="POST">
+    <div class="column is-vcentered">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title is-centered title is-5">
+                    Removed
+                </p>
+            </header>
+            <hr>
+            <div class="card-table">
+                <div class="content">
+                    <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                        {% if endpoints|length < 1 %}
+                        <h1 class="title is-4" style="text-align: center">There are no removed objects.</h1>
+                        {% else %}
+                        <table class="table is-fullwidth is-striped is-hoverable" id="dashboardEpTable">
+                            <thead>
+                            <tr>
+                                <th>Link</th>
+                                <th>Create Date</th>
+                                <th style="text-align: center">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for endpoint in endpoints %}
+                            <tr>
+                                <td>
+                                    <a href="{{ endpoint.url }}" target="_blank">
+                                        {{ endpoint.url | truncate(45, True) |
+                                        replace("https://", "") | replace("http://", "") }}
+                                    </a>
+                                </td>
+                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+                                <td class="level-right">
                                     <button class="button is-small is-primary" name="recover"
-                                            value="{{ endpoint.url }}" style="margin:5px;">
+                                            value="{{ endpoint.url }}" formaction="/recover" style="margin:5px;">
                                         Recover
                                     </button>
-                                </form>
-                                <form action="/selectedEndpoint" method="POST" target="_blank">
                                     <button class="button is-small is-info" name="inspect"
-                                            value="{{ endpoint.url }}" style="margin:5px;">
+                                            value="{{ endpoint.url }}" formaction="/selectedEndpoint"
+                                            formtarget="_blank" style="margin:5px;">
                                         Inspect
                                     </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 {% endblock %}

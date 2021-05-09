@@ -38,12 +38,12 @@
                                 </div>
                             </div>
                             <button class="button is-block is-info is-large is-fullwidth">Login</button>
-                            {% with messages = get_flashed_messages() %}
+                            {% with messages = get_flashed_messages(with_categories=true) %}
                             {% if messages %}
-                            <hr>
+                            <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
                             <ul class=flashes>
-                                {% for message in messages %}
-                                <li>{{ message }}</li>
+                                {% for category, message in messages %}
+                                <div class="{{ category }}">{{ message }}</div>
                                 {% endfor %}
                             </ul>
                             {% endif %}

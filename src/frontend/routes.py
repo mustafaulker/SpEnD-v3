@@ -39,26 +39,30 @@ def about():
 def contact():
     try:
         if request.method == 'POST':
-            if recaptcha.verify():
-                cont_name = request.form.get('cont_name')
-                cont_subject = request.form.get('cont_subject')
-                cont_email = request.form.get('cont_email')
-                cont_message = request.form.get('cont_message')
-                msg = Message(
-                    subject=cont_subject,
-                    sender=app.config['MAIL_USERNAME'][0],
-                    recipients=app.config['MAIL_RECIPIENTS'],
-                    body=f"""
-                                      From: {cont_name} \n
-                                      Mail: {cont_email} \n
-                                      Message: {cont_message} \n
-                                      """
-                )
-                mail.send(msg)
-                flash('Your message has been sent successfully.')
+            if request.form.get('cont_subject'):
+                flash('Not configurated yet, please use GitHub Issues', 'error')
                 return redirect(url_for("contact"))
             else:
-                flash('Please complete the reCaptcha.')
+                if recaptcha.verify():
+                    cont_name = request.form.get('cont_name')
+                    cont_subject = request.form.get('cont_subject')
+                    cont_email = request.form.get('cont_email')
+                    cont_message = request.form.get('cont_message')
+                    msg = Message(
+                        subject=cont_subject,
+                        sender=app.config['MAIL_USERNAME'][0],
+                        recipients=app.config['MAIL_RECIPIENTS'],
+                        body=f"""
+                                          From: {cont_name} \n
+                                          Mail: {cont_email} \n
+                                          Message: {cont_message} \n
+                                          """
+                    )
+                    mail.send(msg)
+                    flash('Your message has been sent successfully.', 'info')
+                    return redirect(url_for("contact"))
+                else:
+                    flash('Please complete the reCaptcha.', 'error')
         return render_template('contact.html')
     except TemplateNotFound:
         abort(404)
@@ -109,7 +113,7 @@ def login():
             user = models.User.objects(username=form_username).first()
 
             if user is None or not user.check_password(form_password):
-                flash('Invalid username or password.')
+                flash('Invalid username or password.', 'error')
                 logger.error(f"Failed authentication: {request.remote_addr}")
                 return redirect(url_for('login'))
             login_user(user)
@@ -154,82 +158,52 @@ def crawler():
         keywords = Database.get_keywords("crawl_keys")
         pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
+        if request.method == 'POST':
+            selected_search_engines = request.form.getlist("cb_se")
+            selected_keywords = request.form.getlist("cb_kw")
+            keyword_input = request.form.get("keyword_input").split("\r\n")
+            inner_crawl = request.form.get("inner_crawl") is not None
+            user_inputs = []
+            [user_inputs.append(keyword.strip()) for keyword in keyword_input]
+            selected_keywords.extend(list(filter(None, user_inputs)))
+
+            if not selected_search_engines or not selected_keywords:
+                flash("- No SEs or Keywords selected.", "error")
+                return redirect(url_for("crawler"))
+            else:
+                flash(f"- Selected Search Engines:\n{selected_search_engines}", "info")
+                flash(f"- Selected Keywords:\n{selected_keywords}", "info")
+
+            spiders = list(map(search_engine_dict.get, selected_search_engines))
+
+            if 'manuel_crawl' in request.form:
+                logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}")
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
+                                  id="manuel_crawl", run_date=datetime.datetime.now())
+                logger.info("Manuel crawl has ended.")
+
+            elif 'schedule_crawl' in request.form:
+                date, time = request.form.get("schedule_date"), request.form.get("schedule_time")
+
+                if datetime.datetime.fromisoformat(f"{date} {time}") < datetime.datetime.now():
+                    flash("- Past date/time selected.", "error")
+                    return redirect(url_for("crawler"))
+
+                spiders = list(map(search_engine_dict.get, selected_search_engines))
+
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
+                                  id="schedule_crawl", run_date=f'{date} {time}')
+
+            return redirect(url_for("crawler"))
         return render_template('/admin/crawler.html', s_engines=list(search_engine_dict.keys()),
                                keywords=keywords, pending_count=pending_count)
+    except ValueError:
+        flash("- Invalid date/time.", "error")
+        return redirect(url_for("crawler"))
     except TemplateNotFound:
         abort(404)
-    except:
-        abort(500)
-
-
-@app.route('/manuel_crawl', methods=['GET', 'POST'])
-@login_required
-def manuel_crawl():
-    try:
-        if request.method == 'POST':
-            selected_search_engines = request.form.getlist("cb_se")
-            selected_keywords = request.form.getlist("cb_kw")
-            keyword_input = request.form.get("keyword_input").split("\r\n")
-            inner_crawl = request.form.get("inner_crawl") is not None
-            user_inputs = []
-            [user_inputs.append(keyword.strip()) for keyword in keyword_input]
-            selected_keywords.extend(list(filter(None, user_inputs)))
-
-            if not selected_search_engines or not selected_keywords:
-                flash(f"- No SEs or Keywords selected. Unchosen ones replaced by their default values.")
-            else:
-                flash(f"- Selected Search Engines: {selected_search_engines}")
-                flash(f"- Selected Keywords: {selected_keywords}")
-
-            spiders = list(map(search_engine_dict.get, selected_search_engines))
-
-            logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}")
-            scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
-                              id="manuel_crawl", run_date=datetime.datetime.now())
-            logger.info(f"Manuel crawl has ended.")
-
-        return redirect(url_for("crawler"))
     except Exception as e:
-        logger.error(f"Err, Approve_EP. {e}")
-        abort(500)
-
-
-@app.route('/schedule_crawl', methods=['GET', 'POST'])
-@login_required
-def schedule_crawl():
-    try:
-        if request.method == 'POST':
-            selected_search_engines = request.form.getlist("cb_se")
-            selected_keywords = request.form.getlist("cb_kw")
-            keyword_input = request.form.get("keyword_input").split("\r\n")
-            inner_crawl = request.form.get("inner_crawl") is not None
-            user_inputs = []
-            [user_inputs.append(keyword.strip()) for keyword in keyword_input]
-            selected_keywords.extend(list(filter(None, user_inputs)))
-
-            date = request.form.get("schedule_date")
-            time = request.form.get("schedule_time")
-            if not selected_search_engines or not selected_keywords:
-                flash(f"- No SEs or Keywords selected. Unchosen ones replaced by their default values.")
-            else:
-                flash(f"- Selected Search Engines: {selected_search_engines}")
-                flash(f"- Selected Keywords: {selected_keywords}")
-
-            if datetime.datetime.fromisoformat(f"{date} {time}") < datetime.datetime.now():
-                flash(f"- Past date/time selected.")
-                return redirect(url_for("crawler"))
-
-            spiders = list(map(search_engine_dict.get, selected_search_engines))
-
-            scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
-                              id="schedule_crawl", run_date=f'{date} {time}')
-
-        return redirect(url_for("crawler"))
-    except ValueError:
-        flash("- Invalid date/time.")
-        return redirect(url_for("crawler"))
-    except Exception as e:
-        logger.error(f"Err, Approve_EP. {e}")
+        logger.error(f"Err, Crawler. {e}")
         abort(500)
 
 
