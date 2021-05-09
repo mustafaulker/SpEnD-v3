@@ -8,7 +8,7 @@ from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict, logger
+from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict, logger, scheduler
 from src.main_crawl import endpoint_crawler
 from src.utils.database_controller import Database
 
@@ -150,6 +150,19 @@ def crawler():
             return render_template('index.html')
         keywords = Database.get_keywords("crawl_keys")
         pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+
+        return render_template('/admin/crawler.html', s_engines=list(search_engine_dict.keys()),
+                               keywords=keywords, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/manuel_crawl', methods=['GET', 'POST'])
+@login_required
+def manuel_crawl():
+    try:
         if request.method == 'POST':
             selected_search_engines = request.form.getlist("cb_se")
             selected_keywords = request.form.getlist("cb_kw")
@@ -164,17 +177,39 @@ def crawler():
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
             logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}")
-            endpoint_crawler(spiders=spiders, query=selected_keywords)
+            scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
+                              id="manuel_crawl", run_date=datetime.datetime.now())
             logger.info(f"Manuel crawl has ended.")
 
-            return redirect(url_for("crawler", s_engines=list(search_engine_dict.keys()),
-                                    keywords=keywords, pending_count=pending_count))
-        return render_template('/admin/crawler.html', s_engines=list(search_engine_dict.keys()),
-                               keywords=keywords, pending_count=pending_count)
-    except TemplateNotFound:
-        abort(404)
-    except:
-        abort(500)
+        return redirect(url_for("crawler"))
+    except Exception as e:
+        logger.error(f"Err, Approve_EP. {e}")
+
+
+@app.route('/schedule_crawl', methods=['GET', 'POST'])
+@login_required
+def schedule_crawl():
+    try:
+        if request.method == 'POST':
+            selected_search_engines = request.form.getlist("cb_se")
+            selected_keywords = request.form.getlist("cb_kw")
+            keyword_input = request.form.get("keyword_input").split("\r\n")
+            user_inputs = []
+            [user_inputs.append(keyword.strip()) for keyword in keyword_input]
+            selected_keywords.extend(list(filter(None, user_inputs)))
+            date = request.form.get("schedule_date")
+            time = request.form.get("schedule_time")
+
+            flash(f"Selected Search Engines: {selected_search_engines}")
+            flash(f"Selected Keywords: {selected_keywords}")
+            spiders = list(map(search_engine_dict.get, selected_search_engines))
+
+            scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
+                              id="schedule_crawl", run_date=f'{date} {time}')
+
+        return redirect(url_for("crawler"))
+    except Exception as e:
+        logger.error(f"Err, Approve_EP. {e}")
 
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
