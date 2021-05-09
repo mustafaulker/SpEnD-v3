@@ -91,7 +91,10 @@ def selectedEndpoint():
 
 @login_manager.user_loader
 def load_user(pk):
-    return models.User.objects.get(pk=pk)
+    try:
+        return models.User.objects.get(pk=pk)
+    except:
+        abort(500)
 
 
 @app.route('/login', methods=('GET', 'POST'))
@@ -167,12 +170,16 @@ def manuel_crawl():
             selected_search_engines = request.form.getlist("cb_se")
             selected_keywords = request.form.getlist("cb_kw")
             keyword_input = request.form.get("keyword_input").split("\r\n")
+            inner_crawl = request.form.get("inner_crawl") is not None
             user_inputs = []
             [user_inputs.append(keyword.strip()) for keyword in keyword_input]
             selected_keywords.extend(list(filter(None, user_inputs)))
 
-            flash(f"Selected Search Engines: {selected_search_engines}")
-            flash(f"Selected Keywords: {selected_keywords}")
+            if not selected_search_engines or not selected_keywords:
+                flash(f"- No SEs or Keywords selected. Unchosen ones replaced by their default values.")
+            else:
+                flash(f"- Selected Search Engines: {selected_search_engines}")
+                flash(f"- Selected Keywords: {selected_keywords}")
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
@@ -184,6 +191,7 @@ def manuel_crawl():
         return redirect(url_for("crawler"))
     except Exception as e:
         logger.error(f"Err, Approve_EP. {e}")
+        abort(500)
 
 
 @app.route('/schedule_crawl', methods=['GET', 'POST'])
@@ -194,22 +202,35 @@ def schedule_crawl():
             selected_search_engines = request.form.getlist("cb_se")
             selected_keywords = request.form.getlist("cb_kw")
             keyword_input = request.form.get("keyword_input").split("\r\n")
+            inner_crawl = request.form.get("inner_crawl") is not None
             user_inputs = []
             [user_inputs.append(keyword.strip()) for keyword in keyword_input]
             selected_keywords.extend(list(filter(None, user_inputs)))
+
             date = request.form.get("schedule_date")
             time = request.form.get("schedule_time")
+            if not selected_search_engines or not selected_keywords:
+                flash(f"- No SEs or Keywords selected. Unchosen ones replaced by their default values.")
+            else:
+                flash(f"- Selected Search Engines: {selected_search_engines}")
+                flash(f"- Selected Keywords: {selected_keywords}")
 
-            flash(f"Selected Search Engines: {selected_search_engines}")
-            flash(f"Selected Keywords: {selected_keywords}")
+            if datetime.datetime.fromisoformat(f"{date} {time}") < datetime.datetime.now():
+                flash(f"- Past date/time selected.")
+                return redirect(url_for("crawler"))
+
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
             scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
                               id="schedule_crawl", run_date=f'{date} {time}')
 
         return redirect(url_for("crawler"))
+    except ValueError:
+        flash("- Invalid date/time.")
+        return redirect(url_for("crawler"))
     except Exception as e:
         logger.error(f"Err, Approve_EP. {e}")
+        abort(500)
 
 
 @app.route('/admin/dashboard', methods=['GET', 'POST'])
@@ -390,6 +411,7 @@ def approve():
         return redirect(url_for("pending"))
     except Exception as e:
         logger.error(f"Err, Approve_EP. {e}")
+        abort(500)
 
 
 @app.route('/suspend', methods=['GET', 'POST'])
@@ -404,6 +426,7 @@ def suspend():
             return redirect(url_for("pending"))
     except Exception as e:
         logger.error(f"Err, Suspend_EP. {e}")
+        abort(500)
 
 
 @app.route('/unsuspend', methods=['GET', 'POST'])
@@ -415,6 +438,7 @@ def unsuspend():
         return redirect(url_for("suspended"))
     except Exception as e:
         logger.error(f"Err, Unsuspend_EP. {e}")
+        abort(500)
 
 
 @app.route('/remove', methods=['GET', 'POST'])
@@ -431,6 +455,7 @@ def remove():
             return redirect(url_for("suspended"))
     except Exception as e:
         logger.error(f"Err, Remove_EP. {e}")
+        abort(500)
 
 
 @app.route('/recover', methods=['GET', 'POST'])
@@ -442,6 +467,7 @@ def recover():
         return redirect(url_for("removed"))
     except Exception as e:
         logger.error(f"Err, Recover_EP. {e}")
+        abort(500)
 
 
 @app.route('/remove_log', methods=['GET', 'POST'])
@@ -462,3 +488,4 @@ def remove_log():
             return redirect(url_for("log_authentications"))
     except Exception as e:
         logger.error(f"Err, Remove_Log. {e}")
+        abort(500)
