@@ -18,7 +18,7 @@ Database.initialize()
 process = CrawlerProcess()
 
 
-def crawl(spiders, query):
+def crawl(spiders, query, inner_crawl: bool):
     for spider in spiders:
         util.fill_start_urls_list(spider, query)
 
@@ -27,10 +27,11 @@ def crawl(spiders, query):
 
     process.start()
 
-    subprocess.call('PYTHONPATH=/app/ python3 /app/src/second_crawl.py', shell=True)
+    if inner_crawl:
+        subprocess.call('PYTHONPATH=/app/ python3 /app/src/second_crawl.py', shell=True)
 
 
-def endpoint_crawler(spiders=spiders, query=Database.get_keywords("crawl_keys")):
-    p = Process(target=crawl, args=(spiders, query))
+def endpoint_crawler(spiders=spiders, query=Database.get_keywords("crawl_keys"), inner_crawl=True):
+    p = Process(target=crawl, args=(spiders, query, inner_crawl))
     p.start()
     p.join()

@@ -12,7 +12,7 @@ from src.utils.util import is_alive
 class Sparql:
 
     @staticmethod
-    def is_endpoint(links: list, first_crawl=True):
+    def is_endpoint(links: list, spider_name: str, keyword: str, page: int, first_crawl=True):
         for link in links:
             print(f"\nCurrent Website : {link}")
             # Site to be checked & Query & Timeout configuration
@@ -26,7 +26,7 @@ class Sparql:
                 # Execute query and convert results to the returnFormat which is JSON.
                 query_result = sparql.queryAndConvert()
                 if query_result["boolean"] and not Database.in_the_collection("endpoints", link_domain):
-                    Database.insert_endpoint(link, link_domain)
+                    Database.insert_endpoint(link, link_domain, spider_name, keyword, page)
                     print("Endpoint written on DB.")
                 else:
                     if Database.in_the_collection("endpoints", link_domain):
@@ -61,10 +61,11 @@ class Sparql:
                         Database.insert_crawl_domain(link_domain)
                         print(f"This site's domain is added for second crawl. site : {link_domain}")
                     else:
-                        Sparql.general_control_for_missed_endpoint(link, link_domain)
+                        Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
                         print("Urllib Error.")
                 else:  # second crawl
-                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain)
+                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain, spider_name, keyword,
+                                                                               page)
                     continue
 
             except (SPARQLWrapperException, URITooLong, Unauthorized) as WrapperException:
@@ -73,18 +74,20 @@ class Sparql:
 
             except TypeError:
                 if first_crawl:  # first crawl
-                    Sparql.general_control_for_missed_endpoint(link, link_domain)
+                    Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
                     print("Type Error")
                 else:  # second crawl
-                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain)
+                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain, spider_name, keyword,
+                                                                               page)
                     continue
 
             except Exception:
                 if first_crawl:  # first crawl
-                    Sparql.general_control_for_missed_endpoint(link, link_domain)
+                    Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
                     print('Exception: ')
                 else:  # second crawl
-                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain)
+                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain, spider_name, keyword,
+                                                                               page)
                     continue
 
     @staticmethod
@@ -100,13 +103,13 @@ class Sparql:
         return missed
 
     @staticmethod
-    def general_control_for_missed_endpoint(link: str, link_domain: str):
+    def general_control_for_missed_endpoint(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
         alive = is_alive(link)
 
         if alive:
             if Sparql.is_missed_endpoint(link) and not Database.in_the_collection("endpoints", link_domain) \
                     and not Database.in_the_collection("second_crawl_domains", link_domain):
-                Database.insert_endpoint(link, link_domain)
+                Database.insert_endpoint(link, link_domain, spider_name, keyword, page)
                 print("Endpoint written on DB.")
             elif Database.in_the_collection("endpoints", link_domain) \
                     or Database.in_the_collection("second_crawl_domains", link_domain):
@@ -116,12 +119,13 @@ class Sparql:
                 print(f"This site's domain is added for second crawl. site : {link_domain}")
 
     @staticmethod
-    def general_control_for_missed_endpoint_in_second_crawl(link: str, link_domain: str):
+    def general_control_for_missed_endpoint_in_second_crawl(link: str, link_domain: str, spider_name: str, keyword: str,
+                                                            page: int):
         alive = is_alive(link)
 
         if alive:
             if Sparql.is_missed_endpoint(link) and not Database.in_the_collection("endpoints", link_domain):
-                Database.insert_endpoint(link, link_domain)
+                Database.insert_endpoint(link, link_domain, spider_name, keyword, page)
                 print("Endpoint written on DB.")
 
     @staticmethod

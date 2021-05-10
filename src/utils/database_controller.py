@@ -104,7 +104,7 @@ class Database:
         return domains
 
     @staticmethod
-    def insert_endpoint(link: str, link_domain: str):
+    def insert_endpoint(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
         """
         Inserts an endpoint to the endpoints collection.
 
@@ -120,6 +120,9 @@ class Database:
             "date_alive": datetime.utcnow(),
             "up_now": True,
             "tag": "pending",
+            "spider": spider_name,
+            "keyword": keyword,
+            "page": page,
         })
 
     @staticmethod

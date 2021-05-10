@@ -173,12 +173,13 @@ def crawler():
             else:
                 flash(f"- Selected Search Engines:\n{selected_search_engines}", "info")
                 flash(f"- Selected Keywords:\n{selected_keywords}", "info")
+                flash(f"- Inner Crawl:\n{inner_crawl}", "info")
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
             if 'manuel_crawl' in request.form:
-                logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}")
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
+                logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}, {inner_crawl}")
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
                                   id="manuel_crawl", run_date=datetime.datetime.now())
                 logger.info("Manuel crawl has ended.")
 
@@ -191,7 +192,7 @@ def crawler():
 
                 spiders = list(map(search_engine_dict.get, selected_search_engines))
 
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
                                   id=None, name="schedule_crawl", run_date=f'{date} {time}')
 
             return redirect(url_for("crawler"))
