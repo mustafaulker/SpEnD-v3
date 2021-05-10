@@ -1,0 +1,93 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<section class="info-tiles">
+    <div class="tile is-ancestor has-text-centered">
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <p class="title">{{ tasks|length }}</p>
+                <p class="subtitle">Tasks</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<form action="/scheduled_tasks" method="POST">
+    <div class="column is-vcentered">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title is-centered title is-5">
+                    Scheduled Tasks
+                </p>
+            </header>
+            <hr>
+            <div class="card-table">
+                <div class="content">
+                    <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                        {% if tasks|length < 1 %}
+                        <h1 class="title is-4" style="text-align: center">
+                            There are no Scheduled Tasks yet.</h1>
+                        {% else %}
+                        <table class="table is-fullwidth is-striped is-hoverable">
+                            <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Trigger Date</th>
+                                <th>Args</th>
+                                <th style="text-align: center">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for task in tasks %}
+                            <tr>
+                                <td>{{ task.name }}</td>
+                                <td>{{ task.next_run_time.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+                                <td>
+                                    {% if task.args|length < 1 %}
+                                        {{ "Default" }}
+                                    {% elif task.args[0]|length == 5 and task.args[1]|length == 6 %}
+                                        {{ "All SEs & KWs" }}
+                                    {% elif task.args[0]|length == 5 and task.args[1]|length < 6 %}
+                                        ({{ "All SEs" }})
+                                        {{ "-- KW:" }}
+                                        {% for keys in task.args[1] %}
+                                            ({{ keys }})
+                                        {% endfor %}
+                                    {% elif task.args[0]|length < 5 and task.args[1]|length == 6 %}
+                                        {{ "SE:" }}
+                                        {% for se in task.args[0] %}
+                                            ({{ se.name }})
+                                        {% endfor %}
+                                        {{ "-- All KWs" }}
+                                    {% else %}
+                                        {{ "SE:" }}
+                                        {% for se in task.args[0] %}
+                                            ({{ se.name }})
+                                        {% endfor %}
+                                        {{ "-- KW:" }}
+                                        {% for keys in task.args[1] %}
+                                            ({{ keys }})
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
+                                <td class="level-right">
+                                    <button class="button is-small is-danger" name="remove_task"
+                                            value="{{ task.id }}" formaction="/remove_task">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

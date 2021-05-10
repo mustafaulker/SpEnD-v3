@@ -192,7 +192,7 @@ def crawler():
                 spiders = list(map(search_engine_dict.get, selected_search_engines))
 
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords],
-                                  id="schedule_crawl", run_date=f'{date} {time}')
+                                  id=None, name="schedule_crawl", run_date=f'{date} {time}')
 
             return redirect(url_for("crawler"))
         return render_template('/admin/crawler.html', s_engines=list(search_engine_dict.keys()),
@@ -204,6 +204,23 @@ def crawler():
         abort(404)
     except Exception as e:
         logger.error(f"Err, Crawler. {e}")
+        abort(500)
+
+
+@app.route('/admin/scheduled_tasks', methods=['GET', 'POST'])
+@login_required
+def scheduled_tasks():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+        tasks = scheduler.get_jobs()
+
+        return render_template('/admin/scheduled_tasks.html', tasks=tasks, pending_count=pending_count)
+    except TemplateNotFound:
+        abort(404)
+    except:
         abort(500)
 
 
@@ -460,6 +477,18 @@ def remove_log():
             return redirect(url_for("log_crawler"))
         elif request.referrer.endswith("authentications"):
             return redirect(url_for("log_authentications"))
+    except Exception as e:
+        logger.error(f"Err, Remove_Log. {e}")
+        abort(500)
+
+
+@app.route('/remove_task', methods=['GET', 'POST'])
+@login_required
+def remove_task():
+    try:
+        if request.method == 'POST':
+            scheduler.remove_job(request.form.get("remove_task"))
+        return redirect(url_for("scheduled_tasks"))
     except Exception as e:
         logger.error(f"Err, Remove_Log. {e}")
         abort(500)
