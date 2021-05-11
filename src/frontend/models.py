@@ -15,6 +15,9 @@ class Endpoints(db.Document):
     date_alive = db.DateTimeField(default=datetime.utcnow())
     up_now = db.BooleanField()
     tag = db.StringField()
+    spider = db.StringField()
+    keyword = db.StringField()
+    page = db.IntField()
 
 
 class Logs(db.Document):

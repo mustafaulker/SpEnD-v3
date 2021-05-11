@@ -178,10 +178,8 @@ def crawler():
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
             if 'manuel_crawl' in request.form:
-                logger.info(f"Manuel crawl has started: {selected_search_engines}, {selected_keywords}, {inner_crawl}")
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
                                   id="manuel_crawl", run_date=datetime.datetime.now())
-                logger.info("Manuel crawl has ended.")
 
             elif 'schedule_crawl' in request.form:
                 date, time = request.form.get("schedule_date"), request.form.get("schedule_time")
@@ -345,7 +343,7 @@ def log_crawler():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        logs = models.Logs.objects.filter(funcName="crawler")
+        logs = models.Logs.objects.filter(funcName="crawl")
         pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
         return render_template('/admin/log_crawler.html', logs=logs, pending_count=pending_count)

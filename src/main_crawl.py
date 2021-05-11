@@ -10,6 +10,7 @@ from src.SpEnD.spiders.google import Google
 from src.SpEnD.spiders.mojeek import Mojeek
 from src.utils import util
 from src.utils.database_controller import Database
+import src.frontend
 
 spiders = [Aol, Ask, Bing, Google, Mojeek]
 
@@ -19,16 +20,23 @@ process = CrawlerProcess()
 
 
 def crawl(spiders, query, inner_crawl: bool):
+    spider_names = list()
     for spider in spiders:
         util.fill_start_urls_list(spider, query)
+        spider_names.append(spider.name)
 
     for spider in spiders:
         process.crawl(spider)
 
+    src.frontend.logger.info(f"Crawl has started: SE: ({', '.join(spider_names)}) - "
+                             f"KW: ({', '.join(query)}) - Inner: ({inner_crawl})")
+
     process.start()
 
     if inner_crawl:
+        src.frontend.logger.info("Inner Crawl has started.")
         subprocess.call('PYTHONPATH=/app/ python3 /app/src/second_crawl.py', shell=True)
+    src.frontend.logger.info("Crawl has ended.")
 
 
 def endpoint_crawler(spiders=spiders, query=Database.get_keywords("crawl_keys"), inner_crawl=True):
