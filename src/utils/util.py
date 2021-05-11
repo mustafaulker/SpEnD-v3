@@ -83,6 +83,8 @@ def fill_start_urls_list(spider, query):
             query = urllib.parse.quote_plus(query)
             if spider.name == "google":
                 spider.start_urls.append(spider.base_url + query + "&num=100")
+            elif spider.name == "bing":
+                spider.start_urls.append(spider.base_url + query + "&form=QBLH")
             else:
                 spider.start_urls.append(spider.base_url + query)
         elif isinstance(query, list):
@@ -90,6 +92,8 @@ def fill_start_urls_list(spider, query):
                 key = urllib.parse.quote_plus(key)
                 if spider.name == "google":
                     spider.start_urls.append(spider.base_url + key + "&num=100")
+                elif spider.name == "bing":
+                    spider.start_urls.append(spider.base_url + key + "&form=QBLH")
                 else:
                     spider.start_urls.append(spider.base_url + key)
         else:
@@ -150,6 +154,8 @@ def add_element_for_second_crawl(spider, query, domain):
     query = urllib.parse.quote_plus(f"{query} site:{domain['domain']}")
     if spider.name == "google":
         spider.start_urls.append(spider.base_url + query + "&num=100")
+    elif spider.name == "bing":
+        spider.start_urls.append(spider.base_url + query + "&form=QBLH")
     else:
         spider.start_urls.append(spider.base_url + query)
 
