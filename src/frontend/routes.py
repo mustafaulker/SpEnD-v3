@@ -13,7 +13,7 @@ from src.main_crawl import endpoint_crawler
 from src.utils.database_controller import Database
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
     try:
         endpoints = models.Endpoints.objects.filter(tag="approved")
@@ -70,7 +70,7 @@ def contact():
         abort(500)
 
 
-@app.route('/endpoint/<path:ep_url>', methods=['GET', 'POST'])
+@app.route('/endpoint/<path:ep_url>')
 def endpoint(ep_url):
     try:
         selected_endpoint = models.Endpoints.objects(url=ep_url).first()
@@ -81,14 +81,12 @@ def endpoint(ep_url):
         abort(500)
 
 
-@app.route('/selectedEndpoint', methods=['GET', 'POST'])
+@app.post('/selectedEndpoint')
 def selectedEndpoint():
     if request.method == 'POST':
         try:
             endpoint_url = request.form.get('inspect')
             return redirect(url_for('endpoint', ep_url=endpoint_url))
-        except TemplateNotFound:
-            abort(404)
         except:
             abort(500)
 
@@ -138,8 +136,6 @@ def logout():
         logout_user()
         logger.info(f"User({request.remote_addr}) has logged-out.")
         return redirect(url_for('index'))
-    except TemplateNotFound:
-        abort(404)
     except:
         abort(500)
 
@@ -392,7 +388,7 @@ def log_guests():
         abort(500)
 
 
-@app.route('/approve', methods=['GET', 'POST'])
+@app.post('/approve')
 @login_required
 def approve():
     try:
@@ -404,7 +400,7 @@ def approve():
         abort(500)
 
 
-@app.route('/suspend', methods=['GET', 'POST'])
+@app.post('/suspend')
 @login_required
 def suspend():
     try:
@@ -419,7 +415,7 @@ def suspend():
         abort(500)
 
 
-@app.route('/unsuspend', methods=['GET', 'POST'])
+@app.post('/unsuspend')
 @login_required
 def unsuspend():
     try:
@@ -431,7 +427,7 @@ def unsuspend():
         abort(500)
 
 
-@app.route('/remove', methods=['GET', 'POST'])
+@app.post('/remove')
 @login_required
 def remove():
     try:
@@ -448,7 +444,7 @@ def remove():
         abort(500)
 
 
-@app.route('/recover', methods=['GET', 'POST'])
+@app.post('/recover')
 @login_required
 def recover():
     try:
@@ -460,7 +456,7 @@ def recover():
         abort(500)
 
 
-@app.route('/remove_log', methods=['GET', 'POST'])
+@app.post('/remove_log')
 @login_required
 def remove_log():
     try:
@@ -481,7 +477,7 @@ def remove_log():
         abort(500)
 
 
-@app.route('/remove_task', methods=['GET', 'POST'])
+@app.post('/remove_task')
 @login_required
 def remove_task():
     try:
