@@ -31,7 +31,7 @@
                         {% for log in logs %}
                         <tr>
                             <td>
-                                {{ log._id }}
+                                <a href="https://ipinfo.io/{{ log._id }}" target="_blank">{{ log._id }}</a>
                             </td>
                             <td>{{ log.count }}</td>
                             <td class="level-right">

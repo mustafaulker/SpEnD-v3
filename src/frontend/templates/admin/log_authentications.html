@@ -31,7 +31,8 @@
                         {% for log in logs %}
                         <tr>
                             <td>
-                                {{ log.message }}
+                                <a href="https://ipinfo.io/{{ (log.message | replace(')', '(')).split('(')[1] }}"
+                                   target="_blank">{{ log.message }}</a>
                             </td>
                             <td>{{ log.time.strftime("%d.%m.%Y %H:%M:%S") }}</td>
                             <td class="level-right">
