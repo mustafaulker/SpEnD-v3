@@ -12,7 +12,14 @@ class Mojeek(scrapy.Spider):
     base_url = "https://www.mojeek.com/search?q="
     is_first_crawl = True
 
+    custom_settings = {
+        "CONCURRENT_REQUESTS": 4,
+        "CONCURRENT_REQUESTS_PER_IP": 4,
+        "DOWNLOAD_DELAY": 7,
+    }
+
     start_urls = []
+    handle_httpstatus_list = [403]
 
     def parse(self, response):
         if "&" in response.url:

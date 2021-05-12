@@ -13,6 +13,7 @@ class Bing(scrapy.Spider):
     is_first_crawl = True
 
     start_urls = []
+    handle_httpstatus_list = [403]
 
     def parse(self, response):
         if "&" in response.url:
