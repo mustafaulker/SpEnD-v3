@@ -31,27 +31,20 @@
                         <h1 class="title is-4" style="text-align: center">
                             There are no approved Endpoints yet.</h1>
                         {% else %}
-                        <table class="table is-fullwidth is-striped is-hoverable" id="approvedEpTable">
+                        <table class="table is-fullwidth is-striped is-hoverable"
+                               id="approvedEpTable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th>Endpoint</th>
+                                <th style="text-align: left">Endpoint</th>
                                 <th>Create Date</th>
                                 <th>Alive</th>
-                                <th style="text-align: center">Actions</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
-                            <tfoot>
-                            <tr>
-                                <th>Endpoint</th>
-                                <th>Create Date</th>
-                                <th>is Alive</th>
-                                <th style="text-align: center">Actions</th>
-                            </tr>
-                            </tfoot>
                             <tbody>
                             {% for endpoint in endpoints %}
                             <tr>
-                                <td>
+                                <td style="text-align: left">
                                     <a href="{{ endpoint.url }}" target="_blank">
                                         {{ endpoint.url | truncate(45, True) |
                                         replace("https://", "") | replace("http://","") }}
@@ -64,18 +57,17 @@
                                     <img src="/static/images/cross.png" alt="False">
                                     {% endif %}
                                 </td>
-                                <td class="level-right">
-                                    <button class="button is-small is-info" name="inspect"
-                                            value="{{ endpoint.url }}" style="margin:5px;"
+                                <td>
+                                    <button class="button is-small is-info" name="inspect" value="{{ endpoint.url }}"
                                             formaction="/selectedEndpoint" formtarget="_blank">
                                         Inspect
                                     </button>
                                     <button class="button is-small is-warning" name="suspend"
-                                            value="{{ endpoint.url }}" formaction="/suspend" style="margin:5px;">
+                                            value="{{ endpoint.url }}" formaction="/suspend" style="margin-left:5px;">
                                         Suspend
                                     </button>
                                     <button class="button is-small is-danger" name="remove"
-                                            value="{{ endpoint.url }}" formaction="/remove">
+                                            value="{{ endpoint.url }}" formaction="/remove" style="margin-left:5px;">
                                         Remove
                                     </button>
                                 </td>

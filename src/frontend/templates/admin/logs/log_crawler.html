@@ -8,7 +8,7 @@
     <div class="card">
         <header class="card-header">
             <p class="card-header-title is-centered title is-5">
-                Logs - Authentications
+                Logs - Crawler
             </p>
         </header>
         <hr>
@@ -17,25 +17,24 @@
                 <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
                     {% if logs|length < 1 %}
                     <h1 class="title is-4" style="text-align: center">
-                        There are no Authentications yet.</h1>
+                        There are no Crawling yet.</h1>
                     {% else %}
-                    <table class="table is-fullwidth is-striped is-hoverable">
+                    <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
                         <thead>
                         <tr>
-                            <th>Log-in/Log-out</th>
+                            <th style="text-align: left">Process</th>
                             <th><abbr title="UTC +3">Date</abbr></th>
-                            <th style="text-align: center">Actions</th>
+                            <th>Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for log in logs %}
                         <tr>
-                            <td>
-                                <a href="https://ipinfo.io/{{ (log.message | replace(')', '(')).split('(')[1] }}"
-                                   target="_blank">{{ log.message }}</a>
+                            <td style="text-align: left">
+                                {{ log.message }}
                             </td>
                             <td>{{ log.time.strftime("%d.%m.%Y %H:%M:%S") }}</td>
-                            <td class="level-right">
+                            <td>
                                 <form action="/remove_log" method="POST">
                                     <button class="button is-small is-danger" name="remove_log"
                                             value="{{ log.id }}">

@@ -30,32 +30,33 @@
                         {% if endpoints|length < 1 %}
                         <h1 class="title is-4" style="text-align: center">There are no removed objects.</h1>
                         {% else %}
-                        <table class="table is-fullwidth is-striped is-hoverable" id="dashboardEpTable">
+                        <table class="table is-fullwidth is-striped is-hoverable"
+                               id="dashboardEpTable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th>Link</th>
+                                <th style="text-align: left">Link</th>
                                 <th>Create Date</th>
-                                <th style="text-align: center">Actions</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for endpoint in endpoints %}
                             <tr>
-                                <td>
+                                <td style="text-align: left">
                                     <a href="{{ endpoint.url }}" target="_blank">
                                         {{ endpoint.url | truncate(45, True) |
                                         replace("https://", "") | replace("http://", "") }}
                                     </a>
                                 </td>
                                 <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
-                                <td class="level-right">
+                                <td>
                                     <button class="button is-small is-primary" name="recover"
-                                            value="{{ endpoint.url }}" formaction="/recover" style="margin:5px;">
+                                            value="{{ endpoint.url }}" formaction="/recover">
                                         Recover
                                     </button>
                                     <button class="button is-small is-info" name="inspect"
                                             value="{{ endpoint.url }}" formaction="/selectedEndpoint"
-                                            formtarget="_blank" style="margin:5px;">
+                                            formtarget="_blank" style="margin-left:5px;">
                                         Inspect
                                     </button>
                                 </td>

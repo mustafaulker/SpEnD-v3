@@ -9,18 +9,18 @@
         <div class="tile is-parent">
             <article class="tile is-child box">
                 <p class="title">{{ endpoints|length }}</p>
-                <p class="subtitle">Pending Endpoints</p>
+                <p class="subtitle">Suspended Endpoints</p>
             </article>
         </div>
     </div>
 </section>
 
-<form action="/pending_endpoints" method="POST">
+<form action="/suspended_endpoints" method="POST">
     <div class="column is-vcentered">
         <div class="card">
             <header class="card-header">
                 <p class="card-header-title is-centered title is-5">
-                    Pending Approval
+                    Suspended
                 </p>
             </header>
             <hr>
@@ -28,24 +28,23 @@
                 <div class="content">
                     <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
                         {% if endpoints|length < 1 %}
-                        <h1 class="title is-4" style="text-align: center">
-                            There are no Endpoint that awaits for approval.</h1>
+                        <h1 class="title is-4" style="text-align: center">There are no suspended Endpoint.</h1>
                         {% else %}
-                        <table class="table is-fullwidth is-striped is-hoverable" id="pendingEpTable">
+                        <table class="table is-fullwidth is-striped is-hoverable"
+                               id="suspendedEpTable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th>Endpoint</th>
+                                <th style="text-align: left">Endpoint</th>
                                 <th>Create Date</th>
                                 <th>Alive</th>
-                                <th style="text-align: center">Actions</th>
-                            </tr>
+                                <th>Actions</th>
                             </thead>
                             <tbody>
                             {% for endpoint in endpoints %}
                             <tr>
-                                <td>
+                                <td style="text-align: left">
                                     <a href="{{ endpoint.url }}" target="_blank">
-                                        {{ endpoint.url | truncate(45, True) |
+                                        {{ endpoint.url | truncate(70, True) |
                                         replace("https://", "") | replace("http://", "") }}
                                     </a>
                                 </td>
@@ -56,22 +55,18 @@
                                     <img src="/static/images/cross.png" alt="False">
                                     {% endif %}
                                 </td>
-                                <td class="level-right">
-                                    <button class="button is-small is-success" name="approve"
-                                            value="{{ endpoint.url }}" formaction="/approve" style="margin:5px;">
-                                        Approve
+                                <td>
+                                    <button class="button is-small is-primary" name="unsuspend"
+                                            value="{{ endpoint.url }}" formaction="/unsuspend">
+                                        Unsuspend
                                     </button>
                                     <button class="button is-small is-info" name="inspect"
                                             value="{{ endpoint.url }}" formaction="/selectedEndpoint"
-                                            formtarget="_blank" style="margin:5px;">
+                                            formtarget="_blank" style="margin-left:5px;">
                                         Inspect
                                     </button>
-                                    <button class="button is-small is-warning" name="suspend"
-                                            value="{{ endpoint.url }}" formaction="/suspend" style="margin:5px;">
-                                        Suspend
-                                    </button>
                                     <button class="button is-small is-danger" name="remove"
-                                            value="{{ endpoint.url }}" formaction="/remove">
+                                            value="{{ endpoint.url }}" formaction="/remove" style="margin-left:5px;">
                                         Remove
                                     </button>
                                 </td>

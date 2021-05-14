@@ -31,19 +31,19 @@
                         <h1 class="title is-4" style="text-align: center">
                             There are no Scheduled Tasks yet.</h1>
                         {% else %}
-                        <table class="table is-fullwidth is-striped is-hoverable">
+                        <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th>Task</th>
+                                <th style="text-align: left">Task</th>
                                 <th>Trigger Date</th>
                                 <th>Args</th>
-                                <th style="text-align: center">Actions</th>
+                                <th>Actions</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for task in tasks %}
                             <tr>
-                                <td>{{ task.name }}</td>
+                                <td style="text-align: left">{{ task.name }}</td>
                                 <td>{{ task.next_run_time.strftime("%d.%m.%Y %H:%M:%S") }}</td>
                                 <td>
                                     {% if task.args|length < 1 %}
@@ -73,7 +73,7 @@
                                         {% endfor %}
                                     {% endif %}
                                 </td>
-                                <td class="level-right">
+                                <td>
                                     <button class="button is-small is-danger" name="remove_task"
                                             value="{{ task.id }}" formaction="/remove_task">
                                         Remove
