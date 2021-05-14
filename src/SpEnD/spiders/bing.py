@@ -12,6 +12,10 @@ class Bing(scrapy.Spider):
     base_url = "https://www.bing.com/search?q="
     is_first_crawl = True
 
+    custom_settings = {
+        "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0",
+    }
+
     start_urls = []
     handle_httpstatus_list = [403]
 

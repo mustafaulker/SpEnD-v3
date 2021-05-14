@@ -32,10 +32,8 @@ class Google(scrapy.Spider):
                 page = int(page[0:2]) + 1
             elif len(page) == 5:
                 page = int(page[0:3]) + 1
-            print(page)
         else:
             page = 1
-            print(page)
 
         links = response.css("div.kCrYT a::attr(href)").getall()
 
