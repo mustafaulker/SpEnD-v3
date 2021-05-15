@@ -73,8 +73,8 @@
                                 </td>
                                 <td>
                                     <button class="button is-small is-info" name="inspect" title="Inspect"
-                                            value="{{ endpoint.url }}" formaction="/selectedEndpoint"
-                                            formtarget="_blank">
+                                            value="{{ endpoint.url }}" formtarget="_blank"
+                                            formaction="{{ url_for('endpoint', ep_url = endpoint.url) }}">
                                         <span class="icon">
                                             <i class="fas fa-search"></i>
                                         </span>

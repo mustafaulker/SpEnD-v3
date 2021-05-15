@@ -89,7 +89,7 @@
             <tr>
                 <td>{{ count.value }}</td>
                 <td style="text-align: left">
-                    <a href="endpoint/{{ endpoint.url }}" target="_blank">
+                    <a href="{{ url_for('endpoint', ep_url = endpoint.url) }}" target="_blank">
                         {{ endpoint.url | truncate(150, True) | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>

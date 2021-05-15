@@ -13,7 +13,7 @@ from src.main_crawl import endpoint_crawler
 from src.utils.database_controller import Database
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     try:
         endpoints = models.Endpoints.objects.filter(tag="approved")
@@ -70,7 +70,7 @@ def contact():
         abort(500)
 
 
-@app.route('/endpoint/<path:ep_url>')
+@app.route('/endpoint/<path:ep_url>', methods=['GET', 'POST'])
 def endpoint(ep_url):
     try:
         selected_endpoint = models.Endpoints.objects(url=ep_url).first()
@@ -79,16 +79,6 @@ def endpoint(ep_url):
         abort(404)
     except:
         abort(500)
-
-
-@app.post('/selectedEndpoint')
-def selectedEndpoint():
-    if request.method == 'POST':
-        try:
-            endpoint_url = request.form.get('inspect')
-            return redirect(url_for('endpoint', ep_url=endpoint_url))
-        except:
-            abort(500)
 
 
 @login_manager.user_loader
@@ -258,7 +248,8 @@ def approved():
         endpoints = models.Endpoints.objects.filter(tag="approved")
         pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
-        return render_template('/admin/manage/approved_endpoints.html', endpoints=endpoints, pending_count=pending_count)
+        return render_template('/admin/manage/approved_endpoints.html', endpoints=endpoints,
+                               pending_count=pending_count)
     except TemplateNotFound:
         abort(404)
     except:
@@ -274,7 +265,8 @@ def pending():
 
         endpoints = models.Endpoints.objects.filter(tag="pending")
 
-        return render_template('/admin/manage/pending_endpoints.html', endpoints=endpoints, pending_count=len(endpoints))
+        return render_template('/admin/manage/pending_endpoints.html', endpoints=endpoints,
+                               pending_count=len(endpoints))
     except TemplateNotFound:
         abort(404)
     except:
@@ -291,7 +283,8 @@ def suspended():
         endpoints = models.Endpoints.objects.filter(tag="suspended")
         pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
-        return render_template('/admin/manage/suspended_endpoints.html', endpoints=endpoints, pending_count=pending_count)
+        return render_template('/admin/manage/suspended_endpoints.html', endpoints=endpoints,
+                               pending_count=pending_count)
     except TemplateNotFound:
         abort(404)
     except:
