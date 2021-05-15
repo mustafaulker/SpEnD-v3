@@ -7,59 +7,68 @@
     <link rel="icon" href="/static/images/favicon.png">
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
-          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/c520f053b5.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-social@2/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-divider@1.1.0/dist/bulma-divider.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-divider@1.1.0/dist/bulma-divider.css">
 
-    <title>SpEnD | SparQL Endpoints</title>
     {% block head %}{% endblock %}
+    <title>SpEnD | SparQL Endpoints</title>
 </head>
 
 <body>
 
 <!-- navBar -->
 <nav class="navbar is-light" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="https://github.com/mustafaulker/SpEnD-v3" target="_blank"
-           style="background: url(/static/images/header_logo.png) no-repeat center center; background-size: cover; width: 152px;"></a>
-        <a role="button" id="nav-burger" class="navbar-burger" aria-label="menu" aria-expanded="false"
-           data-target="nav-menu" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
-            <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-        </a>
-    </div>
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/" target="_self"
+               style="background: url(/static/images/header_logo.png) no-repeat center center; background-size: cover; width: 152px;"></a>
+            <a role="button" id="nav-burger" class="navbar-burger" aria-label="menu" aria-expanded="false"
+               data-target="nav-menu" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
+                <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+            </a>
+        </div>
 
-    <div id="nav-menu" class="navbar-menu">
-        <div class="navbar-start">
-            <a class="navbar-item" href="/" target="_self">
-                Home
-            </a>
-            <a class="navbar-item" href="/crawler" target="_self">
-                Crawler
-            </a>
-            <div class="navbar-item has-dropdown is-hoverable">
-                <a class="navbar-link">
-                    More
+        <div id="nav-menu" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="/" target="_self">
+                <span class="icon" style="margin-right: 5px">
+                    <i class="fas fa-home"></i>
+                </span>
+                    Home
                 </a>
-                <div class="navbar-dropdown">
-                    <a class="navbar-item" href="/about" target="_self">
-                        About
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link">
+                        More
                     </a>
-                    <a class="navbar-item" href="/contact" target="_self">
-                        Contact Us
-                    </a>
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item" href="/about" target="_self">
+                        <span class="icon" style="margin-right: 5px">
+                            <i class="fas fa-info"></i>
+                        </span>
+                            About
+                        </a>
+                        <a class="navbar-item" href="/contact" target="_self">
+                        <span class="icon" style="margin-right: 5px">
+                            <i class="fas fa-envelope-open-text"></i>
+                        </span>
+                            Contact Us
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="navbar-end">
-            <div class="navbar-item">
-                <h4 class="bd-footer-title">
-                    Contribute on <strong>Github</strong>&emsp;
-                </h4>
-                <iframe src="https://ghbtns.com/github-btn.html?user=mustafaulker&amp;repo=SpEnD-v3&amp;type=star&amp;count=false&amp;size=large"
-                        allowtransparency="true" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <h4 class="bd-footer-title">
+                        Contribute on <strong>Github</strong>&emsp;
+                    </h4>
+                    <iframe src="https://ghbtns.com/github-btn.html?user=mustafaulker&amp;repo=SpEnD-v3&amp;type=star&amp;count=false&amp;size=large"
+                            allowtransparency="true" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
+                </div>
+                <a class="navbar-item" href="/login" target="_self" title="Log in">
+                    <i class="fas fa-sign-in-alt fa-lg"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -75,7 +84,7 @@
     <div class="container is-fluid">
         <div class="columns">
             <div class="column">
-                <p>&copy; 2021 - <strong>SpEnD</strong></p>
+                <p><i class="far fa-copyright"></i> 2021 - <strong>SpEnD</strong></p>
                 <p>Created using
                     <a href="https://palletsprojects.com/p/flask/" target="_blank">Flask</a>,
                     <a href="http://docs.mongoengine.org/projects/flask-mongoengine/en/latest/" target="_blank">Flask-MongoEngine</a>,

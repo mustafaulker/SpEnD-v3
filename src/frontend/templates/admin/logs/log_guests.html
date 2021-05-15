@@ -1,0 +1,67 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+<title>Logs - Guests | SpEnD</title>
+{% endblock %}
+
+{% block body %}
+<div class="column is-vcentered">
+    <div class="card">
+        <header class="card-header">
+            <p class="card-header-title is-centered title is-5">
+                Logs - Guests
+            </p>
+        </header>
+        <hr>
+        <div class="card-table">
+            <div class="content">
+                <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                    {% if total_count < 1 %}
+                    <h1 class="title is-4" style="text-align: center">
+                        There are no Guests yet.</h1>
+                    {% else %}
+                    <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
+                        <thead>
+                        <tr>
+                            <th style="text-align: left">
+                                <span class="icon"><i class="fas fa-network-wired"></i></span>
+                                IP Address
+                            </th>
+                            <th>
+                                <span class="icon"><i class="fas fa-stopwatch-20"></i></span>
+                                <abbr title="Homepage visits only">Visit Count</abbr>
+                            </th>
+                            <th>
+                                <span class="icon"><i class="fas fa-cogs"></i></span>
+                                Actions
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td style="text-align: left">
+                                <a href="https://ipinfo.io/{{ log._id }}" target="_blank">{{ log._id }}</a>
+                            </td>
+                            <td>{{ log.count }}</td>
+                            <td>
+                                <form action="/remove_log" method="POST">
+                                    <button class="button is-small is-danger" name="remove_log"
+                                            value="{{ log._id }}" title="Remove">
+                                        <span class="icon">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

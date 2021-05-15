@@ -7,20 +7,45 @@ from src.frontend import db
 
 
 class Endpoints(db.Document):
+    meta = {'collection': 'endpoints'}
     url = db.StringField()
     domain = db.StringField()
-    date_created = db.DateTimeField(default=datetime.now())
-    date_checked = db.DateTimeField(default=datetime.now())
-    date_alive = db.DateTimeField(default=datetime.now())
+    date_created = db.DateTimeField(default=datetime.utcnow())
+    date_checked = db.DateTimeField(default=datetime.utcnow())
+    date_alive = db.DateTimeField(default=datetime.utcnow())
     up_now = db.BooleanField()
     tag = db.StringField()
+    spider = db.StringField()
+    keyword = db.StringField()
+    page = db.IntField()
 
 
-class Keywords(db.Document):
-    crawl_keys = db.DictField()
-    second_crawl_keys = db.DictField()
-    wanted_keys = db.DictField()
-    unwanted_keys = db.DictField()
+class Logs(db.Document):
+    meta = {'collection': 'logs'}
+    name = db.StringField()
+    message = db.StringField()
+    time = db.DateTimeField(default=datetime.utcnow())
+    funcName = db.StringField()
+    levelname = db.StringField()
+    levelno = db.IntField()
+    filename = db.StringField()
+    pathname = db.StringField()
+    module = db.StringField()
+    username = db.StringField()
+    host = db.StringField()
+    msg = db.StringField()
+    args = db.ListField()
+    thread = db.IntField()
+    threadName = db.StringField()
+    process = db.IntField()
+    processName = db.StringField()
+    lineno = db.IntField()
+    created = db.DecimalField()
+    msecs = db.DecimalField()
+    relativeCreated = db.DecimalField()
+    exc_info = db.StringField()
+    exc_text = db.StringField()
+    stack_info = db.StringField()
 
 
 class User(UserMixin, db.Document):

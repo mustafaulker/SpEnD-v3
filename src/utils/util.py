@@ -1,3 +1,4 @@
+import datetime
 import urllib.parse
 from sys import stderr
 
@@ -15,6 +16,17 @@ second_crawl_domains = Database.get_second_crawl_domains()
 
 
 def link_filter(incoming_links: list) -> list:
+    """
+    This method firstly checks the query part of incoming links. If there is "?help" part in the query section,
+    this part will be deleted from "?" index to end of the query part. Then, it checks the presence of the "wanted"
+    and "unwanted" keys in the link. If there is no "wanted" key in the incoming link, link will be eliminated.
+    If one of the "wanted" keys exist and there is no "unwanted" key in the link, then link will be added to
+    filtered links list.
+
+    :param incoming_links: List of links to be filtered
+    :return: List of filtered links
+    """
+
     filtered_links = list()
     for link in incoming_links:
         if "help" in urllib.parse.urlparse(link).query:
@@ -29,6 +41,21 @@ def link_filter(incoming_links: list) -> list:
 
 
 def link_regulator_for_google(incoming_links: list) -> list:
+    """
+    This method regulates the links coming from Google Search.
+
+    Regulates the link structure from this structure :
+
+    "/url?q=https://www.example.com/SparqlEndpoint&sa=U&ved=2ahUKEwiU"
+
+    to this structure :
+
+    "https://www.example.com/SparqlEndpoint"
+
+    :param incoming_links: List of links to be regulated
+    :return: List of regulated links
+    """
+
     regulated_links = list()
     for link in incoming_links:
         if "/url?q=" in link:
@@ -41,18 +68,32 @@ def link_regulator_for_google(incoming_links: list) -> list:
 
 
 def fill_start_urls_list(spider, query):
+    """
+    This method fills the start_urls list of the specified spider.
+    Firstly, the query keyword is parsed for the search engine.
+    Then the parsed keyword is inserted into the specified spider's start_urls list.
+
+    :param spider: Spider which start_urls list will be filled
+    :param query: Keyword list or keyword string for the search query
+    :return: None
+    """
+
     try:
         if isinstance(query, str):
             query = urllib.parse.quote_plus(query)
             if spider.name == "google":
-                spider.start_urls.append(spider.base_url + query + "&num=50")
+                spider.start_urls.append(spider.base_url + query + "&num=100")
+            elif spider.name == "bing":
+                spider.start_urls.append(spider.base_url + query + "&form=QBLH")
             else:
                 spider.start_urls.append(spider.base_url + query)
         elif isinstance(query, list):
             for key in query:
                 key = urllib.parse.quote_plus(key)
                 if spider.name == "google":
-                    spider.start_urls.append(spider.base_url + key + "&num=50")
+                    spider.start_urls.append(spider.base_url + key + "&num=100")
+                elif spider.name == "bing":
+                    spider.start_urls.append(spider.base_url + key + "&form=QBLH")
                 else:
                     spider.start_urls.append(spider.base_url + key)
         else:
@@ -63,32 +104,81 @@ def fill_start_urls_list(spider, query):
 
 def fill_start_urls_list_for_second_crawl(spider, query):
     try:
+        date = datetime.datetime.utcnow() - datetime.timedelta(days=7)
         if isinstance(query, str):
             for domain in second_crawl_domains:
-                query = urllib.parse.quote_plus(f"{query} site:{domain}")
-                if spider.name == "google":
-                    spider.start_urls.append(spider.base_url + query + "&num=50")
+                if "last_crawl" in domain:
+                    if domain["last_crawl"] < date:
+                        add_element_for_second_crawl(spider, query, domain)
+                        Database.update("second_crawl_domains", {"domain": domain["domain"]},
+                                        {"$set": {"last_crawl": datetime.datetime.utcnow()}})
+                    else:
+                        continue
                 else:
-                    spider.start_urls.append(spider.base_url + query)
+                    add_element_for_second_crawl(spider, query, domain)
+                    Database.update("second_crawl_domains", {"domain": domain["domain"]},
+                                    {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         elif isinstance(query, list):
             for domain in second_crawl_domains:
-                for key in query:
-                    key = urllib.parse.quote_plus(f"{key} site:{domain}")
-                    if spider.name == "google":
-                        spider.start_urls.append(spider.base_url + key + "&num=50")
+                if "last_crawl" in domain:
+                    if domain["last_crawl"] < date:
+                        for key in query:
+                            add_element_for_second_crawl(spider, key, domain)
+                        Database.update("second_crawl_domains", {"domain": domain["domain"]},
+                                        {"$set": {"last_crawl": datetime.datetime.utcnow()}})
                     else:
-                        spider.start_urls.append(spider.base_url + key)
+                        continue
+                else:
+                    for key in query:
+                        add_element_for_second_crawl(spider, key, domain)
+                    Database.update("second_crawl_domains", {"domain": domain["domain"]},
+                                    {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         else:
             raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or list.")
     except ValueError as valueError:
         stderr.write(str(valueError))
 
 
+def add_element_for_second_crawl(spider, query, domain):
+    """
+    This method inserts link domain to spider's start_urls list for second crawl.
+    Firstly, the query keyword is parsed for the search engine.
+    Then the parsed keyword is inserted into the specified spider's start_urls list.
+
+    :param spider: Spider which start_urls list will be filled
+    :param query: Keyword string for the search query
+    :param domain: JSON Object from second_crawl_domains collection
+    :return: None
+    """
+
+    query = urllib.parse.quote_plus(f"{query} site:{domain['domain']}")
+    if spider.name == "google":
+        spider.start_urls.append(spider.base_url + query + "&num=100")
+    elif spider.name == "bing":
+        spider.start_urls.append(spider.base_url + query + "&form=QBLH")
+    else:
+        spider.start_urls.append(spider.base_url + query)
+
+
 def clear_start_urls_list(spider):
+    """
+    This method clears the spider's start_urls list.
+
+    :param spider: Spider which start_urls list will be cleaned
+    :return: None
+    """
+
     spider.start_urls.clear()
 
 
 def is_alive(link: str) -> bool:
+    """
+    This method checks whether site is alive or not.
+
+    :param link: Link of the site to be checked whether it is live or not
+    :return: Boolean based response according to site's response
+    """
+
     alive = False
     try:
         response = requests.get(link, timeout=40).status_code

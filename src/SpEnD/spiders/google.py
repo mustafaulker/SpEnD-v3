@@ -1,3 +1,5 @@
+import urllib.parse
+
 import scrapy
 from scrapy import Request
 
@@ -19,14 +21,28 @@ class Google(scrapy.Spider):
     start_urls = []
 
     def parse(self, response):
+        keyword = response.url[response.url.index("=") + 1:response.url.index("&")]
+        keyword = urllib.parse.unquote_plus(keyword)
+
+        if "&start=" in response.url:
+            page = response.url[response.url.index("start=") + 6:response.url.index("&sa")]
+            if len(page) == 3:
+                page = int(page[0]) + 1
+            elif len(page) == 4:
+                page = int(page[0:2]) + 1
+            elif len(page) == 5:
+                page = int(page[0:3]) + 1
+        else:
+            page = 1
 
         links = response.css("div.kCrYT a::attr(href)").getall()
 
-        Sparql.is_endpoint(util.link_filter(util.link_regulator_for_google(links)), first_crawl=Google.is_first_crawl)
+        Sparql.is_endpoint(util.link_filter(util.link_regulator_for_google(links)), Google.name, keyword, page,
+                           first_crawl=Google.is_first_crawl)
 
         next_page = response.css("a.nBDE1b.G5eFlf::attr(href)").get()
 
-        if "&start=50" in response.url:
+        if "&start=100" in response.url:
             if len(response.css("a.nBDE1b.G5eFlf::attr(href)").getall()) == 1:
                 next_page = None
             else:

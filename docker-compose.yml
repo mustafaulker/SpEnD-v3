@@ -11,7 +11,7 @@ services:
     links:
       - mongo
     ports:
-    - 5000:5000
+      - 5000:5000
     restart: unless-stopped
 
   mongo:
@@ -26,5 +26,5 @@ services:
       - ./mongo-seed/keywords.json:/mongo-seed/keywords.json
       - ./mongo-seed/users.json:/mongo-seed/users.json
     command: bash -c "mongoimport --host mongo -d SpEnD-DB -c keywords --type json --file /mongo-seed/keywords.json --jsonArray
-                      && mongoimport --host mongo -d SpEnD-DB -c users --type json --file /mongo-seed/users.json --jsonArray"
+      && mongoimport --host mongo -d SpEnD-DB -c users --type json --file /mongo-seed/users.json --jsonArray"
     restart: on-failure

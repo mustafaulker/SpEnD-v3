@@ -1,0 +1,87 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<section class="info-tiles">
+    <div class="tile is-ancestor has-text-centered">
+        <div class="tile is-parent">
+            <article class="tile is-child box">
+                <p class="title">{{ endpoints|length }}</p>
+                <p class="subtitle">Removed</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<form action="/admin/manage/removed" method="POST">
+    <div class="column is-vcentered">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title is-centered title is-5">
+                    Removed Objects
+                </p>
+            </header>
+            <hr>
+            <div class="card-table">
+                <div class="content">
+                    <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                        {% if endpoints|length < 1 %}
+                        <h1 class="title is-4" style="text-align: center">There are no removed objects.</h1>
+                        {% else %}
+                        <table class="table is-fullwidth is-striped is-hoverable"
+                               id="dashboardEpTable" style="text-align: center">
+                            <thead>
+                            <tr>
+                                <th style="text-align: left">
+                                    <span class="icon"><i class="fas fa-link"></i></span>
+                                    Link
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                    <abbr title="DD/MM/YYYY - UTC +0">Create Date</abbr>
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-cogs"></i></span>
+                                    Actions
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for endpoint in endpoints %}
+                            <tr>
+                                <td style="text-align: left">
+                                    <a href="{{ endpoint.url }}" target="_blank">
+                                        {{ endpoint.url | truncate(70, True) |
+                                        replace("https://", "") | replace("http://", "") }}
+                                    </a>
+                                </td>
+                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M") }}</td>
+                                <td>
+                                    <button class="button is-small is-info" name="inspect" title="Inspect"
+                                            value="{{ endpoint.url }}" formtarget="_blank"
+                                            formaction="{{ url_for('endpoint', ep_url = endpoint.url) }}">
+                                        <span class="icon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-primary" name="recover" title="Recover"
+                                            value="{{ endpoint.url }}" formaction="/recover" style="margin-left:5px;">
+                                        <span class="icon">
+                                            <i class="fas fa-trash-restore"></i>
+                                        </span>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

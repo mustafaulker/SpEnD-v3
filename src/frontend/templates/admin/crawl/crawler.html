@@ -1,0 +1,109 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+<title>Crawler | SpEnD</title>
+{% endblock %}
+
+{% block body %}
+<form action="/admin/crawl/crawler" method="POST">
+    <div class="columns is-vcentered">
+        <div class="column">
+            <div class="column is-third-fourth" style="text-align: center">
+                <p class="title is-4">
+                    <span class="icon"><i class="fab fa-searchengin"></i></span>
+                    Search Engines
+                </p>
+                <span class="control">
+                    {% for i in range(s_engines|length) %}
+                        {% if i/3 == 1 %}
+                        <br><br>
+                        {% endif %}
+                      <label class="is-checkbox is-rounded">
+                        <input id="cb_{{ s_engines[i] }}_1" type="checkbox" name="cb_se"
+                               value="{{ s_engines[i] }}">
+                        <span class="icon checkmark">
+                          <i class="fa fa-check"></i>
+                        </span>
+                        <span>{{ s_engines[i] }}</span>
+                      </label>
+                    {% endfor %}
+                </span>
+            </div>
+            <hr style="width: 50%; margin-left: auto; margin-right: auto; background-color: #1E4B6D;">
+            <div class="column is-third-fourth" style="text-align: center">
+                <p class="title is-4">
+                    <span class="icon"><i class="fas fa-align-left"></i></span>
+                    Query Keywords
+                </p>
+                <span class="control">
+                    {% for i in range(keywords|length) %}
+                        {% if i/3 == 1 %}
+                        <br><br>
+                        {% endif %}
+                      <label class="is-checkbox is-rounded">
+                        <input id="cb_{{ keywords[i] }}_1" type="checkbox" name="cb_kw"
+                               value="{{ keywords[i] }}">
+                        <span class="icon checkmark">
+                          <i class="fa fa-check"></i>
+                        </span>
+                        <span>{{ keywords[i] }}</span>
+                      </label>
+                    {% endfor %}
+                </span>
+            </div>
+            <hr style="width: 50%; margin-left: auto; margin-right: auto; background-color: #1E4B6D;">
+            <div class="column is is-third-fourth" style="text-align: center">
+                <p class="title is-4">
+                    <span class="icon"><i class="far fa-keyboard"></i></span>
+                    Add keywords
+                </p>
+                <label>
+                    <textarea name="keyword_input" id="kw_input" cols="60" rows="10"
+                              placeholder="Seperate multiple keywords with a line"
+                              style="resize:none; overflow: auto; font-size: 15px"></textarea>
+                </label>
+            </div>
+        </div>
+        <div class="column is-one-quarter" style="text-align: center">
+            <label class="is-checkbox is-link is-rounded">
+                <input type="checkbox" name="inner_crawl" checked>
+                <span class="icon checkmark">
+                        <i class="fa fa-check"></i>
+                    </span>
+                <span>Inner Crawl</span>
+            </label>
+            <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
+
+            <span class="control">
+              <button class="button is-danger is-rounded" type="submit"
+                      value="manuel" name="manuel_crawl">Crawl</button>
+            </span>
+            <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
+
+            <label>
+                <input type="date" name="schedule_date"/>
+            </label>
+            <label>
+                <input type="time" name="schedule_time"/>
+            </label>
+            <br>
+            <br>
+            <span class="control">
+              <button class="button is-danger is-rounded" type="submit"
+                      value="schedule" name="schedule_crawl">Schedule</button>
+            </span>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
+            <ul class=flashes>
+                {% for category, message in messages %}
+                <div class="{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</form>
+{% endblock %}
