@@ -1,4 +1,5 @@
 # SpEnD v3.0
+
 ## SparQL Endpoint Crawler & Analyzer
 
 Crawls various search engines (e.g. **Google**, **Bing**, **Aol**, etc.) with given query keywords.  
@@ -7,12 +8,15 @@ Checks if gathered websites is an Endpoint or not, if so stores them in the data
 - Current discovered **_Endpoints:_** **258**
 
 ## Execution
+
 `$ docker compose up`
 
 ### UI
+
 [`localhost:5000`](http://localhost:5000/)
 
 ### Project Layout
+
     .   
     ├── src/
     │   ├── frontend/
@@ -25,6 +29,10 @@ Checks if gathered websites is an Endpoint or not, if so stores them in the data
     │   │   │   └── js/
     │   │   ├── templates/
     │   │   │   ├── admin/
+    │   │   │   │   ├── crawl/
+    │   │   │   │   ├── logs/
+    │   │   │   │   ├── manage/
+    │   │   │   │   └── ...
     │   │   │   ├── auth/
     │   │   │   ├── errors/
     │   │   │   └── ...

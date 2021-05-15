@@ -15,7 +15,7 @@
     </div>
 </section>
 
-<form action="/approved_endpoints" method="POST">
+<form action="/admin/manage/approved" method="POST">
     <div class="column is-vcentered">
         <div class="card">
             <header class="card-header">
@@ -35,10 +35,22 @@
                                id="approvedEpTable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th style="text-align: left">Endpoint</th>
-                                <th>Create Date</th>
-                                <th>Alive</th>
-                                <th>Actions</th>
+                                <th style="text-align: left">
+                                    <span class="icon"><i class="fas fa-link"></i></span>
+                                    Endpoint
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                    <abbr title="DD/MM/YYYY - UTC +0">Create Date</abbr>
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                                    Status
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-cogs"></i></span>
+                                    Actions
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -46,29 +58,39 @@
                             <tr>
                                 <td style="text-align: left">
                                     <a href="{{ endpoint.url }}" target="_blank">
-                                        {{ endpoint.url | truncate(45, True) |
+                                        {{ endpoint.url | truncate(70, True) |
                                         replace("https://", "") | replace("http://","") }}
                                     </a>
                                 </td>
-                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M") }}</td>
                                 <td>{% if endpoint.up_now %}
-                                    <img src="/static/images/thick.png" alt="True">
+                                    <span class="icon" title="Live">
+                                        <i class="fas fa-check-circle fa-lg" style="color:green;"></i>
+                                    </span>
                                     {% else %}
-                                    <img src="/static/images/cross.png" alt="False">
+                                    <span class="icon" title="Not Responding">
+                                        <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i>
+                                    </span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     <button class="button is-small is-info" name="inspect" value="{{ endpoint.url }}"
-                                            formaction="/selectedEndpoint" formtarget="_blank">
-                                        Inspect
+                                            formaction="/selectedEndpoint" formtarget="_blank" title="Inspect">
+                                        <span class="icon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
                                     </button>
-                                    <button class="button is-small is-warning" name="suspend"
+                                    <button class="button is-small is-warning" name="suspend" title="Suspend"
                                             value="{{ endpoint.url }}" formaction="/suspend" style="margin-left:5px;">
-                                        Suspend
+                                        <span class="icon">
+                                            <i class="fas fa-pause"></i>
+                                        </span>
                                     </button>
-                                    <button class="button is-small is-danger" name="remove"
+                                    <button class="button is-small is-danger" name="remove" title="Remove"
                                             value="{{ endpoint.url }}" formaction="/remove" style="margin-left:5px;">
-                                        Remove
+                                        <span class="icon">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
                                     </button>
                                 </td>
                             </tr>

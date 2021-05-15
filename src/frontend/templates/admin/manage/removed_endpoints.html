@@ -9,18 +9,18 @@
         <div class="tile is-parent">
             <article class="tile is-child box">
                 <p class="title">{{ endpoints|length }}</p>
-                <p class="subtitle">Removed Objects</p>
+                <p class="subtitle">Removed</p>
             </article>
         </div>
     </div>
 </section>
 
-<form action="/removed_endpoints" method="POST">
+<form action="/admin/manage/removed" method="POST">
     <div class="column is-vcentered">
         <div class="card">
             <header class="card-header">
                 <p class="card-header-title is-centered title is-5">
-                    Removed
+                    Removed Objects
                 </p>
             </header>
             <hr>
@@ -34,9 +34,18 @@
                                id="dashboardEpTable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th style="text-align: left">Link</th>
-                                <th>Create Date</th>
-                                <th>Actions</th>
+                                <th style="text-align: left">
+                                    <span class="icon"><i class="fas fa-link"></i></span>
+                                    Link
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                    <abbr title="DD/MM/YYYY - UTC +0">Create Date</abbr>
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-cogs"></i></span>
+                                    Actions
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -44,20 +53,24 @@
                             <tr>
                                 <td style="text-align: left">
                                     <a href="{{ endpoint.url }}" target="_blank">
-                                        {{ endpoint.url | truncate(45, True) |
+                                        {{ endpoint.url | truncate(70, True) |
                                         replace("https://", "") | replace("http://", "") }}
                                     </a>
                                 </td>
-                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M") }}</td>
                                 <td>
-                                    <button class="button is-small is-primary" name="recover"
-                                            value="{{ endpoint.url }}" formaction="/recover">
-                                        Recover
-                                    </button>
-                                    <button class="button is-small is-info" name="inspect"
+                                    <button class="button is-small is-info" name="inspect" title="Inspect"
                                             value="{{ endpoint.url }}" formaction="/selectedEndpoint"
-                                            formtarget="_blank" style="margin-left:5px;">
-                                        Inspect
+                                            formtarget="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-primary" name="recover" title="Recover"
+                                            value="{{ endpoint.url }}" formaction="/recover" style="margin-left:5px;">
+                                        <span class="icon">
+                                            <i class="fas fa-trash-restore"></i>
+                                        </span>
                                     </button>
                                 </td>
                             </tr>

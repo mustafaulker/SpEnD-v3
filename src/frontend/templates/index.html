@@ -10,11 +10,10 @@
         <label>
             <input class="input is-rounded" type="text" placeholder="Search"
                    style="width: 15%" id="endpointSearch" onkeyup="search_filter()">
+            <span class="icon is-left"><i class="fa fa-search"></i></span>
         </label>
-        <span class="icon is-left">
-            <i class="fa fa-search"></i>
-        </span>
-        <label class="checkbox" id="alive_checkbox" style="margin-left: 1%; margin-top: 0.5%">
+
+        <label class="checkbox" id="alive_checkbox" style="margin-left: 1%; margin-top: 0.6%">
             <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">
             List only alive
         </label>
@@ -30,23 +29,56 @@
             <a href="/contact">Contact page.</a>
         </h1>
         {% else %}
-        <table class="table is-fullwidth is-striped is-hoverable" id="endpointTable">
+        <table class="table is-fullwidth is-striped is-hoverable"
+               id="endpointTable" style="text-align: center">
             <thead>
             <tr>
-                <th><abbr title="Order">#</abbr></th>
-                <th>Endpoint</th>
-                <th>Create Date</th>
-                <th>Last Check</th>
-                <th>is Alive</th>
+                <th>
+                    <abbr title="Order">
+                        <span class="icon"><i class="fas fa-list-ol"></i></span>
+                    </abbr>
+                </th>
+                <th style="text-align: left">
+                    <span class="icon"><i class="fas fa-link"></i></span>
+                    Endpoint
+                </th>
+                <th>
+                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                    <abbr title="DD/MM/YYYY">Create Date</abbr>
+                </th>
+                <th>
+                    <span class="icon"><i class="far fa-clock"></i></span>
+                    <abbr title="UTC +0">Last Check</abbr>
+                </th>
+                <th>
+                    <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                    Status
+                </th>
             </tr>
             </thead>
             <tfoot>
             <tr>
-                <th><abbr title="Order">#</abbr></th>
-                <th>Endpoint</th>
-                <th>Create Date</th>
-                <th>Last Check</th>
-                <th>is Alive</th>
+                <th>
+                    <abbr title="Order">
+                        <span class="icon"><i class="fas fa-list-ol"></i></span>
+                    </abbr>
+                </th>
+                <th style="text-align: left">
+                    <span class="icon"><i class="fas fa-link"></i></span>
+                    Endpoint
+                </th>
+                <th>
+                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                    <abbr title="DD/MM/YYYY">Create Date</abbr>
+                </th>
+                <th>
+                    <span class="icon"><i class="far fa-clock"></i></span>
+                    <abbr title="UTC +0">Last Check</abbr>
+                </th>
+                <th>
+                    <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                    Status
+                </th>
             </tr>
             </tfoot>
             <tbody>
@@ -55,17 +87,21 @@
             {% for endpoint in endpoints %}
             <tr>
                 <td>{{ count.value }}</td>
-                <td>
+                <td style="text-align: left">
                     <a href="endpoint/{{ endpoint.url }}" target="_blank">
                         {{ endpoint.url | truncate(150, True) | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>
                 <td>{{ endpoint.date_created.date().strftime("%d.%m.%Y") }}</td>
-                <td>{{ endpoint.date_checked.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+                <td>{{ endpoint.date_checked.strftime("%H:%M") }}</td>
                 <td>{% if endpoint.up_now %}
-                    <img src="/static/images/thick.png" alt="True">
+                    <span class="icon" title="Live">
+                        <i class="fas fa-check-circle fa-lg" style="color:green;"></i>
+                    </span>
                     {% else %}
-                    <img src="/static/images/cross.png" alt="False">
+                    <span class="icon" title="Not Responding">
+                        <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i>
+                    </span>
                     {% endif %}
                 </td>
             </tr>

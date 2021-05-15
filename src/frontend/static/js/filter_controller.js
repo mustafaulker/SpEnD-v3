@@ -36,8 +36,8 @@ function alive_filter() {
         for (i = 0; i < tr.length; i++) {
             td = tr[i].getElementsByTagName("td")[4]
             if (td) {
-                is_alive = td.getElementsByTagName("img")[0].alt
-                if (is_alive === "True") {
+                is_alive = td.getElementsByTagName("span")[0].title
+                if (is_alive === "Live") {
                     tr[i].style.display = ""
                     alive_list.push(tr[i])
                 } else {

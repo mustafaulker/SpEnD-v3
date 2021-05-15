@@ -15,7 +15,7 @@
     </div>
 </section>
 
-<form action="/scheduled_tasks" method="POST">
+<form action="/admin/crawl/scheduled_tasks" method="POST">
     <div class="column is-vcentered">
         <div class="card">
             <header class="card-header">
@@ -34,10 +34,22 @@
                         <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th style="text-align: left">Task</th>
-                                <th>Trigger Date</th>
-                                <th>Args</th>
-                                <th>Actions</th>
+                                <th style="text-align: left">
+                                    <span class="icon"><i class="fas fa-tasks"></i></span>
+                                    Task
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                    <abbr title="UTC +0">Trigger Date</abbr>
+                                </th>
+                                <th>
+                                    <i class="fas fa-sliders-h fa-rotate-90"></i>
+                                    Args
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-cogs"></i></span>
+                                    Actions
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -47,36 +59,38 @@
                                 <td>{{ task.next_run_time.strftime("%d.%m.%Y %H:%M:%S") }}</td>
                                 <td>
                                     {% if task.args|length < 1 %}
-                                        {{ "Default" }}
+                                    {{ "Default" }}
                                     {% elif task.args[0]|length == 5 and task.args[1]|length == 6 %}
-                                        {{ "All SEs & KWs" }}
+                                    {{ "All SEs & KWs" }}
                                     {% elif task.args[0]|length == 5 and task.args[1]|length < 6 %}
-                                        ({{ "All SEs" }})
-                                        {{ "-- KW:" }}
-                                        {% for keys in task.args[1] %}
-                                            ({{ keys }})
-                                        {% endfor %}
+                                    ({{ "All SEs" }})
+                                    {{ "-- KW:" }}
+                                    {% for keys in task.args[1] %}
+                                    ({{ keys }})
+                                    {% endfor %}
                                     {% elif task.args[0]|length < 5 and task.args[1]|length == 6 %}
-                                        {{ "SE:" }}
-                                        {% for se in task.args[0] %}
-                                            ({{ se.name }})
-                                        {% endfor %}
-                                        {{ "-- All KWs" }}
+                                    {{ "SE:" }}
+                                    {% for se in task.args[0] %}
+                                    ({{ se.name }})
+                                    {% endfor %}
+                                    {{ "-- All KWs" }}
                                     {% else %}
-                                        {{ "SE:" }}
-                                        {% for se in task.args[0] %}
-                                            ({{ se.name }})
-                                        {% endfor %}
-                                        {{ "-- KW:" }}
-                                        {% for keys in task.args[1] %}
-                                            ({{ keys }})
-                                        {% endfor %}
+                                    {{ "SE:" }}
+                                    {% for se in task.args[0] %}
+                                    ({{ se.name }})
+                                    {% endfor %}
+                                    {{ "-- KW:" }}
+                                    {% for keys in task.args[1] %}
+                                    ({{ keys }})
+                                    {% endfor %}
                                     {% endif %}
                                 </td>
                                 <td>
                                     <button class="button is-small is-danger" name="remove_task"
-                                            value="{{ task.id }}" formaction="/remove_task">
-                                        Remove
+                                            value="{{ task.id }}" formaction="/remove_task" title="Remove">
+                                        <span class="icon">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
                                     </button>
                                 </td>
                             </tr>

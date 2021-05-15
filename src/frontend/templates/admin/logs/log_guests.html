@@ -22,9 +22,18 @@
                     <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
                         <thead>
                         <tr>
-                            <th style="text-align: left">IP Address</th>
-                            <th>Visit Count</th>
-                            <th>Actions</th>
+                            <th style="text-align: left">
+                                <span class="icon"><i class="fas fa-network-wired"></i></span>
+                                IP Address
+                            </th>
+                            <th>
+                                <span class="icon"><i class="fas fa-stopwatch-20"></i></span>
+                                <abbr title="Homepage visits only">Visit Count</abbr>
+                            </th>
+                            <th>
+                                <span class="icon"><i class="fas fa-cogs"></i></span>
+                                Actions
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -37,8 +46,10 @@
                             <td>
                                 <form action="/remove_log" method="POST">
                                     <button class="button is-small is-danger" name="remove_log"
-                                            value="{{ log._id }}">
-                                        Remove
+                                            value="{{ log._id }}" title="Remove">
+                                        <span class="icon">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
                                     </button>
                                 </form>
                             </td>

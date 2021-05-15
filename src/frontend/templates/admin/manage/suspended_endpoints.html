@@ -9,18 +9,18 @@
         <div class="tile is-parent">
             <article class="tile is-child box">
                 <p class="title">{{ endpoints|length }}</p>
-                <p class="subtitle">Suspended Endpoints</p>
+                <p class="subtitle">Suspended</p>
             </article>
         </div>
     </div>
 </section>
 
-<form action="/suspended_endpoints" method="POST">
+<form action="/admin/manage/suspended" method="POST">
     <div class="column is-vcentered">
         <div class="card">
             <header class="card-header">
                 <p class="card-header-title is-centered title is-5">
-                    Suspended
+                    Suspended Endpoint
                 </p>
             </header>
             <hr>
@@ -34,10 +34,22 @@
                                id="suspendedEpTable" style="text-align: center">
                             <thead>
                             <tr>
-                                <th style="text-align: left">Endpoint</th>
-                                <th>Create Date</th>
-                                <th>Alive</th>
-                                <th>Actions</th>
+                                <th style="text-align: left">
+                                    <span class="icon"><i class="fas fa-link"></i></span>
+                                    Endpoint
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                    <abbr title="DD/MM/YYYY - UTC +0">Create Date</abbr>
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                                    Status
+                                </th>
+                                <th>
+                                    <span class="icon"><i class="fas fa-cogs"></i></span>
+                                    Actions
+                                </th>
                             </thead>
                             <tbody>
                             {% for endpoint in endpoints %}
@@ -48,26 +60,37 @@
                                         replace("https://", "") | replace("http://", "") }}
                                     </a>
                                 </td>
-                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M") }}</td>
                                 <td>{% if endpoint.up_now %}
-                                    <img src="/static/images/thick.png" alt="True">
+                                    <span class="icon" title="Live">
+                                        <i class="fas fa-check-circle fa-lg" style="color:green;"></i>
+                                    </span>
                                     {% else %}
-                                    <img src="/static/images/cross.png" alt="False">
+                                    <span class="icon" title="Not Responding">
+                                        <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i>
+                                    </span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <button class="button is-small is-primary" name="unsuspend"
-                                            value="{{ endpoint.url }}" formaction="/unsuspend">
-                                        Unsuspend
-                                    </button>
-                                    <button class="button is-small is-info" name="inspect"
+                                    <button class="button is-small is-info" name="inspect" title="Inspect"
                                             value="{{ endpoint.url }}" formaction="/selectedEndpoint"
-                                            formtarget="_blank" style="margin-left:5px;">
-                                        Inspect
+                                            formtarget="_blank">
+                                        <span class="icon">
+                                            <i class="fas fa-search"></i>
+                                        </span>
                                     </button>
-                                    <button class="button is-small is-danger" name="remove"
+                                    <button class="button is-small is-primary" name="unsuspend"
+                                            value="{{ endpoint.url }}"
+                                            formaction="/unsuspend" style="margin-left:5px;" title="Unsuspend">
+                                        <span class="icon">
+                                            <i class="fas fa-play"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-danger" name="remove" title="Remove"
                                             value="{{ endpoint.url }}" formaction="/remove" style="margin-left:5px;">
-                                        Remove
+                                        <span class="icon">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
                                     </button>
                                 </td>
                             </tr>

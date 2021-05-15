@@ -4,11 +4,14 @@
 {% endblock %}
 
 {% block body %}
-<form action="/admin/crawler" method="POST">
+<form action="/admin/crawl/crawler" method="POST">
     <div class="columns is-vcentered">
         <div class="column">
             <div class="column is-third-fourth" style="text-align: center">
-                <p class="title is-4">Search Engines</p>
+                <p class="title is-4">
+                    <span class="icon"><i class="fab fa-searchengin"></i></span>
+                    Search Engines
+                </p>
                 <span class="control">
                     {% for i in range(s_engines|length) %}
                         {% if i/3 == 1 %}
@@ -27,7 +30,10 @@
             </div>
             <hr style="width: 50%; margin-left: auto; margin-right: auto; background-color: #1E4B6D;">
             <div class="column is-third-fourth" style="text-align: center">
-                <p class="title is-4">Query Keywords</p>
+                <p class="title is-4">
+                    <span class="icon"><i class="fas fa-align-left"></i></span>
+                    Query Keywords
+                </p>
                 <span class="control">
                     {% for i in range(keywords|length) %}
                         {% if i/3 == 1 %}
@@ -46,7 +52,10 @@
             </div>
             <hr style="width: 50%; margin-left: auto; margin-right: auto; background-color: #1E4B6D;">
             <div class="column is is-third-fourth" style="text-align: center">
-                <p class="title is-4">Add keywords</p>
+                <p class="title is-4">
+                    <span class="icon"><i class="far fa-keyboard"></i></span>
+                    Add keywords
+                </p>
                 <label>
                     <textarea name="keyword_input" id="kw_input" cols="60" rows="10"
                               placeholder="Seperate multiple keywords with a line"
@@ -70,8 +79,12 @@
             </span>
             <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
 
-            <input type="date" name="schedule_date"/>
-            <input type="time" name="schedule_time"/>
+            <label>
+                <input type="date" name="schedule_date"/>
+            </label>
+            <label>
+                <input type="time" name="schedule_time"/>
+            </label>
             <br>
             <br>
             <span class="control">
