@@ -142,7 +142,6 @@ def crawler():
         if not current_user.is_authenticated():
             return render_template('index.html')
         keywords = Database.get_keywords("crawl_keys")
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
         if request.method == 'POST':
             selected_search_engines = request.form.getlist("cb_se")
@@ -181,7 +180,7 @@ def crawler():
 
             return redirect(url_for("crawler"))
         return render_template('/admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()),
-                               keywords=keywords, pending_count=pending_count)
+                               keywords=keywords, pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except ValueError:
         flash("- Invalid date/time.", "error")
         return redirect(url_for("crawler"))
@@ -199,10 +198,10 @@ def scheduled_tasks():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
         tasks = scheduler.get_jobs()
 
-        return render_template('/admin/crawl/scheduled_tasks.html', tasks=tasks, pending_count=pending_count)
+        return render_template('/admin/crawl/scheduled_tasks.html', tasks=tasks,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -218,20 +217,17 @@ def dashboard():
 
         endpoints = models.Endpoints.objects.filter(tag="approved")
         alive_count = len(models.Endpoints.objects.filter(tag="approved", up_now=True))
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
         start = datetime.datetime.now()
-        ago_30 = (start - datetime.timedelta(30))
-        ago_180 = (start - datetime.timedelta(180))
-
-        last_30 = {'date_alive': {'$gte': ago_30}}
-        last_180 = {'date_alive': {'$gte': ago_180}}
+        last_30 = {'date_alive': {'$gte': (start - datetime.timedelta(30))}}
+        last_180 = {'date_alive': {'$gte': (start - datetime.timedelta(180))}}
 
         alive_30_count = len(models.Endpoints.objects(tag="approved", __raw__=last_30))
         alive_180_count = len(models.Endpoints.objects(tag="approved", __raw__=last_180))
 
-        return render_template('/admin/dashboard.html', endpoints=endpoints, pending_count=pending_count,
-                               alive_30_count=alive_30_count, alive_180_count=alive_180_count, alive_count=alive_count)
+        return render_template('/admin/dashboard.html', endpoints=endpoints, alive_30_count=alive_30_count,
+                               alive_180_count=alive_180_count, alive_count=alive_count,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -246,10 +242,9 @@ def approved():
             return render_template('index.html')
 
         endpoints = models.Endpoints.objects.filter(tag="approved")
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
         return render_template('/admin/manage/approved_endpoints.html', endpoints=endpoints,
-                               pending_count=pending_count)
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -281,10 +276,9 @@ def suspended():
             return render_template('index.html')
 
         endpoints = models.Endpoints.objects.filter(tag="suspended")
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
         return render_template('/admin/manage/suspended_endpoints.html', endpoints=endpoints,
-                               pending_count=pending_count)
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -299,9 +293,9 @@ def removed():
             return render_template('index.html')
 
         endpoints = models.Endpoints.objects.filter(tag="removed")
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
-        return render_template('/admin/manage/removed_endpoints.html', endpoints=endpoints, pending_count=pending_count)
+        return render_template('/admin/manage/removed_endpoints.html', endpoints=endpoints,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -315,10 +309,11 @@ def log_exceptions():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        logs = models.Logs.objects.filter(levelname="ERROR")
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+        logs = sorted(models.Logs.objects.filter(levelname="ERROR"),
+                      key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_exceptions.html', logs=logs, pending_count=pending_count)
+        return render_template('/admin/logs/log_exceptions.html', logs=logs,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -332,10 +327,11 @@ def log_crawler():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        logs = models.Logs.objects.filter(funcName="crawl")
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
+        logs = sorted(models.Logs.objects.filter(funcName="crawl"),
+                      key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_crawler.html', logs=logs, pending_count=pending_count)
+        return render_template('/admin/logs/log_crawler.html', logs=logs,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -352,9 +348,9 @@ def log_authentications():
         logs = sorted(chain(models.Logs.objects.filter(funcName="login"),
                             models.Logs.objects.filter(funcName="logout")),
                       key=lambda instance: instance.time, reverse=True)
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
-        return render_template('/admin/logs/log_authentications.html', logs=logs, pending_count=pending_count)
+        return render_template('/admin/logs/log_authentications.html', logs=logs,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
@@ -370,11 +366,9 @@ def log_guests():
 
         logs = list(models.Logs.objects.filter(funcName="index").aggregate(
             [{"$sortByCount": "$message"}]))
-        total_count = len(list(logs))
-        pending_count = len(models.Endpoints.objects.filter(tag="pending"))
 
-        return render_template('/admin/logs/log_guests.html', logs=logs,
-                               total_count=total_count, pending_count=pending_count)
+        return render_template('/admin/logs/log_guests.html', logs=logs, total_count=len(list(logs)),
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:

@@ -47,14 +47,15 @@ class Database:
     @staticmethod
     def drop_collection(collection: str):
         """
+        Deletes the entire collection and it's data
 
-        :param collection:
-        :return:
+        :param collection: Collection to be deleted
+        :return: None
         """
         Database.DATABASE.drop_collection(collection)
 
     @staticmethod
-    def get_keywords(keys) -> list:
+    def get_keywords(keys: str) -> list:
         """
         Gets keywords for desired keyword list.
         Possible params = ["crawl_keys", "second_crawl_keys", "wanted_keys", "unwanted_keys"]
@@ -110,6 +111,9 @@ class Database:
 
         :param link: Endpoint's URL
         :param link_domain: Endpoint's domain
+        :param spider_name: Which spider found the endpoint
+        :param keyword: Which keyword found the endpoint
+        :param page: On which page is the endpoint found
         :return: None
         """
         Database.insert_one("endpoints", {

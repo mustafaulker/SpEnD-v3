@@ -16,7 +16,7 @@ class Sparql:
         for link in links:
             print(f"\nCurrent Website : {link}")
             # Site to be checked & Query & Timeout configuration
-            sparql = SPARQLWrapper(f"{link}", returnFormat=JSON)
+            sparql = SPARQLWrapper(link, returnFormat=JSON)
             sparql.setQuery("ASK WHERE { ?s ?p ?o. }")
             sparql.setTimeout(30)
             sparql.setOnlyConneg(True)
@@ -130,6 +130,12 @@ class Sparql:
 
     @staticmethod
     def check_endpoints():
+        """
+        Gets all endpoints, checks if they are alive or not.
+        According to the result, updates their status.
+
+        :return: None
+        """
         for endpoint in Database.get_endpoints():
             if is_alive(endpoint):
                 Database.endpoint_alive_or_not(endpoint, True)
