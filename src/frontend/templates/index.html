@@ -93,7 +93,7 @@
                         {{ endpoint.url | truncate(150, True) | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>
-                <td>{{ endpoint.date_created.date().strftime("%d.%m.%Y") }}</td>
+                <td>{{ endpoint.date_created.date().strftime("%d.%m.%y") }}</td>
                 <td>{{ endpoint.date_checked.strftime("%H:%M") }}</td>
                 <td>{% if endpoint.up_now %}
                     <span class="icon" title="Live">

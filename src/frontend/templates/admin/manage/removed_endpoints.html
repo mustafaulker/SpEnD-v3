@@ -53,11 +53,11 @@
                             <tr>
                                 <td style="text-align: left">
                                     <a href="{{ endpoint.url }}" target="_blank">
-                                        {{ endpoint.url | truncate(70, True) |
+                                        {{ endpoint.url | truncate(80, True) |
                                         replace("https://", "") | replace("http://", "") }}
                                     </a>
                                 </td>
-                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M") }}</td>
+                                <td>{{ endpoint.date_created.strftime("%d.%m.%y %H:%M") }}</td>
                                 <td>
                                     <button class="button is-small is-info" name="inspect" title="Inspect"
                                             value="{{ endpoint.url }}" formtarget="_blank"

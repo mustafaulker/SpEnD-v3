@@ -43,7 +43,7 @@
                             <td style="text-align: left">
                                 {{ log.message }}
                             </td>
-                            <td>{{ log.time.strftime("%d.%m.%Y %H:%M") }}</td>
+                            <td>{{ log.time.strftime("%d.%m.%y %H:%M") }}</td>
                             <td>
                                 <form action="/remove_log" method="POST">
                                     <button class="button is-small is-danger" name="remove_log"

@@ -57,7 +57,7 @@
                             {% for task in tasks %}
                             <tr>
                                 <td style="text-align: left">{{ task.name }}</td>
-                                <td>{{ task.next_run_time.strftime("%d.%m.%Y %H:%M:%S") }}</td>
+                                <td>{{ task.next_run_time.strftime("%d.%m.%y %H:%M") }}</td>
                                 <td>
                                     {% if task.args|length < 1 %}
                                     {{ "Default" }}

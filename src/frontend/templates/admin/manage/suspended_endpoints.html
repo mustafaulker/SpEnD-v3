@@ -56,11 +56,11 @@
                             <tr>
                                 <td style="text-align: left">
                                     <a href="{{ endpoint.url }}" target="_blank">
-                                        {{ endpoint.url | truncate(70, True) |
+                                        {{ endpoint.url | truncate(80, True) |
                                         replace("https://", "") | replace("http://", "") }}
                                     </a>
                                 </td>
-                                <td>{{ endpoint.date_created.strftime("%d.%m.%Y %H:%M") }}</td>
+                                <td>{{ endpoint.date_created.strftime("%d.%m.%y %H:%M") }}</td>
                                 <td>{% if endpoint.up_now %}
                                     <span class="icon" title="Live">
                                         <i class="fas fa-check-circle fa-lg" style="color:green;"></i>
