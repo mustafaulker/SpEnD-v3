@@ -12,7 +12,7 @@ from src.utils import util
 from src.utils.database_controller import Database
 import src.frontend
 
-spiders = [Aol, Ask, Bing, Google, Mojeek]
+spider_list = (Aol, Ask, Bing, Google, Mojeek)
 
 Database.initialize()
 
@@ -39,7 +39,7 @@ def crawl(spiders, query, inner_crawl: bool):
     src.frontend.logger.info("Crawl has ended.")
 
 
-def endpoint_crawler(spiders=spiders, query=Database.get_keywords("crawl_keys"), inner_crawl=True):
+def endpoint_crawler(spiders=spider_list, query=Database.get_keywords("crawl_keys"), inner_crawl=True):
     p = Process(target=crawl, args=(spiders, query, inner_crawl))
     p.start()
     p.join()

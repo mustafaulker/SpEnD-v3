@@ -55,19 +55,19 @@ class Database:
         Database.DATABASE.drop_collection(collection)
 
     @staticmethod
-    def get_keywords(keys: str) -> list:
+    def get_keywords(keys: str) -> tuple:
         """
         Gets keywords for desired keyword list.
         Possible params = ["crawl_keys", "second_crawl_keys", "wanted_keys", "unwanted_keys"]
 
         :param keys: Desired keyword lists name
-        :return: List of keywords
+        :return: Tuple of keywords
         """
         all_keys = list(Database.DATABASE["keywords"].find({}, {"_id": 0}))
 
         for i in range(len(all_keys)):
             if keys == list(all_keys[i].keys())[0]:
-                return all_keys[i][keys]
+                return tuple(all_keys[i][keys])
 
     @staticmethod
     def update(collection: str, query, update):
