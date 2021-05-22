@@ -472,5 +472,35 @@ def remove_task():
             scheduler.remove_job(request.form.get("remove_task"))
         return redirect(url_for("scheduled_tasks"))
     except Exception as e:
-        logger.error(f"Err, Remove_Log. {e}")
+        logger.error(f"Err, Remove_Task. {e}")
+        abort(500)
+
+
+@app.post('/resume_auto')
+@login_required
+def resume_auto():
+    try:
+        if request.method == 'POST':
+            if 'resume_ep_check' in request.form:
+                scheduler.resume_job('endpoint_check')
+            elif 'resume_auto_crawl' in request.form:
+                scheduler.resume_job('auto_crawl')
+        return redirect(url_for("scheduled_tasks"))
+    except Exception as e:
+        logger.error(f"Err, Resume_Task. {e}")
+        abort(500)
+
+
+@app.post('/pause_auto')
+@login_required
+def pause_auto():
+    try:
+        if request.method == 'POST':
+            if 'pause_ep_check' in request.form:
+                scheduler.pause_job('endpoint_check')
+            elif 'pause_auto_crawl' in request.form:
+                scheduler.pause_job('auto_crawl')
+        return redirect(url_for("scheduled_tasks"))
+    except Exception as e:
+        logger.error(f"Err, Pause_Task. {e}")
         abort(500)
