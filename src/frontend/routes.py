@@ -89,14 +89,14 @@ def load_user(pk):
         abort(500)
 
 
-@app.route('/login', methods=('GET', 'POST'))
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     try:
         if current_user.is_authenticated:
             return redirect(url_for('dashboard'))
         if request.method == 'POST':
-            form_username = request.form['username']
-            form_password = request.form['userpass']
+            form_username = request.form.get('username')
+            form_password = request.form.get('userpass')
 
             user = models.User.objects(username=form_username).first()
 
@@ -126,6 +126,33 @@ def logout():
         logout_user()
         logger.info(f"User({request.remote_addr}) has logged-out.")
         return redirect(url_for('index'))
+    except:
+        abort(500)
+
+
+@app.route('/admin/users/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    try:
+        if request.method == 'POST':
+            current_password = request.form.get('current_password')
+            new_password = request.form.get('new_password')
+
+            user = models.User.objects(username=current_user.username).first()
+
+            if user is None or not user.check_password(current_password):
+                flash('Invalid current password.', 'error')
+                logger.error(f"Failed password change attempt: {request.remote_addr}")
+                return redirect(url_for('change_password'))
+
+            user.change_pass(new_password)
+            user.save()
+            flash('Password has changed.', 'info')
+            logger.info(f"{request.environ.get('REMOTE_ADDR')} has changed the password of {current_user.username}.")
+
+        return render_template('/admin/users/change_password.html')
+    except TemplateNotFound:
+        abort(404)
     except:
         abort(500)
 
