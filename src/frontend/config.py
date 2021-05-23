@@ -12,6 +12,7 @@ class Config(object):
 
 class MongoConfig(Config):
     MONGODB_DB = 'SpEnD-DB'
+    MONGODB_CONNECT = False
     try:
         MONGODB_HOST = os.environ["MONGODB_HOST"]
         MONGODB_PORT = int(os.environ["MONGODB_PORT"])

@@ -25,42 +25,6 @@
                 </p>
             </header>
             <hr>
-            <div class="container">
-                <p class="title is-5 has-text-centered">Resume / Pause Auto Services</p>
-                <div class="columns has-text-centered">
-                    <div class="column">
-                        <p class="title is-6">Endpoint Check</p>
-                        <button class="button is-small is-success" name="resume_ep_check"
-                                value="endpoint_check" formaction="/resume_auto" title="Resume">
-                            <span class="icon">
-                                <i class="fas fa-play"></i>
-                            </span>
-                        </button>
-                        <button class="button is-small is-warning" name="pause_ep_check"
-                                value="endpoint_check" formaction="/pause_auto" title="Pause">
-                            <span class="icon">
-                                <i class="fas fa-pause"></i>
-                            </span>
-                        </button>
-                    </div>
-                    <div class="column">
-                        <p class="title is-6">Auto Crawl</p>
-                        <button class="button is-small is-success" name="resume_auto_crawl"
-                                value="auto_crawl" formaction="/resume_auto" title="Resume">
-                            <span class="icon">
-                                <i class="fas fa-play"></i>
-                            </span>
-                        </button>
-                        <button class="button is-small is-warning" name="pause_auto_crawl"
-                                value="auto_crawl" formaction="/pause_auto" title="Pause">
-                            <span class="icon">
-                                <i class="fas fa-pause"></i>
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <hr>
             <div class="card-table">
                 <div class="content">
                     <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
@@ -129,12 +93,66 @@
                                     {% endif %}
                                 </td>
                                 <td>
+                                    {% if task.name == "endpoint_check" %}
+                                    <button class="button is-small is-info" name="postpone_task"
+                                            value="{{ task.id }}" formaction="/postpone_task"
+                                            title="Postpone by one day">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-success" name="resume_ep_check"
+                                            value="endpoint_check" formaction="/resume_auto" title="Resume"
+                                            style="margin-left:5px;">
+                                        <span class="icon">
+                                            <i class="fas fa-play"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-warning" name="pause_ep_check"
+                                            value="endpoint_check" formaction="/pause_auto" title="Pause"
+                                            style="margin-left:5px;">
+                                        <span class="icon">
+                                            <i class="fas fa-pause"></i>
+                                        </span>
+                                    </button>
+                                    {% elif task.name == "auto_crawl" %}
+                                    <button class="button is-small is-info" name="postpone_task"
+                                            value="{{ task.id }}" formaction="/postpone_task"
+                                            title="Postpone by one day">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-success" name="resume_auto_crawl"
+                                            value="auto_crawl" formaction="/resume_auto" title="Resume"
+                                            style="margin-left:5px;">
+                                        <span class="icon">
+                                            <i class="fas fa-play"></i>
+                                        </span>
+                                    </button>
+                                    <button class="button is-small is-warning" name="pause_auto_crawl"
+                                            value="auto_crawl" formaction="/pause_auto" title="Pause"
+                                            style="margin-left:5px;">
+                                        <span class="icon">
+                                            <i class="fas fa-pause"></i>
+                                        </span>
+                                    </button>
+                                    {% else %}
+                                    <button class="button is-small is-info" name="postpone_task"
+                                            value="{{ task.id }}" formaction="/postpone_task"
+                                            title="Postpone by one day">
+                                        <span class="icon">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </span>
+                                    </button>
                                     <button class="button is-small is-danger" name="remove_task"
-                                            value="{{ task.id }}" formaction="/remove_task" title="Remove">
+                                            value="{{ task.id }}" formaction="/remove_task" title="Remove"
+                                            style="margin-left:5px;">
                                         <span class="icon">
                                             <i class="fas fa-trash"></i>
                                         </span>
                                     </button>
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}

@@ -504,3 +504,16 @@ def pause_auto():
     except Exception as e:
         logger.error(f"Err, Pause_Task. {e}")
         abort(500)
+
+
+@app.post('/postpone_task')
+@login_required
+def postpone_task():
+    try:
+        if request.method == 'POST':
+            scheduler.modify_job(id=request.form.get("postpone_task"), next_run_time=scheduler.get_job(
+                request.form.get("postpone_task")).next_run_time + datetime.timedelta(days=1))
+        return redirect(url_for("scheduled_tasks"))
+    except Exception as e:
+        logger.error(f"Err, Postpone_Task. {e}")
+        abort(500)
