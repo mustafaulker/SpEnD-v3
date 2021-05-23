@@ -10,6 +10,7 @@ from src.utils.sparql_controller import Sparql
 class Google(scrapy.Spider):
     name = "google"
     base_url = "https://www.google.com/search?q="
+    search_parameters = "&num=100"
     is_first_crawl = True
 
     custom_settings = {

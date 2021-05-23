@@ -10,6 +10,7 @@ from src.utils.sparql_controller import Sparql
 class Bing(scrapy.Spider):
     name = "bing"
     base_url = "https://www.bing.com/search?q="
+    search_parameters = "&form=QBLH&count=50"
     is_first_crawl = True
 
     custom_settings = {

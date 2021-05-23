@@ -10,6 +10,7 @@ from src.utils.sparql_controller import Sparql
 class Mojeek(scrapy.Spider):
     name = "mojeek"
     base_url = "https://www.mojeek.com/search?q="
+    search_parameters = "&t=40"
     is_first_crawl = True
 
     custom_settings = {

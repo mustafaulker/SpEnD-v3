@@ -10,6 +10,7 @@ from src.utils.sparql_controller import Sparql
 class Aol(scrapy.Spider):
     name = "aol"
     base_url = "https://search.aol.com/aol/search?q="
+    search_parameters = ""
     is_first_crawl = True
 
     start_urls = []

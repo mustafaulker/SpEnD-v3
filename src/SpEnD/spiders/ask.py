@@ -10,6 +10,7 @@ from src.utils.sparql_controller import Sparql
 class Ask(scrapy.Spider):
     name = "ask"
     base_url = "https://www.ask.com/web?q="
+    search_parameters = ""
     is_first_crawl = True
 
     start_urls = []

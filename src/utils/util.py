@@ -81,23 +81,13 @@ def fill_start_urls_list(spider, query):
     try:
         if isinstance(query, str):
             query = urllib.parse.quote_plus(query)
-            if spider.name == "google":
-                spider.start_urls.append(spider.base_url + query + "&num=100")
-            elif spider.name == "bing":
-                spider.start_urls.append(spider.base_url + query + "&form=QBLH")
-            else:
-                spider.start_urls.append(spider.base_url + query)
-        elif isinstance(query, list):
+            spider.start_urls.append(spider.base_url + query + spider.search_parameters)
+        elif isinstance(query, list) or isinstance(query, tuple):
             for key in query:
                 key = urllib.parse.quote_plus(key)
-                if spider.name == "google":
-                    spider.start_urls.append(spider.base_url + key + "&num=100")
-                elif spider.name == "bing":
-                    spider.start_urls.append(spider.base_url + key + "&form=QBLH")
-                else:
-                    spider.start_urls.append(spider.base_url + key)
+                spider.start_urls.append(spider.base_url + key + spider.search_parameters)
         else:
-            raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or list.")
+            raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str, list or tuple.")
     except ValueError as valueError:
         stderr.write(str(valueError))
 
@@ -118,7 +108,7 @@ def fill_start_urls_list_for_second_crawl(spider, query):
                     add_element_for_second_crawl(spider, query, domain)
                     Database.update("second_crawl_domains", {"domain": domain["domain"]},
                                     {"$set": {"last_crawl": datetime.datetime.utcnow()}})
-        elif isinstance(query, list):
+        elif isinstance(query, tuple):
             for domain in second_crawl_domains:
                 if "last_crawl" in domain:
                     if domain["last_crawl"] < date:
@@ -134,7 +124,7 @@ def fill_start_urls_list_for_second_crawl(spider, query):
                     Database.update("second_crawl_domains", {"domain": domain["domain"]},
                                     {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         else:
-            raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or list.")
+            raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or tuple.")
     except ValueError as valueError:
         stderr.write(str(valueError))
 
@@ -152,12 +142,7 @@ def add_element_for_second_crawl(spider, query, domain):
     """
 
     query = urllib.parse.quote_plus(f"{query} site:{domain['domain']}")
-    if spider.name == "google":
-        spider.start_urls.append(spider.base_url + query + "&num=100")
-    elif spider.name == "bing":
-        spider.start_urls.append(spider.base_url + query + "&form=QBLH")
-    else:
-        spider.start_urls.append(spider.base_url + query)
+    spider.start_urls.append(spider.base_url + query + spider.search_parameters)
 
 
 def clear_start_urls_list(spider):
