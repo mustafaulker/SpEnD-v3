@@ -60,6 +60,12 @@
                                 <td>
                                     {% if task.next_run_time == None %}
                                     {{ task.next_run_time }}
+                                    {% elif task.name == "interval_crawl" %}
+                                    Every {{ task.trigger.interval.days }} days: {{ task.next_run_time.strftime("%d.%m-%H:%M") }}
+                                    {% elif task.name == "endpoint_check" %}
+                                    Hourly, {{ task.next_run_time.strftime("%H:%M") }}
+                                    {% elif task.name == "auto_crawl" %}
+                                    Daily, {{ task.next_run_time.strftime("%H:%M") }}
                                     {% else %}
                                     {{ task.next_run_time.strftime("%d.%m.%y %H:%M") }}
                                     {% endif %}

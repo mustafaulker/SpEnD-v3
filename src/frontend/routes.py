@@ -202,7 +202,9 @@ def crawler():
 
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
                                   id=None, name='schedule_crawl', run_date=f'{date} {time}')
-                flash(f'- Crawl will be triggered on {date} at {time}', 'info')
+
+                flash(f'- Crawl will be triggered on '
+                      f'{datetime.datetime.strptime(date, "%Y-%m-%d").date().strftime("%d.%m.%y")} at {time}', 'info')
 
             elif 'schedule_interval' in request.form:
                 interval = request.form.get('crawl_interval')
