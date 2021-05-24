@@ -410,6 +410,110 @@ def log_guests():
         abort(500)
 
 
+@app.route('/admin/keywords/crawl_keys', methods=['GET', 'POST'])
+@login_required
+def crawl_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('crawl_keys')
+
+        return render_template('/admin/keywords/crawl_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/keywords/inner_keys', methods=['GET', 'POST'])
+@login_required
+def inner_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('second_crawl_keys')
+
+        return render_template('/admin/keywords/inner_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/keywords/wanted_keys', methods=['GET', 'POST'])
+@login_required
+def wanted_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('wanted_keys')
+
+        return render_template('/admin/keywords/wanted_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/keywords/unwanted_keys', methods=['GET', 'POST'])
+@login_required
+def unwanted_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('unwanted_keys')
+
+        return render_template('/admin/keywords/unwanted_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.post('/add_keyword')
+@login_required
+def add_keyword():
+    try:
+        if request.method == 'POST':
+            if 'crawl' in request.referrer:
+                return redirect(url_for('crawl_keys'))
+            elif 'inner' in request.referrer:
+                return redirect(url_for('inner_keys'))
+            elif 'unwanted' in request.referrer:
+                return redirect(url_for('unwanted_keys'))
+            elif 'wanted' in request.referrer:
+                return redirect(url_for('wanted_keys'))
+    except Exception as e:
+        logger.error(f"Err, Add_Keyword. {e}")
+        abort(500)
+
+
+@app.post('/remove_keyword')
+@login_required
+def remove_keyword():
+    try:
+        if request.method == 'POST':
+            if 'crawl' in request.referrer:
+                return redirect(url_for('crawl_keys'))
+            elif 'inner' in request.referrer:
+                return redirect(url_for('inner_keys'))
+            elif 'unwanted' in request.referrer:
+                return redirect(url_for('unwanted_keys'))
+            elif 'wanted' in request.referrer:
+                return redirect(url_for('wanted_keys'))
+    except Exception as e:
+        logger.error(f'Err, Remove_Keyword. {e}')
+        abort(500)
+
+
 @app.post('/approve')
 @login_required
 def approve():
@@ -483,19 +587,19 @@ def recover():
 def remove_log():
     try:
         if request.method == 'POST':
-            if request.referrer.endswith("guests"):
-                Database.delete_many("logs", {"msg": request.form.get("remove_log")})
+            if 'guests' in request.referrer:
+                Database.delete_many('logs', {'msg': request.form.get('remove_log')})
                 return redirect(url_for("log_guests"))
             else:
-                Database.delete_one("logs", {"_id": ObjectId(request.form.get("remove_log"))})
-        if request.referrer.endswith("exceptions"):
-            return redirect(url_for("log_exceptions"))
-        elif request.referrer.endswith("crawler"):
-            return redirect(url_for("log_crawler"))
-        elif request.referrer.endswith("authentications"):
-            return redirect(url_for("log_authentications"))
+                Database.delete_one('logs', {'_id': ObjectId(request.form.get('remove_log'))})
+        if 'exceptions' in request.referrer:
+            return redirect(url_for('log_exceptions'))
+        elif 'crawler' in request.referrer:
+            return redirect(url_for('log_crawler'))
+        elif 'authentications' in request.referrer:
+            return redirect(url_for('log_authentications'))
     except Exception as e:
-        logger.error(f"Err, Remove_Log. {e}")
+        logger.error(f'Err, Remove_Log. {e}')
         abort(500)
 
 
@@ -552,76 +656,3 @@ def postpone_task():
     except Exception as e:
         logger.error(f"Err, Postpone_Task. {e}")
         abort(500)
-
-
-@app.route('/admin/keywords/crawl_keys', methods=['GET', 'POST'])
-@login_required
-def crawl_keys():
-    try:
-        if not current_user.is_authenticated():
-            return render_template('index.html')
-
-        keywords = Database.get_keywords('crawl_keys')
-
-        return render_template('/admin/keywords/crawl_keys.html', keywords=keywords,
-                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
-    except TemplateNotFound:
-        abort(404)
-    except Exception as e:
-        print(e)
-        abort(500)
-
-
-@app.route('/admin/keywords/inner_keys', methods=['GET', 'POST'])
-@login_required
-def inner_keys():
-    try:
-        if not current_user.is_authenticated():
-            return render_template('index.html')
-
-        keywords = Database.get_keywords('second_crawl_keys')
-
-        return render_template('/admin/keywords/inner_keys.html', keywords=keywords,
-                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
-    except TemplateNotFound:
-        abort(404)
-    except Exception as e:
-        print(e)
-        abort(500)
-
-
-@app.route('/admin/keywords/wanted_keys', methods=['GET', 'POST'])
-@login_required
-def wanted_keys():
-    try:
-        if not current_user.is_authenticated():
-            return render_template('index.html')
-
-        keywords = Database.get_keywords('wanted_keys')
-
-        return render_template('/admin/keywords/wanted_keys.html', keywords=keywords,
-                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
-    except TemplateNotFound:
-        abort(404)
-    except Exception as e:
-        print(e)
-        abort(500)
-
-
-@app.route('/admin/keywords/unwanted_keys', methods=['GET', 'POST'])
-@login_required
-def unwanted_keys():
-    try:
-        if not current_user.is_authenticated():
-            return render_template('index.html')
-
-        keywords = Database.get_keywords('unwanted_keys')
-
-        return render_template('/admin/keywords/unwanted_keys.html', keywords=keywords,
-                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
-    except TemplateNotFound:
-        abort(404)
-    except Exception as e:
-        print(e)
-        abort(500)
-
