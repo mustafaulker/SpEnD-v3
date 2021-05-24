@@ -168,53 +168,59 @@ def crawler():
     try:
         if not current_user.is_authenticated():
             return render_template('index.html')
-        keywords = Database.get_keywords("crawl_keys")
+        keywords = Database.get_keywords('crawl_keys')
 
         if request.method == 'POST':
-            selected_search_engines = request.form.getlist("cb_se")
-            selected_keywords = request.form.getlist("cb_kw")
-            keyword_input = request.form.get("keyword_input").split("\r\n")
-            inner_crawl = request.form.get("inner_crawl") is not None
+            selected_search_engines = request.form.getlist('cb_se')
+            selected_keywords = request.form.getlist('cb_kw')
+            keyword_input = request.form.get('keyword_input').split("\r\n")
+            inner_crawl = request.form.get('inner_crawl') is not None
             user_inputs = []
             [user_inputs.append(keyword.strip()) for keyword in keyword_input]
             selected_keywords.extend(list(filter(None, user_inputs)))
 
             if not selected_search_engines or not selected_keywords:
-                flash("- No SEs or Keywords selected.", "error")
-                return redirect(url_for("crawler"))
+                flash('- No SEs or Keywords selected.', 'error')
+                return redirect(url_for('crawler'))
             else:
-                flash(f"- Selected Search Engines:\n{selected_search_engines}", "info")
-                flash(f"- Selected Keywords:\n{selected_keywords}", "info")
-                flash(f"- Inner Crawl:\n{inner_crawl}", "info")
+                flash(f'- Selected Search Engines:\n{selected_search_engines}', 'info')
+                flash(f'- Selected Keywords:\n{selected_keywords}', 'info')
+                flash(f'- Inner Crawl:\n{inner_crawl}', 'info')
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
             if 'manuel_crawl' in request.form:
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
-                                  id="manuel_crawl", run_date=datetime.datetime.now())
+                                  id='manuel_crawl', run_date=datetime.datetime.now())
 
             elif 'schedule_crawl' in request.form:
-                date, time = request.form.get("schedule_date"), request.form.get("schedule_time")
+                date, time = request.form.get('schedule_date'), request.form.get('schedule_time')
 
-                if datetime.datetime.fromisoformat(f"{date} {time}") < datetime.datetime.now():
-                    flash("- Past date/time selected.", "error")
-                    return redirect(url_for("crawler"))
-
-                spiders = list(map(search_engine_dict.get, selected_search_engines))
+                if datetime.datetime.fromisoformat(f'{date} {time}') < datetime.datetime.now():
+                    flash('- Past date/time selected.', 'error')
+                    return redirect(url_for('crawler'))
 
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
-                                  id=None, name="schedule_crawl", run_date=f'{date} {time}')
+                                  id=None, name='schedule_crawl', run_date=f'{date} {time}')
+                flash(f'- Crawl will be triggered on {date} at {time}', 'info')
 
-            return redirect(url_for("crawler"))
+            elif 'schedule_interval' in request.form:
+                interval = request.form.get('crawl_interval')
+
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
+                                  id=None, name='interval_crawl', trigger='interval', days=int(interval))
+                flash(f'- Crawl will be triggered {interval} days apart', 'info')
+
+            return redirect(url_for('crawler'))
         return render_template('/admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()),
                                keywords=keywords, pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except ValueError:
-        flash("- Invalid date/time.", "error")
-        return redirect(url_for("crawler"))
+        flash('- Invalid date/time.', 'error')
+        return redirect(url_for('crawler'))
     except TemplateNotFound:
         abort(404)
     except Exception as e:
-        logger.error(f"Err, Crawler. {e}")
+        logger.error(f'Err, Crawler. {e}')
         abort(500)
 
 

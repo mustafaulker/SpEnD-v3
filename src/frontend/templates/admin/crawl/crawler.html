@@ -64,7 +64,7 @@
                 </label>
             </div>
         </div>
-        <div class="column is-one-quarter" style="text-align: center">
+        <div class="column is-one-quarter is-vcentered" style="text-align: center">
             <label class="is-checkbox is-link is-rounded">
                 <input type="checkbox" name="inner_crawl" checked>
                 <span class="icon checkmark">
@@ -76,7 +76,7 @@
 
             <span class="control">
               <button class="button is-danger is-rounded" type="submit"
-                      value="manuel" name="manuel_crawl">Crawl</button>
+                      value="manuel" name="manuel_crawl">Instant Crawl</button>
             </span>
             <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
 
@@ -90,8 +90,31 @@
             <br>
             <span class="control">
               <button class="button is-danger is-rounded" type="submit"
-                      value="schedule" name="schedule_crawl">Schedule</button>
+                      value="schedule" name="schedule_crawl">Schedule a Crawl</button>
             </span>
+            <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
+
+            <div class="select is-small is-info">
+                <label for="crawl_interval">
+                    <select class="is-hovered" id="crawl_interval" name="crawl_interval">
+                        <option value="1">one day apart</option>
+                        <option value="2">two days apart</option>
+                        <option value="3">three days apart</option>
+                        <option value="4">four days apart</option>
+                        <option value="5">five days apart</option>
+                        <option value="6">six days apart</option>
+                        <option value="7">one week apart</option>
+                        <option value="14">two weeks apart</option>
+                    </select>
+                </label>
+            </div>
+            <br>
+            <br>
+            <span class="control">
+              <button class="button is-danger is-rounded" type="submit"
+                      value="interval" name="schedule_interval">Schedule Crawl Interval</button>
+            </span>
+
 
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
