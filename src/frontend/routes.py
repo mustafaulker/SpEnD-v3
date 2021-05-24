@@ -102,11 +102,11 @@ def login():
 
             if user is None or not user.check_password(form_password):
                 flash('Invalid username or password.', 'error')
-                logger.error(f"Failed authentication: {request.remote_addr}")
+                logger.error(f"({request.remote_addr}) - Failed authentication.")
                 return redirect(url_for('login'))
             login_user(user)
 
-            logger.info(f"User({request.environ.get('REMOTE_ADDR')}) has logged-in.")
+            logger.info(f"User({request.remote_addr}) has logged-in.")
 
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
@@ -148,7 +148,7 @@ def change_password():
             user.change_pass(new_password)
             user.save()
             flash('Password has changed.', 'info')
-            logger.info(f"{request.environ.get('REMOTE_ADDR')} has changed the password of {current_user.username}.")
+            logger.info(f"({request.remote_addr}) has changed the password of {current_user.username}.")
 
         return render_template('/admin/users/change_password.html')
     except TemplateNotFound:
@@ -402,7 +402,7 @@ def log_guests():
         logs = list(models.Logs.objects.filter(funcName="index").aggregate(
             [{"$sortByCount": "$message"}]))
 
-        return render_template('/admin/logs/log_guests.html', logs=logs, total_count=len(list(logs)),
+        return render_template('/admin/logs/log_guests.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -552,3 +552,76 @@ def postpone_task():
     except Exception as e:
         logger.error(f"Err, Postpone_Task. {e}")
         abort(500)
+
+
+@app.route('/admin/keywords/crawl_keys', methods=['GET', 'POST'])
+@login_required
+def crawl_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('crawl_keys')
+
+        return render_template('/admin/keywords/crawl_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except Exception as e:
+        print(e)
+        abort(500)
+
+
+@app.route('/admin/keywords/inner_keys', methods=['GET', 'POST'])
+@login_required
+def inner_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('second_crawl_keys')
+
+        return render_template('/admin/keywords/inner_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except Exception as e:
+        print(e)
+        abort(500)
+
+
+@app.route('/admin/keywords/wanted_keys', methods=['GET', 'POST'])
+@login_required
+def wanted_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('wanted_keys')
+
+        return render_template('/admin/keywords/wanted_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except Exception as e:
+        print(e)
+        abort(500)
+
+
+@app.route('/admin/keywords/unwanted_keys', methods=['GET', 'POST'])
+@login_required
+def unwanted_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('unwanted_keys')
+
+        return render_template('/admin/keywords/unwanted_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except Exception as e:
+        print(e)
+        abort(500)
+
