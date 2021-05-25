@@ -163,3 +163,14 @@ class Database:
         """
         Database.update("endpoints", {"url": endpoint},
                         {"$set": {"date_checked": datetime.utcnow(), "up_now": up_now}})
+
+    @staticmethod
+    def delete_keyword(keyword_array: str, keyword: str):
+        """
+        Deletes a keyword from specified keyword array.
+                
+        :param keyword_array: Array's name which contains specified keyword
+        :param keyword: Keyword's name to be deleted
+        :return: None
+        """
+        Database.update('keywords', {keyword_array: keyword}, {'$pull': {keyword_array: keyword}})

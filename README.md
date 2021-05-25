@@ -32,6 +32,8 @@ Checks if gathered websites is an Endpoint or not, if so stores them in the data
     │   │   │   │   ├── crawl/
     │   │   │   │   ├── logs/
     │   │   │   │   ├── manage/
+    │   │   │   │   ├── keywords/
+    │   │   │   │   ├── users/
     │   │   │   │   └── ...
     │   │   │   ├── auth/
     │   │   │   ├── errors/

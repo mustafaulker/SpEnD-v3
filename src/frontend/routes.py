@@ -502,12 +502,16 @@ def remove_keyword():
     try:
         if request.method == 'POST':
             if 'crawl' in request.referrer:
+                Database.delete_keyword('crawl_keys', request.form.get('remove_key'))
                 return redirect(url_for('crawl_keys'))
             elif 'inner' in request.referrer:
+                Database.delete_keyword('second_crawl_keys', request.form.get('remove_key'))
                 return redirect(url_for('inner_keys'))
             elif 'unwanted' in request.referrer:
+                Database.delete_keyword('unwanted_keys', request.form.get('remove_key'))
                 return redirect(url_for('unwanted_keys'))
             elif 'wanted' in request.referrer:
+                Database.delete_keyword('wanted_keys', request.form.get('remove_key'))
                 return redirect(url_for('wanted_keys'))
     except Exception as e:
         logger.error(f'Err, Remove_Keyword. {e}')
