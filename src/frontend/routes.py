@@ -440,7 +440,7 @@ def second_crawl_keys():
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
-    except Exception as e:
+    except:
         abort(500)
 
 

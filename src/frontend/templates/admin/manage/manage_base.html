@@ -1,0 +1,58 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+    {% block tabtitle %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <section class="info-tiles">
+        <div class="tile is-ancestor has-text-centered">
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{% block title %}{{ endpoints|length }}{% endblock %}</p>
+                    <p class="subtitle">{% block subtitle %}{% endblock %}</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <div class="column is-vcentered">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title is-centered title is-5">
+                    {% block tabletitle %}{% endblock %}
+                </p>
+            </header>
+            <hr>
+            <div class="card-table">
+                <div class="content">
+                    <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                        {% block scheduled_tasks_special %}
+                            {% if endpoints|length < 1 %}
+                                <h1 class="title is-4" style="text-align: center">
+                                    {% block noendpoint %}{% endblock %}
+                                </h1>
+                            {% else %}
+                                <table class="table is-fullwidth is-striped is-hoverable"
+                                       style="text-align: center">
+                                    <thead>
+                                    <tr>
+                                        {% block tablehead %}{% endblock %}
+                                        <th>
+                                            <span class="icon"><i class="fas fa-cogs"></i></span>
+                                            Actions
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% block tablebody %}{% endblock %}
+                                    </tbody>
+                                </table>
+                            {% endif %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

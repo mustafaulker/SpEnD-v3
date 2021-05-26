@@ -1,0 +1,45 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+    {% block tabtitle %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+    <div class="column is-vcentered">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title is-centered title is-5">
+                    {% block title %}{% endblock %}
+                </p>
+            </header>
+            <hr>
+            <div class="card-table">
+                <div class="content">
+                    <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                        {% if logs|length < 1 %}
+                            <h1 class="title is-4" style="text-align: center">
+                                {% block nolog %}{% endblock %}
+                            </h1>
+                        {% else %}
+                            <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
+                                <thead>
+                                <tr>
+                                    {% block firstcolhead %}{% endblock %}
+                                    {% block secondcolhead %}{% endblock %}
+                                    <th>
+                                        <span class="icon"><i class="fas fa-cogs"></i></span>
+                                        Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% block forblock %}{% endblock %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
