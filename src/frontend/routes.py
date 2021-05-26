@@ -40,7 +40,7 @@ def contact():
     try:
         if request.method == 'POST':
             if request.form.get('cont_subject'):
-                flash('Not configurated yet, please use GitHub Issues', 'error')
+                flash('Not configured yet, please use GitHub Issues', 'error')
                 return redirect(url_for("contact"))
             else:
                 if recaptcha.verify():
@@ -113,7 +113,7 @@ def login():
                 next_page = url_for('dashboard')
             return redirect(next_page)
 
-        return render_template('/auth/login.html')
+        return render_template('./auth/login.html')
     except TemplateNotFound:
         abort(404)
     except:
@@ -150,7 +150,7 @@ def change_password():
             flash('Password has changed.', 'info')
             logger.info(f"({request.remote_addr}) has changed the password of {current_user.username}.")
 
-        return render_template('/admin/users/change_password.html')
+        return render_template('./admin/users/change_password.html')
     except TemplateNotFound:
         abort(404)
     except:
@@ -214,7 +214,7 @@ def crawler():
                 flash(f'- Crawl will be triggered {interval} days apart', 'info')
 
             return redirect(url_for('crawler'))
-        return render_template('/admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()),
+        return render_template('./admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()),
                                keywords=keywords, pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except ValueError:
         flash('- Invalid date/time.', 'error')
@@ -235,7 +235,7 @@ def scheduled_tasks():
 
         tasks = scheduler.get_jobs()
 
-        return render_template('/admin/crawl/scheduled_tasks.html', tasks=tasks,
+        return render_template('./admin/crawl/scheduled_tasks.html', tasks=tasks,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -260,7 +260,7 @@ def dashboard():
         alive_30_count = len(models.Endpoints.objects(tag="approved", __raw__=last_30))
         alive_180_count = len(models.Endpoints.objects(tag="approved", __raw__=last_180))
 
-        return render_template('/admin/dashboard.html', endpoints=endpoints, alive_30_count=alive_30_count,
+        return render_template('./admin/dashboard.html', endpoints=endpoints, alive_30_count=alive_30_count,
                                alive_180_count=alive_180_count, alive_count=alive_count,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
@@ -278,7 +278,7 @@ def approved():
 
         endpoints = models.Endpoints.objects.filter(tag="approved")
 
-        return render_template('/admin/manage/approved_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/approved_endpoints.html', endpoints=endpoints,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -295,7 +295,7 @@ def pending():
 
         endpoints = models.Endpoints.objects.filter(tag="pending")
 
-        return render_template('/admin/manage/pending_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/pending_endpoints.html', endpoints=endpoints,
                                pending_count=len(endpoints))
     except TemplateNotFound:
         abort(404)
@@ -312,7 +312,7 @@ def suspended():
 
         endpoints = models.Endpoints.objects.filter(tag="suspended")
 
-        return render_template('/admin/manage/suspended_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/suspended_endpoints.html', endpoints=endpoints,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -329,7 +329,7 @@ def removed():
 
         endpoints = models.Endpoints.objects.filter(tag="removed")
 
-        return render_template('/admin/manage/removed_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/removed_endpoints.html', endpoints=endpoints,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -347,7 +347,7 @@ def log_exceptions():
         logs = sorted(models.Logs.objects.filter(levelname="ERROR"),
                       key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_exceptions.html', logs=logs,
+        return render_template('./admin/logs/log_exceptions.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -365,7 +365,7 @@ def log_crawler():
         logs = sorted(models.Logs.objects.filter(funcName="crawl"),
                       key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_crawler.html', logs=logs,
+        return render_template('./admin/logs/log_crawler.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -384,7 +384,7 @@ def log_authentications():
                             models.Logs.objects.filter(funcName="logout")),
                       key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_authentications.html', logs=logs,
+        return render_template('./admin/logs/log_authentications.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -402,7 +402,7 @@ def log_guests():
         logs = list(models.Logs.objects.filter(funcName="index").aggregate(
             [{"$sortByCount": "$message"}]))
 
-        return render_template('/admin/logs/log_guests.html', logs=logs,
+        return render_template('./admin/logs/log_guests.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -419,7 +419,7 @@ def crawl_keys():
 
         keywords = Database.get_keywords('crawl_keys')
 
-        return render_template('/admin/keywords/crawl_keys.html', keywords=keywords,
+        return render_template('./admin/keywords/crawl_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -436,11 +436,11 @@ def second_crawl_keys():
 
         keywords = Database.get_keywords('second_crawl_keys')
 
-        return render_template('/admin/keywords/second_crawl_keys.html', keywords=keywords,
+        return render_template('./admin/keywords/second_crawl_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
-    except:
+    except Exception as e:
         abort(500)
 
 
@@ -453,7 +453,7 @@ def wanted_keys():
 
         keywords = Database.get_keywords('wanted_keys')
 
-        return render_template('/admin/keywords/wanted_keys.html', keywords=keywords,
+        return render_template('./admin/keywords/wanted_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -470,7 +470,7 @@ def unwanted_keys():
 
         keywords = Database.get_keywords('unwanted_keys')
 
-        return render_template('/admin/keywords/unwanted_keys.html', keywords=keywords,
+        return render_template('./admin/keywords/unwanted_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -484,8 +484,8 @@ def insert_keyword():
     try:
         if request.method == 'POST':
             keys = []
-            keyword_txtarea = request.form.get('keyword_txtarea').split("\r\n")
-            [keys.append(keyword.strip()) for keyword in keyword_txtarea]
+            keyword_textarea = request.form.get('keyword_textarea').split("\r\n")
+            [keys.append(keyword.strip()) for keyword in keyword_textarea]
 
             if '' in keys:
                 keys.remove('')

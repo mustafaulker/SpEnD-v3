@@ -8,6 +8,7 @@ class Config(object):
     FLASK_SECRET = SECRET_KEY
     STATIC_URL_PATH = '/static/'
     STATIC_FOLDER = 'static'
+    TEMPLATE_FOLDER = 'templates'
 
 
 class MongoConfig(Config):
