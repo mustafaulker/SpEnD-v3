@@ -427,16 +427,16 @@ def crawl_keys():
         abort(500)
 
 
-@app.route('/admin/keywords/inner_keys', methods=['GET', 'POST'])
+@app.route('/admin/keywords/second_crawl_keys', methods=['GET', 'POST'])
 @login_required
-def inner_keys():
+def second_crawl_keys():
     try:
         if not current_user.is_authenticated():
             return render_template('index.html')
 
         keywords = Database.get_keywords('second_crawl_keys')
 
-        return render_template('/admin/keywords/inner_keys.html', keywords=keywords,
+        return render_template('/admin/keywords/second_crawl_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -478,21 +478,30 @@ def unwanted_keys():
         abort(500)
 
 
-@app.post('/add_keyword')
+@app.post('/insert_keyword')
 @login_required
-def add_keyword():
+def insert_keyword():
     try:
         if request.method == 'POST':
-            if 'crawl' in request.referrer:
-                return redirect(url_for('crawl_keys'))
-            elif 'inner' in request.referrer:
-                return redirect(url_for('inner_keys'))
-            elif 'unwanted' in request.referrer:
-                return redirect(url_for('unwanted_keys'))
-            elif 'wanted' in request.referrer:
-                return redirect(url_for('wanted_keys'))
+            keys = []
+            keyword_txtarea = request.form.get('keyword_txtarea').split("\r\n")
+            [keys.append(keyword.strip()) for keyword in keyword_txtarea]
+
+            if '' in keys:
+                keys.remove('')
+
+            if '' in keys and len(keys) == 1:
+                flash(f'No Keywords provided.', 'error')
+            else:
+                for key in keys.copy():
+                    if key in Database.get_keywords(request.referrer.rsplit('/', 1)[-1]):
+                        keys.remove(key)
+
+                Database.insert_keyword(request.referrer.rsplit('/', 1)[-1], keys)
+                flash(f'Keywords has added.', 'info')
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
-        logger.error(f"Err, Add_Keyword. {e}")
+        logger.error(f"Err, Insert_Keyword. {e}")
         abort(500)
 
 
@@ -501,18 +510,8 @@ def add_keyword():
 def remove_keyword():
     try:
         if request.method == 'POST':
-            if 'crawl' in request.referrer:
-                Database.delete_keyword('crawl_keys', request.form.get('remove_key'))
-                return redirect(url_for('crawl_keys'))
-            elif 'inner' in request.referrer:
-                Database.delete_keyword('second_crawl_keys', request.form.get('remove_key'))
-                return redirect(url_for('inner_keys'))
-            elif 'unwanted' in request.referrer:
-                Database.delete_keyword('unwanted_keys', request.form.get('remove_key'))
-                return redirect(url_for('unwanted_keys'))
-            elif 'wanted' in request.referrer:
-                Database.delete_keyword('wanted_keys', request.form.get('remove_key'))
-                return redirect(url_for('wanted_keys'))
+            Database.remove_keyword(request.referrer.rsplit('/', 1)[-1], request.form.get('remove_key'))
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f'Err, Remove_Keyword. {e}')
         abort(500)
@@ -523,7 +522,7 @@ def remove_keyword():
 def approve():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
+            Database.update_one("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
         return redirect(url_for("pending"))
     except Exception as e:
         logger.error(f"Err, Approve_EP. {e}")
@@ -535,11 +534,8 @@ def approve():
 def suspend():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
-        if request.referrer.endswith("approved"):
-            return redirect(url_for("approved"))
-        if request.referrer.endswith("pending"):
-            return redirect(url_for("pending"))
+            Database.update_one("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Suspend_EP. {e}")
         abort(500)
@@ -550,7 +546,7 @@ def suspend():
 def unsuspend():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
+            Database.update_one("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("suspended"))
     except Exception as e:
         logger.error(f"Err, Unsuspend_EP. {e}")
@@ -562,13 +558,8 @@ def unsuspend():
 def remove():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
-        if request.referrer.endswith("approved"):
-            return redirect(url_for("approved"))
-        elif request.referrer.endswith("pending"):
-            return redirect(url_for("pending"))
-        elif request.referrer.endswith("suspended"):
-            return redirect(url_for("suspended"))
+            Database.update_one("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Remove_EP. {e}")
         abort(500)
@@ -579,7 +570,7 @@ def remove():
 def recover():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
+            Database.update_one("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("removed"))
     except Exception as e:
         logger.error(f"Err, Recover_EP. {e}")

@@ -70,8 +70,12 @@ class Database:
                 return tuple(all_keys[i][keys])
 
     @staticmethod
-    def update(collection: str, query, update):
+    def update_one(collection: str, query, update):
         Database.DATABASE[collection].update_one(query, update)
+
+    @staticmethod
+    def update_many(collection: str, query, update):
+        Database.DATABASE[collection].update_many(query, update)
 
     @staticmethod
     def delete_one(collection: str, query):
@@ -161,11 +165,11 @@ class Database:
         :param up_now: State of endpoint
         :return: None
         """
-        Database.update("endpoints", {"url": endpoint},
-                        {"$set": {"date_checked": datetime.utcnow(), "up_now": up_now}})
+        Database.update_one("endpoints", {"url": endpoint},
+                            {"$set": {"date_checked": datetime.utcnow(), "up_now": up_now}})
 
     @staticmethod
-    def delete_keyword(keyword_array: str, keyword: str):
+    def remove_keyword(keyword_array: str, keyword: str):
         """
         Deletes a keyword from specified keyword array.
                 
@@ -173,4 +177,17 @@ class Database:
         :param keyword: Keyword's name to be deleted
         :return: None
         """
-        Database.update('keywords', {keyword_array: keyword}, {'$pull': {keyword_array: keyword}})
+        Database.update_one('keywords', {keyword_array: keyword}, {'$pull': {keyword_array: keyword}})
+
+    @staticmethod
+    def insert_keyword(keyword_array: str, keyword):
+        """
+        Inserts keyword/s to specified keyword array.
+
+        :param keyword_array: Array's name which keyword/s to be inserted.
+        :param keyword: Keyword/s to be inserted.
+        :return: None
+        """
+        Database.update_many('keywords',
+                             {keyword_array: {"$exists": True}},
+                             {'$push': {keyword_array: {"$each": keyword}}})
