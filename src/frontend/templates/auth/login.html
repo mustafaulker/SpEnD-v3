@@ -1,56 +1,56 @@
 {% extends 'base.html' %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/css/auth/login.css">
-<title>Log-in | SpEnD</title>
+    <link rel="stylesheet" href="/static/css/auth/login.css">
+    <title>Log-in | SpEnD</title>
 {% endblock %}
 
 {% block body %}
-<form method="POST">
-    <section class="hero is-success is-fullheight">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <div class="column is-4 is-offset-4">
-                    <h3 class="title has-text-black">Login</h3>
-                    <hr class="login-hr">
-                    <div class="box">
-                        <div class="field">
-                            <div class="control has-icons-left">
-                                <label for="loginEmail">
-                                    <input class="input is-large" type="text" autofocus="" id="loginEmail"
-                                           placeholder="username" name="username" required>
-                                    <span class="icon is-small is-left">
+    <form method="POST">
+        <section class="hero is-success is-fullheight">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <div class="column is-4 is-offset-4">
+                        <h3 class="title has-text-black">Login</h3>
+                        <hr class="login-hr">
+                        <div class="box">
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <label for="loginEmail">
+                                        <input class="input is-large" type="text" autofocus="" id="loginEmail"
+                                               placeholder="username" name="username" required>
+                                        <span class="icon is-small is-left">
                                       <i class="fa fa-user"></i>
                                     </span>
-                                </label>
+                                    </label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="field">
-                            <div class="control has-icons-left">
-                                <label for="loginPassword">
-                                    <input class="input is-large" type="password" id="loginPassword"
-                                           placeholder="password" name="userpass" required>
-                                    <span class="icon is-small is-left">
+                            <div class="field">
+                                <div class="control has-icons-left">
+                                    <label for="loginPassword">
+                                        <input class="input is-large" type="password" id="loginPassword"
+                                               placeholder="password" name="userpass" required>
+                                        <span class="icon is-small is-left">
                                       <i class="fa fa-lock"></i>
                                     </span>
-                                </label>
+                                    </label>
+                                </div>
                             </div>
+                            <button class="button is-block is-info is-large is-fullwidth">Login</button>
+                            {% with messages = get_flashed_messages(with_categories=true) %}
+                                {% if messages %}
+                                    <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
+                                    <ul class=flashes>
+                                        {% for category, message in messages %}
+                                            <div class="{{ category }}">{{ message }}</div>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            {% endwith %}
                         </div>
-                        <button class="button is-block is-info is-large is-fullwidth">Login</button>
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                        <hr style="width: 40%; margin-left: auto; margin-right: auto; background-color: #7a7a7a;">
-                        <ul class=flashes>
-                            {% for category, message in messages %}
-                            <div class="{{ category }}">{{ message }}</div>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                        {% endwith %}
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-</form>
+        </section>
+    </form>
 {% endblock %}

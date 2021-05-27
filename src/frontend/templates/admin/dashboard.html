@@ -3,32 +3,32 @@
 {% block head %}<title>Dashboard | SpEnD</title>{% endblock %}
 
 {% block body %}
-<section class="info-tiles">
-    <div class="tile is-ancestor has-text-centered">
-        <div class="tile is-parent">
-            <article class="tile is-child box">
-                <p class="title">{{ endpoints|length }}</p>
-                <p class="subtitle">Endpoints</p>
-            </article>
+    <section class="info-tiles">
+        <div class="tile is-ancestor has-text-centered">
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ endpoints|length }}</p>
+                    <p class="subtitle">Endpoints</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ alive_count }}</p>
+                    <p class="subtitle">Live</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ alive_30_count }}</p>
+                    <p class="subtitle">Live in last 30 days</p>
+                </article>
+            </div>
+            <div class="tile is-parent">
+                <article class="tile is-child box">
+                    <p class="title">{{ alive_180_count }}</p>
+                    <p class="subtitle">Live in last 180 days</p>
+                </article>
+            </div>
         </div>
-        <div class="tile is-parent">
-            <article class="tile is-child box">
-                <p class="title">{{ alive_count }}</p>
-                <p class="subtitle">Live</p>
-            </article>
-        </div>
-        <div class="tile is-parent">
-            <article class="tile is-child box">
-                <p class="title">{{ alive_30_count }}</p>
-                <p class="subtitle">Live in last 30 days</p>
-            </article>
-        </div>
-        <div class="tile is-parent">
-            <article class="tile is-child box">
-                <p class="title">{{ alive_180_count }}</p>
-                <p class="subtitle">Live in last 180 days</p>
-            </article>
-        </div>
-    </div>
-</section>
+    </section>
 {% endblock %}

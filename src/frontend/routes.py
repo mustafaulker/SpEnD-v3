@@ -173,12 +173,22 @@ def crawler():
         if request.method == 'POST':
             selected_search_engines = request.form.getlist('cb_se')
             selected_keywords = request.form.getlist('cb_kw')
-            keyword_input = request.form.get('keyword_input').split("\r\n")
+            keyword_input = set(request.form.get('keyword_input').split("\r\n"))
             inner_crawl = request.form.get('inner_crawl') is not None
             user_inputs = []
             [user_inputs.append(keyword.strip()) for keyword in keyword_input]
             selected_keywords.extend(list(filter(None, user_inputs)))
 
+            # Insert written keyword/s to the DB.
+            if '' in keyword_input:
+                keyword_input.remove('')
+            if keyword_input:
+                for key in keyword_input.copy():
+                    if key in Database.get_keywords('crawl_keys'):
+                        keyword_input.remove(key)
+                Database.insert_keyword('crawl_keys', list(keyword_input))
+
+            # SE and KW selection control.
             if not selected_search_engines or not selected_keywords:
                 flash('- No SEs or Keywords selected.', 'error')
                 return redirect(url_for('crawler'))
@@ -189,10 +199,12 @@ def crawler():
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
+            # Instant crawl button pressed.
             if 'manuel_crawl' in request.form:
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
                                   id='manuel_crawl', run_date=datetime.datetime.now())
 
+            # Schedule a crawl button pressed.
             elif 'schedule_crawl' in request.form:
                 date, time = request.form.get('schedule_date'), request.form.get('schedule_time')
 
@@ -206,6 +218,7 @@ def crawler():
                 flash(f'- Crawl will be triggered on '
                       f'{datetime.datetime.strptime(date, "%Y-%m-%d").date().strftime("%d.%m.%y")} at {time}', 'info')
 
+            # Schedule Crawl Interval button pressed.
             elif 'schedule_interval' in request.form:
                 interval = request.form.get('crawl_interval')
 
@@ -483,21 +496,21 @@ def unwanted_keys():
 def insert_keyword():
     try:
         if request.method == 'POST':
-            keys = []
+            keys = set()
             keyword_textarea = request.form.get('keyword_textarea').split("\r\n")
-            [keys.append(keyword.strip()) for keyword in keyword_textarea]
+            [keys.add(keyword.strip()) for keyword in keyword_textarea]
+
+            for key in keys.copy():
+                if key in Database.get_keywords(request.referrer.rsplit('/', 1)[-1]):
+                    keys.remove(key)
 
             if '' in keys:
                 keys.remove('')
 
-            if '' in keys and len(keys) == 1:
+            if not keys:
                 flash(f'No Keywords provided.', 'error')
             else:
-                for key in keys.copy():
-                    if key in Database.get_keywords(request.referrer.rsplit('/', 1)[-1]):
-                        keys.remove(key)
-
-                Database.insert_keyword(request.referrer.rsplit('/', 1)[-1], keys)
+                Database.insert_keyword(request.referrer.rsplit('/', 1)[-1], list(keys))
                 flash(f'Keywords has added.', 'info')
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
