@@ -6,6 +6,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from SPARQLWrapper.SPARQLExceptions import *
 from urllib3.exceptions import *
 
+import src.frontend
 from src.utils.database_controller import Database
 from src.utils.util import is_alive
 
@@ -143,8 +144,10 @@ class Sparql:
 
         :return: None
         """
+        src.frontend.logger.info('Status check has started.')
         for endpoint in Database.get_endpoints():
             if is_alive(endpoint):
                 Database.endpoint_alive_or_not(endpoint, True)
             else:
                 Database.endpoint_alive_or_not(endpoint, False)
+        src.frontend.logger.info('Status check has stopped.')

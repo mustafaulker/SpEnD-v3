@@ -21,9 +21,7 @@
     <div class="container">
         <div class="navbar-brand">
             <a class="navbar-item brand-text" href="/admin/dashboard" target="_self"
-               style="font-weight: bold; font-size: large; color: #0865AE">
-                SpEnD | Admin
-            </a>
+               style="font-weight: bold; font-size: large; color: #0865AE">SpEnD | Admin</a>
             <div class="navbar-burger burger" data-target="adminNavMenu"
                  onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
                 <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
@@ -110,6 +108,10 @@
                         <span class="icon"><i class="fas fa-file-signature"></i></span>
                         Crawler Logs</a>
                     </li>
+                    <li><a href="/admin/logs/status">
+                        <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                        Status Check Logs</a>
+                    </li>
                     <li><a href="/admin/logs/authentications">
                         <span class="icon"><i class="fas fa-fingerprint"></i></span>
                         Authentications</a>
@@ -160,6 +162,5 @@
         </div>
     </div>
 </div>
-
 </body>
 </html>

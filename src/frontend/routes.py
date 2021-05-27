@@ -386,6 +386,24 @@ def log_crawler():
         abort(500)
 
 
+@app.route('/admin/logs/status', methods=['GET', 'POST'])
+@login_required
+def log_status():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        logs = sorted(models.Logs.objects.filter(funcName='check_endpoints'),
+                      key=lambda instance: instance.time, reverse=True)
+
+        return render_template('./admin/logs/log_status.html', logs=logs,
+                               pending_count=len(models.Endpoints.objects.filter(tag='pending')))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
 @app.route('/admin/logs/authentications', methods=['GET', 'POST'])
 @login_required
 def log_authentications():
@@ -606,6 +624,8 @@ def remove_log():
             return redirect(url_for('log_crawler'))
         elif 'authentications' in request.referrer:
             return redirect(url_for('log_authentications'))
+        elif 'status' in request.referrer:
+            return redirect(url_for('log_status'))
     except Exception as e:
         logger.error(f'Err, Remove_Log. {e}')
         abort(500)
