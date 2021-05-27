@@ -227,7 +227,7 @@ def crawler():
                 flash(f'- Crawl will be triggered {interval} days apart', 'info')
 
             return redirect(url_for('crawler'))
-        return render_template('./admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()),
+        return render_template('./admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()), zip=zip,
                                keywords=keywords, pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except ValueError:
         flash('- Invalid date/time.', 'error')
