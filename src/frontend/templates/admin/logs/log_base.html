@@ -1,7 +1,7 @@
 {% extends 'admin/admin_base.html' %}
 
 {% block head %}
-    {% block tabtitle %}{% endblock %}
+    <title>{% block tabtitle %}{% endblock %}</title>
 {% endblock %}
 
 {% block body %}
@@ -24,8 +24,13 @@
                             <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
                                 <thead>
                                 <tr>
-                                    {% block firstcolhead %}{% endblock %}
-                                    {% block secondcolhead %}{% endblock %}
+                                    <th style="text-align: left">{% block firstcolhead %}{% endblock %}</th>
+                                    <th>
+                                        {% block secondcolhead %}
+                                            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                            <abbr title="DD/MM/YYYY - UTC +0">Date</abbr>
+                                        {% endblock %}
+                                    </th>
                                     <th>
                                         <span class="icon"><i class="fas fa-cogs"></i></span>
                                         Actions

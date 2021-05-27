@@ -1,25 +1,17 @@
 {% extends './admin/logs/log_base.html' %}
 
-{% block tabtitle %}<title>Logs - Authentications | SpEnD</title>{% endblock %}
+{% block tabtitle %}Logs - Authentications | SpEnD{% endblock %}
 
 {% block title %}Logs - Authentications{% endblock %}
 
 {% block nolog %}There are no Authentications yet.{% endblock %}
 
 {% block firstcolhead %}
-    <th style="text-align: left">
-        <span class="icon"><i class="fas fa-key"></i></span>
-        Log-in/Log-out
-    </th>
+    <span class="icon"><i class="fas fa-key"></i></span>
+    Log-in/Log-out
 {% endblock %}
 
-{% block secondcolhead %}
-    <th>
-        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-        <abbr title="DD/MM/YYYY - UTC +0">Date</abbr>
-    </th>
-{% endblock %}
-
+{% block secondcolhead %}{{ super() }}{% endblock %}
 
 {% block forblock %}
     {% for log in logs %}

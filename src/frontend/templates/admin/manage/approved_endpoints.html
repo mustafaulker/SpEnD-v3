@@ -1,6 +1,6 @@
 {% extends 'admin/manage/manage_base.html' %}
 
-{% block tabtitle %}<title>Endpoints - Approved | SpEnD</title>{% endblock %}
+{% block tabtitle %}Endpoints - Approved | SpEnD{% endblock %}
 
 {% block title %}{{ super() }}{% endblock %}
 {% block subtitle %}Approved{% endblock %}
@@ -9,20 +9,7 @@
 
 {% block noendpoint %}There are no approved Endpoints yet.{% endblock %}
 
-{% block tablehead %}
-    <th style="text-align: left">
-        <span class="icon"><i class="fas fa-link"></i></span>
-        Endpoint
-    </th>
-    <th>
-        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-        <abbr title="DD/MM/YYYY - UTC +0">Create Date</abbr>
-    </th>
-    <th>
-        <span class="icon"><i class="fas fa-heartbeat"></i></span>
-        Status
-    </th>
-{% endblock %}
+{% block tablehead %}{{ super() }}{% endblock %}
 
 {% block tablebody %}
     <form action="/admin/manage/approved" method="POST">

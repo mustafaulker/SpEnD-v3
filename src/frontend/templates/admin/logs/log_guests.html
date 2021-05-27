@@ -1,23 +1,19 @@
 {% extends './admin/logs/log_base.html' %}
 
-{% block tabtitle %}<title>Logs - Guests | SpEnD</title>{% endblock %}
+{% block tabtitle %}Logs - Guests | SpEnD{% endblock %}
 
 {% block title %}Logs - Guests{% endblock %}
 
 {% block nolog %}There are no Guests yet.{% endblock %}
 
 {% block firstcolhead %}
-    <th style="text-align: left">
-        <span class="icon"><i class="fas fa-network-wired"></i></span>
-        IP Address
-    </th>
+    <span class="icon"><i class="fas fa-network-wired"></i></span>
+    IP Address
 {% endblock %}
 
 {% block secondcolhead %}
-    <th>
-        <span class="icon"><i class="fas fa-stopwatch-20"></i></span>
-        <abbr title="Homepage visits only">Visit Count</abbr>
-    </th>
+    <span class="icon"><i class="fas fa-stopwatch-20"></i></span>
+    <abbr title="Homepage visits only">Visit Count</abbr>
 {% endblock %}
 
 

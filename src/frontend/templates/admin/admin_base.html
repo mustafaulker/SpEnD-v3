@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="/static/css/main.css">
 
     {% block head %}{% endblock %}
-    <title>Admin | SpEnD</title>
 </head>
 
 <body>
@@ -20,8 +19,9 @@
 <nav class="navbar is-white" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <a class="navbar-item brand-text" href="/admin/dashboard" target="_self">
-                SpEnD | Dashboard
+            <a class="navbar-item brand-text" href="/admin/dashboard" target="_self"
+               style="font-weight: bold; font-size: large; color: #0865AE">
+                SpEnD | Admin
             </a>
             <div class="navbar-burger burger" data-target="adminNavMenu"
                  onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
@@ -55,9 +55,7 @@
         <div class="column is-3 ">
             <aside class="menu">
                 <p class="menu-label">
-                    <span class="icon">
-                        <i class="fas fa-stream"></i>
-                    </span>
+                    <span class="icon"><i class="fas fa-stream"></i></span>
                     Endpoint Management
                 </p>
                 <ul class="menu-list">
@@ -99,9 +97,7 @@
                     </li>
                 </ul>
                 <p class="menu-label">
-                    <span class="icon">
-                        <i class="fas fa-file-medical-alt"></i>
-                    </span>
+                    <span class="icon"><i class="fas fa-file-medical-alt"></i></span>
                     Logs
                 </p>
                 <ul class="menu-list">
@@ -123,9 +119,7 @@
                     </li>
                 </ul>
                 <p class="menu-label">
-                    <span class="icon">
-                        <i class="fas fa-keyboard"></i>
-                    </span>
+                    <span class="icon"><i class="fas fa-keyboard"></i></span>
                     Keyword Management
                 </p>
                 <ul class="menu-list">
@@ -147,9 +141,7 @@
                     </li>
                 </ul>
                 <p class="menu-label">
-                    <span class="icon">
-                        <i class="fas fa-users-cog"></i>
-                    </span>
+                    <span class="icon"><i class="fas fa-users-cog"></i></span>
                     User Management
                 </p>
                 <ul class="menu-list">

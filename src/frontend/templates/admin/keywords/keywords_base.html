@@ -1,7 +1,7 @@
 {% extends 'admin/admin_base.html' %}
 
 {% block head %}
-    {% block tabtitle %}{% endblock %}
+    <title>{% block tabtitle %}{% endblock %}</title>
 {% endblock %}
 
 {% block body %}
@@ -11,7 +11,7 @@
                 <article class="tile is-child box">
                     <p class="title">{{ keywords|length }}</p>
                     <p class="subtitle">Keywords</p>
-                    {% block subtitle %}{% endblock %}
+                    <p>{% block subtitle %}{% endblock %}</p>
                 </article>
             </div>
         </div>

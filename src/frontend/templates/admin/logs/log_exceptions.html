@@ -1,25 +1,17 @@
 {% extends './admin/logs/log_base.html' %}
 
-{% block tabtitle %}<title>Logs - Exceptions | SpEnD</title>{% endblock %}
+{% block tabtitle %}Logs - Exceptions | SpEnD{% endblock %}
 
 {% block title %}Logs - Exceptions{% endblock %}
 
 {% block nolog %}There are no Exceptions yet.{% endblock %}
 
 {% block firstcolhead %}
-    <th style="text-align: left">
-        <span class="icon"><i class="fas fa-bug"></i></span>
-        Exception
-    </th>
+    <span class="icon"><i class="fas fa-bug"></i></span>
+    Exception
 {% endblock %}
 
-{% block secondcolhead %}
-    <th>
-        <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-        <abbr title="DD/MM/YYYY - UTC +0">Date</abbr>
-    </th>
-{% endblock %}
-
+{% block secondcolhead %}{{ super() }}{% endblock %}
 
 {% block forblock %}
     {% for log in logs %}

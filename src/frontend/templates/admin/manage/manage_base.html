@@ -1,7 +1,7 @@
 {% extends 'admin/admin_base.html' %}
 
 {% block head %}
-    {% block tabtitle %}{% endblock %}
+    <title>{% block tabtitle %}{% endblock %}</title>
 {% endblock %}
 
 {% block body %}
@@ -37,7 +37,20 @@
                                        style="text-align: center">
                                     <thead>
                                     <tr>
-                                        {% block tablehead %}{% endblock %}
+                                        {% block tablehead %}
+                                            <th style="text-align: left">
+                                                <span class="icon"><i class="fas fa-link"></i></span>
+                                                Endpoint
+                                            </th>
+                                            <th>
+                                                <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                                <abbr title="DD/MM/YYYY - UTC +0">Create Date</abbr>
+                                            </th>
+                                            <th>
+                                                <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                                                Status
+                                            </th>
+                                        {% endblock %}
                                         <th>
                                             <span class="icon"><i class="fas fa-cogs"></i></span>
                                             Actions
