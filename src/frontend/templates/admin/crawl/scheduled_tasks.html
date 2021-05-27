@@ -38,102 +38,65 @@
             <form action="/admin/crawl/scheduled_tasks" method="POST">
                 {% for task in tasks %}
                     <tr>
-                        <td style="text-align: left">{{ task.name }}</td>
+                        <td style="text-align: left">
+                            {% if task.name == 'status_check' %}
+                                <abbr title="Checks if endpoints response">{{ task.name }}</abbr>
+                            {% else %}
+                                {{ task.name }}
+                            {% endif %}
+                        </td>
                         <td>
                             {% if task.next_run_time == None %}
-                                {{ task.next_run_time }}
+                                <p style="color: red">Task Paused</p>
+                            {% elif task.name == "status_check" %}
+                                <abbr title="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">{{ 'Hourly' }}</abbr>
+                            {% elif task.name == "auto_crawl" %}
+                                <abbr title="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">{{ 'Daily' }}</abbr>
                             {% elif task.name == "interval_crawl" %}
-                                Every {{ task.trigger.interval.days }} days:
-                                {{ task.next_run_time.strftime("%d.%m-%H:%M") }}
-                            {% elif task.name == "endpoint_check" %}
-                                Hourly, {{ task.next_run_time.strftime("%H:%M") }}
-                            {% elif task.name == "auto_crawl" %}
-                                Daily, {{ task.next_run_time.strftime("%H:%M") }}
+                                <abbr title="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">
+                                    Every {{ task.trigger.interval.days }} days</abbr>
                             {% else %}
-                                {{ task.next_run_time.strftime("%d.%m.%y %H:%M") }}
+                                {{ task.next_run_time.strftime("%d.%m.%y | %H:%M") }}
                             {% endif %}
                         </td>
                         <td>
-                            {% if task.args|length < 1 %}
-                                {{ "Default" }}
-                            {% elif task.args[0]|length == 5 and task.args[1]|length == 6 %}
-                                {{ "All SEs & KWs" }}
-                            {% elif task.args[0]|length == 5 and task.args[1]|length < 6 %}
-                                ({{ "All SEs" }})
-                                {{ "-- KW:" }}
-                                {% for keys in task.args[1] %}
-                                    ({{ keys }})
-                                {% endfor %}
-                            {% elif task.args[0]|length < 5 and task.args[1]|length == 6 %}
-                                {{ "SE:" }}
-                                {% for se in task.args[0] %}
-                                    ({{ se.name }})
-                                {% endfor %}
-                                {{ "-- All KWs" }}
+                            {% if task.name == 'status_check' %}
+                                {{ '-' }}
+                            {% elif task.name == 'auto_crawl' %}
+                                <abbr title="All SE & KW">Default</abbr>
                             {% else %}
-                                {{ "SE:" }}
-                                {% for se in task.args[0] %}
-                                    ({{ se.name }})
-                                {% endfor %}
-                                {{ "-- KW:" }}
-                                {% for keys in task.args[1] %}
-                                    ({{ keys }})
-                                {% endfor %}
+                                <abbr title="{% for se in task.args[0] %}{{ (se.name +'\n') | capitalize }}{% endfor %}"
+                                      style="font-weight: bold">Search Engines</abbr>
+                                {{ '|' }}
+                                <abbr title="{% for keys in task.args[1] %}{{ keys + '\n' }}{% endfor %}"
+                                      style="font-weight: bold">Keywords</abbr>
                             {% endif %}
                         </td>
                         <td>
-                            {% if task.name == "endpoint_check" %}
-                                <button class="button is-small is-info" name="postpone_task"
-                                        value="{{ task.id }}" formaction="/postpone_task"
-                                        title="Postpone by one day">
+                            <button class="button is-small is-info" name="postpone_task"
+                                    value="{{ task.id }}" formaction="/postpone_task"
+                                    title="Postpone by one day">
                                         <span class="icon">
                                             <i class="fas fa-calendar-plus"></i>
                                         </span>
-                                </button>
-                                <button class="button is-small is-success" name="resume_ep_check"
-                                        value="endpoint_check" formaction="/resume_auto" title="Resume"
+                            </button>
+                            {% if task.name in ['status_check', 'auto_crawl', 'interval_crawl'] %}
+                                <button class="button is-small is-success" name="resume_task"
+                                        value="{{ task.id }}" formaction="/resume_task" title="Resume"
                                         style="margin-left:5px;">
                                         <span class="icon">
                                             <i class="fas fa-play"></i>
                                         </span>
                                 </button>
-                                <button class="button is-small is-warning" name="pause_ep_check"
-                                        value="endpoint_check" formaction="/pause_auto" title="Pause"
+                                <button class="button is-small is-warning" name="pause_task"
+                                        value="{{ task.id }}" formaction="/pause_task" title="Pause"
                                         style="margin-left:5px;">
                                         <span class="icon">
                                             <i class="fas fa-pause"></i>
                                         </span>
                                 </button>
-                            {% elif task.name == "auto_crawl" %}
-                                <button class="button is-small is-info" name="postpone_task"
-                                        value="{{ task.id }}" formaction="/postpone_task"
-                                        title="Postpone by one day">
-                                        <span class="icon">
-                                            <i class="fas fa-calendar-plus"></i>
-                                        </span>
-                                </button>
-                                <button class="button is-small is-success" name="resume_auto_crawl"
-                                        value="auto_crawl" formaction="/resume_auto" title="Resume"
-                                        style="margin-left:5px;">
-                                        <span class="icon">
-                                            <i class="fas fa-play"></i>
-                                        </span>
-                                </button>
-                                <button class="button is-small is-warning" name="pause_auto_crawl"
-                                        value="auto_crawl" formaction="/pause_auto" title="Pause"
-                                        style="margin-left:5px;">
-                                        <span class="icon">
-                                            <i class="fas fa-pause"></i>
-                                        </span>
-                                </button>
-                            {% else %}
-                                <button class="button is-small is-info" name="postpone_task"
-                                        value="{{ task.id }}" formaction="/postpone_task"
-                                        title="Postpone by one day">
-                                        <span class="icon">
-                                            <i class="fas fa-calendar-plus"></i>
-                                        </span>
-                                </button>
+                            {% endif %}
+                            {% if task.name != 'status_check' %}
                                 <button class="button is-small is-danger" name="remove_task"
                                         value="{{ task.id }}" formaction="/remove_task" title="Remove"
                                         style="margin-left:5px;">

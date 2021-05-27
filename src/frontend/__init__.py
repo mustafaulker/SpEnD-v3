@@ -42,7 +42,7 @@ search_engine_dict = {
 
 scheduler = APScheduler()
 
-scheduler.add_job(id='endpoint_check', func=Sparql.check_endpoints, trigger="interval", hours=1)
+scheduler.add_job(id='status_check', func=Sparql.check_endpoints, trigger="interval", hours=1)
 scheduler.add_job(id='auto_crawl', func=src.main_crawl.endpoint_crawler, trigger="interval", days=1)
 scheduler.start()
 

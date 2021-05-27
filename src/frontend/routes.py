@@ -623,30 +623,24 @@ def remove_task():
         abort(500)
 
 
-@app.post('/resume_auto')
+@app.post('/resume_task')
 @login_required
-def resume_auto():
+def resume_task():
     try:
         if request.method == 'POST':
-            if 'resume_ep_check' in request.form:
-                scheduler.resume_job('endpoint_check')
-            elif 'resume_auto_crawl' in request.form:
-                scheduler.resume_job('auto_crawl')
+            scheduler.resume_job(request.form.get('resume_task'))
         return redirect(url_for("scheduled_tasks"))
     except Exception as e:
         logger.error(f"Err, Resume_Task. {e}")
         abort(500)
 
 
-@app.post('/pause_auto')
+@app.post('/pause_task')
 @login_required
-def pause_auto():
+def pause_task():
     try:
         if request.method == 'POST':
-            if 'pause_ep_check' in request.form:
-                scheduler.pause_job('endpoint_check')
-            elif 'pause_auto_crawl' in request.form:
-                scheduler.pause_job('auto_crawl')
+            scheduler.pause_job(request.form.get('pause_task'))
         return redirect(url_for("scheduled_tasks"))
     except Exception as e:
         logger.error(f"Err, Pause_Task. {e}")
