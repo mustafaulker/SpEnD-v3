@@ -1,4 +1,5 @@
 import datetime
+import logging
 import urllib.parse
 from sys import stderr
 
@@ -164,13 +165,16 @@ def is_alive(link: str) -> bool:
     :return: Boolean based response according to site's response
     """
 
+    logging.getLogger("urllib3.connectionpool").setLevel(logging.WARNING)
     alive = False
     try:
         response = requests.get(link, timeout=40).status_code
         if response == 200:
             alive = True
         else:
-            print("This site is not alive. Therefore this site will not add to Second_Crawl_Domains collection.")
+            # print(f"This site is not alive. Therefore {link} will not add to Second_Crawl_Domains collection.\n") # Debug print.
+            pass
     except (TimeoutError, NewConnectionError, MaxRetryError, requests.ConnectionError, requests.ReadTimeout):
-        print("This site is not alive. Therefore this site will not add to Second_Crawl_Domains collection.")
+        # print(f"This site is not alive. Therefore {link} will not add to Second_Crawl_Domains collection.\n") # Debug print.
+        pass
     return alive

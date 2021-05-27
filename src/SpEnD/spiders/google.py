@@ -1,3 +1,4 @@
+import logging
 import urllib.parse
 
 import scrapy
@@ -8,6 +9,14 @@ from src.utils.sparql_controller import Sparql
 
 
 class Google(scrapy.Spider):
+
+    def __init__(self, *args, **kwargs):
+        logging.getLogger("scrapy.downloadermiddlewares.redirect").setLevel(logging.INFO)
+        logging.getLogger("scrapy.middleware").setLevel(logging.WARNING)
+        logging.getLogger("scrapy.extensions").setLevel(logging.WARNING)
+        logging.getLogger("scrapy.statscollectors").setLevel(logging.WARNING)
+        super().__init__(*args, **kwargs)
+
     name = "google"
     base_url = "https://www.google.com/search?q="
     search_parameters = "&num=100"
@@ -51,3 +60,6 @@ class Google(scrapy.Spider):
 
         if next_page is not None:
             yield Request(response.urljoin(next_page), callback=self.parse)
+
+    def closed(self, reason):
+        print(f"{self.name.upper()} is closed. ({reason})")
