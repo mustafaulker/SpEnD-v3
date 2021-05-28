@@ -1,0 +1,16 @@
+{% extends './admin/logs/log_base.html' %}
+
+{% block tabtitle %}Logs - Status Check | SpEnD{% endblock %}
+
+{% block title %}Logs - Status Check{% endblock %}
+
+{% block nolog %}There are no Status Check yet.{% endblock %}
+
+{% block firstcolhead %}
+    <span class="icon"><i class="fas fa-life-ring"></i></span>
+    Check Process
+{% endblock %}
+
+{% block secondcolhead %}{{ super() }}{% endblock %}
+
+{% block forblock %}{{ super() }}{% endblock %}

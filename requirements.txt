@@ -1,9 +1,6 @@
+Scrapy
 SPARQLWrapper
 pymongo
-Scrapy
-itemadapter
-requests
-urllib3
 Flask
 Flask-MongoEngine
 Flask-reCaptcha
@@ -11,6 +8,9 @@ Flask-Mail
 Flask-APScheduler
 Flask-Login
 Flask-Bcrypt
+itemadapter
+requests
+urllib3
 Jinja2
 Werkzeug
 mongolog

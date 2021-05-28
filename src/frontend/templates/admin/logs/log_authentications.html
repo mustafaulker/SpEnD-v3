@@ -1,68 +1,34 @@
-{% extends 'admin/admin_base.html' %}
+{% extends './admin/logs/log_base.html' %}
 
-{% block head %}
-<title>Logs - Authentications | SpEnD</title>
+{% block tabtitle %}Logs - Authentications | SpEnD{% endblock %}
+
+{% block title %}Logs - Authentications{% endblock %}
+
+{% block nolog %}There are no Authentications yet.{% endblock %}
+
+{% block firstcolhead %}
+    <span class="icon"><i class="fas fa-key"></i></span>
+    Log-in/Log-out
 {% endblock %}
 
-{% block body %}
-<div class="column is-vcentered">
-    <div class="card">
-        <header class="card-header">
-            <p class="card-header-title is-centered title is-5">
-                Logs - Authentications
-            </p>
-        </header>
-        <hr>
-        <div class="card-table">
-            <div class="content">
-                <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
-                    {% if logs|length < 1 %}
-                    <h1 class="title is-4" style="text-align: center">
-                        There are no Authentications yet.</h1>
-                    {% else %}
-                    <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
-                        <thead>
-                        <tr>
-                            <th style="text-align: left">
-                                <span class="icon"><i class="fas fa-key"></i></span>
-                                Log-in/Log-out
-                            </th>
-                            <th>
-                                <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                                <abbr title="DD/MM/YYYY - UTC +0">Date</abbr>
-                            </th>
-                            <th>
-                                <span class="icon"><i class="fas fa-cogs"></i></span>
-                                Actions
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for log in logs %}
-                        <tr>
-                            <td style="text-align: left">
-                                <a href="https://ipinfo.io/{{ (log.message | replace(')', '(')).split('(')[1] }}"
-                                   target="_blank">{{ log.message }}</a>
-                            </td>
-                            <td>{{ log.time.strftime("%d.%m.%y %H:%M") }}</td>
-                            <td>
-                                <form action="/remove_log" method="POST">
-                                    <button class="button is-small is-danger" name="remove_log"
-                                            value="{{ log.id }}" title="Remove">
-                                        <span class="icon">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% block secondcolhead %}{{ super() }}{% endblock %}
+
+{% block forblock %}
+    {% for log in logs %}
+        <tr>
+            <td style="text-align: left">
+                <a href="https://ipinfo.io/{{ (log.message | replace(')', '(')).split('(')[1] }}"
+                   target="_blank">{{ log.message }}</a>
+            </td>
+            <td>{{ log.time.strftime("%d.%m.%y %H:%M") }}</td>
+            <td>
+                <form action="/remove_log" method="POST">
+                    <button class="button is-small is-danger" name="remove_log"
+                            value="{{ log.id }}" title="Remove">
+                            <span class="icon"><i class="fas fa-trash"></i></span>
+                    </button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
 {% endblock %}

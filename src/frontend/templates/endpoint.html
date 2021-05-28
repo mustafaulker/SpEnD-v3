@@ -1,59 +1,57 @@
 {% extends 'base.html' %}
 
-{% block head %}
-<title>Endpoint | SpEnD</title>
-{% endblock %}
+{% block head %}<title>Endpoint | SpEnD</title>{% endblock %}
 
 {% block body %}
-<form action="/endpoint.html/<ep_url>" method="GET">
-    <section class="hero is-large">
-        <div class="hero-body">
-            <div class="container has-text-centered">
-                <div class="column has-text-centered">
-                    <h1 class="title is-2">Endpoint</h1>
-                    <hr style="width:20%; height: 2px; margin-left: auto; margin-right: auto;"/>
-                    <h1 class="subtitle is-4">
-                        <span class="icon"><i class="fas fa-link"></i></span>
-                        <a href="{{ endpoint.url }}">{{ endpoint.url }}</a>
-                    </h1>
-                </div>
-                <hr class="hr"/>
-                <div class="columns is-variable">
-                    <div class="column is-one-third">
-                        <p class="title is-5">
-                            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                            <abbr title="DD/MM/YYYY">Create Date</abbr>
-                        </p>
-                        <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
-                        {{ endpoint.date_created.date().strftime("%d.%m.%y") }}
+    <form action="/endpoint.html/<ep_url>" method="GET">
+        <section class="hero is-large">
+            <div class="hero-body">
+                <div class="container has-text-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-2">Endpoint</h1>
+                        <hr style="width:20%; height: 2px; margin-left: auto; margin-right: auto;"/>
+                        <h1 class="subtitle is-4">
+                            <span class="icon"><i class="fas fa-link"></i></span>
+                            <a href="{{ endpoint.url }}">{{ endpoint.url }}</a>
+                        </h1>
                     </div>
-                    <div class="column is-one-third">
-                        <p class="title is-5">
-                            <span class="icon"><i class="far fa-clock"></i></span>
-                            <abbr title="UTC +0">Last Check</abbr>
-                        </p>
-                        <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
-                        {{ endpoint.date_checked.strftime("%H:%M") }}
-                    </div>
-                    <div class="column is-one-third">
-                        <p class="title is-5">
-                            <span class="icon"><i class="fas fa-heartbeat"></i></span>
-                            Status
-                        </p>
-                        <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
-                        {% if endpoint.up_now %}
-                        <span class="icon" title="Live">
+                    <hr class="hr"/>
+                    <div class="columns is-variable">
+                        <div class="column is-one-third">
+                            <p class="title is-5">
+                                <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                <abbr title="DD/MM/YYYY">Create Date</abbr>
+                            </p>
+                            <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
+                            {{ endpoint.date_created.date().strftime("%d.%m.%y") }}
+                        </div>
+                        <div class="column is-one-third">
+                            <p class="title is-5">
+                                <span class="icon"><i class="far fa-clock"></i></span>
+                                <abbr title="UTC +0">Last Check</abbr>
+                            </p>
+                            <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
+                            {{ endpoint.date_checked.strftime("%H:%M") }}
+                        </div>
+                        <div class="column is-one-third">
+                            <p class="title is-5">
+                                <span class="icon"><i class="fas fa-heartbeat"></i></span>
+                                Status
+                            </p>
+                            <hr style="width:30%; height: 2px; margin-left: auto; margin-right: auto;"/>
+                            {% if endpoint.up_now %}
+                                <span class="icon" title="Live">
                             <i class="fas fa-check-circle fa-lg" style="color:green;"></i>
                         </span>
-                        {% else %}
-                        <span class="icon" title="Not Responding">
+                            {% else %}
+                                <span class="icon" title="Not Responding">
                             <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i>
                         </span>
-                        {% endif %}
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-</form>
+        </section>
+    </form>
 {% endblock %}

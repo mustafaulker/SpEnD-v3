@@ -1,0 +1,65 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block head %}
+    <title>{% block tabtitle %}{% endblock %}</title>
+{% endblock %}
+
+{% block body %}
+    <div class="column is-vcentered">
+        <div class="card">
+            <header class="card-header">
+                <p class="card-header-title is-centered title is-5">
+                    {% block title %}{% endblock %}
+                </p>
+            </header>
+            <hr>
+            <div class="card-table">
+                <div class="content">
+                    <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
+                        {% if logs|length < 1 %}
+                            <h1 class="title is-4" style="text-align: center">
+                                {% block nolog %}{% endblock %}
+                            </h1>
+                        {% else %}
+                            <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
+                                <thead>
+                                <tr>
+                                    <th style="text-align: left">{% block firstcolhead %}{% endblock %}</th>
+                                    <th>
+                                        {% block secondcolhead %}
+                                            <span class="icon"><i class="fas fa-calendar-alt"></i></span>
+                                            <abbr title="DD/MM/YYYY - UTC +0">Date</abbr>
+                                        {% endblock %}
+                                    </th>
+                                    <th>
+                                        <span class="icon"><i class="fas fa-cogs"></i></span>
+                                        Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% block forblock %}
+                                    {% for log in logs %}
+                                        <tr>
+                                            <td style="text-align: left">{{ log.message }}</td>
+                                            <td>{{ log.time.strftime("%d.%m.%y %H:%M") }}</td>
+                                            <td>
+                                                <form action="/remove_log" method="POST">
+                                                    <button class="button is-small is-danger" name="remove_log"
+                                                            value="{{ log.id }}" title="Remove">
+                                                        <span class="icon"><i class="fas fa-trash"></i></span>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endblock %}
+                                </tbody>
+                            </table>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

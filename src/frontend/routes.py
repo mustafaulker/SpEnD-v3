@@ -40,7 +40,7 @@ def contact():
     try:
         if request.method == 'POST':
             if request.form.get('cont_subject'):
-                flash('Not configurated yet, please use GitHub Issues', 'error')
+                flash('Not configured yet, please use GitHub Issues', 'error')
                 return redirect(url_for("contact"))
             else:
                 if recaptcha.verify():
@@ -89,31 +89,31 @@ def load_user(pk):
         abort(500)
 
 
-@app.route('/login', methods=('GET', 'POST'))
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     try:
         if current_user.is_authenticated:
             return redirect(url_for('dashboard'))
         if request.method == 'POST':
-            form_username = request.form['username']
-            form_password = request.form['userpass']
+            form_username = request.form.get('username')
+            form_password = request.form.get('userpass')
 
             user = models.User.objects(username=form_username).first()
 
             if user is None or not user.check_password(form_password):
                 flash('Invalid username or password.', 'error')
-                logger.error(f"Failed authentication: {request.remote_addr}")
+                logger.error(f"({request.remote_addr}) - Failed authentication.")
                 return redirect(url_for('login'))
             login_user(user)
 
-            logger.info(f"User({request.environ.get('REMOTE_ADDR')}) has logged-in.")
+            logger.info(f"User({request.remote_addr}) has logged-in.")
 
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 next_page = url_for('dashboard')
             return redirect(next_page)
 
-        return render_template('/auth/login.html')
+        return render_template('./auth/login.html')
     except TemplateNotFound:
         abort(404)
     except:
@@ -130,6 +130,33 @@ def logout():
         abort(500)
 
 
+@app.route('/admin/users/change_password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    try:
+        if request.method == 'POST':
+            current_password = request.form.get('current_password')
+            new_password = request.form.get('new_password')
+
+            user = models.User.objects(username=current_user.username).first()
+
+            if user is None or not user.check_password(current_password):
+                flash('Invalid current password.', 'error')
+                logger.error(f"Failed password change attempt: {request.remote_addr}")
+                return redirect(url_for('change_password'))
+
+            user.change_pass(new_password)
+            user.save()
+            flash('Password has changed.', 'info')
+            logger.info(f"({request.remote_addr}) has changed the password of {current_user.username}.")
+
+        return render_template('./admin/users/change_password.html')
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
 @login_manager.unauthorized_handler
 def unauthorized_callback():
     return abort(403)
@@ -141,53 +168,74 @@ def crawler():
     try:
         if not current_user.is_authenticated():
             return render_template('index.html')
-        keywords = Database.get_keywords("crawl_keys")
+        keywords = Database.get_keywords('crawl_keys')
 
         if request.method == 'POST':
-            selected_search_engines = request.form.getlist("cb_se")
-            selected_keywords = request.form.getlist("cb_kw")
-            keyword_input = request.form.get("keyword_input").split("\r\n")
-            inner_crawl = request.form.get("inner_crawl") is not None
+            selected_search_engines = request.form.getlist('cb_se')
+            selected_keywords = request.form.getlist('cb_kw')
+            keyword_input = set(request.form.get('keyword_input').split("\r\n"))
+            inner_crawl = request.form.get('inner_crawl') is not None
             user_inputs = []
             [user_inputs.append(keyword.strip()) for keyword in keyword_input]
             selected_keywords.extend(list(filter(None, user_inputs)))
 
+            # Insert written keyword/s to the DB.
+            if '' in keyword_input:
+                keyword_input.remove('')
+            if keyword_input:
+                for key in keyword_input.copy():
+                    if key in Database.get_keywords('crawl_keys'):
+                        keyword_input.remove(key)
+                Database.insert_keyword('crawl_keys', list(keyword_input))
+
+            # SE and KW selection control.
             if not selected_search_engines or not selected_keywords:
-                flash("- No SEs or Keywords selected.", "error")
-                return redirect(url_for("crawler"))
+                flash('- No SEs or Keywords selected.', 'error')
+                return redirect(url_for('crawler'))
             else:
-                flash(f"- Selected Search Engines:\n{selected_search_engines}", "info")
-                flash(f"- Selected Keywords:\n{selected_keywords}", "info")
-                flash(f"- Inner Crawl:\n{inner_crawl}", "info")
+                flash(f'- Selected Search Engines:\n{selected_search_engines}', 'info')
+                flash(f'- Selected Keywords:\n{selected_keywords}', 'info')
+                flash(f'- Inner Crawl:\n{inner_crawl}', 'info')
 
             spiders = list(map(search_engine_dict.get, selected_search_engines))
 
+            # Instant crawl button pressed.
             if 'manuel_crawl' in request.form:
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
-                                  id="manuel_crawl", run_date=datetime.datetime.now())
+                                  id='manuel_crawl', run_date=datetime.datetime.now())
 
+            # Schedule a crawl button pressed.
             elif 'schedule_crawl' in request.form:
-                date, time = request.form.get("schedule_date"), request.form.get("schedule_time")
+                date, time = request.form.get('schedule_date'), request.form.get('schedule_time')
 
-                if datetime.datetime.fromisoformat(f"{date} {time}") < datetime.datetime.now():
-                    flash("- Past date/time selected.", "error")
-                    return redirect(url_for("crawler"))
-
-                spiders = list(map(search_engine_dict.get, selected_search_engines))
+                if datetime.datetime.fromisoformat(f'{date} {time}') < datetime.datetime.now():
+                    flash('- Past date/time selected.', 'error')
+                    return redirect(url_for('crawler'))
 
                 scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
-                                  id=None, name="schedule_crawl", run_date=f'{date} {time}')
+                                  id=None, name='schedule_crawl', run_date=f'{date} {time}')
 
-            return redirect(url_for("crawler"))
-        return render_template('/admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()),
+                flash(f'- Crawl will be triggered on '
+                      f'{datetime.datetime.strptime(date, "%Y-%m-%d").date().strftime("%d.%m.%y")} at {time}', 'info')
+
+            # Schedule Crawl Interval button pressed.
+            elif 'schedule_interval' in request.form:
+                interval = request.form.get('crawl_interval')
+
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
+                                  id=None, name='interval_crawl', trigger='interval', days=int(interval))
+                flash(f'- Crawl will be triggered {interval} days apart', 'info')
+
+            return redirect(url_for('crawler'))
+        return render_template('./admin/crawl/crawler.html', s_engines=list(search_engine_dict.keys()), zip=zip,
                                keywords=keywords, pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except ValueError:
-        flash("- Invalid date/time.", "error")
-        return redirect(url_for("crawler"))
+        flash('- Invalid date/time.', 'error')
+        return redirect(url_for('crawler'))
     except TemplateNotFound:
         abort(404)
     except Exception as e:
-        logger.error(f"Err, Crawler. {e}")
+        logger.error(f'Err, Crawler. {e}')
         abort(500)
 
 
@@ -200,7 +248,7 @@ def scheduled_tasks():
 
         tasks = scheduler.get_jobs()
 
-        return render_template('/admin/crawl/scheduled_tasks.html', tasks=tasks,
+        return render_template('./admin/crawl/scheduled_tasks.html', tasks=tasks,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -225,7 +273,7 @@ def dashboard():
         alive_30_count = len(models.Endpoints.objects(tag="approved", __raw__=last_30))
         alive_180_count = len(models.Endpoints.objects(tag="approved", __raw__=last_180))
 
-        return render_template('/admin/dashboard.html', endpoints=endpoints, alive_30_count=alive_30_count,
+        return render_template('./admin/dashboard.html', endpoints=endpoints, alive_30_count=alive_30_count,
                                alive_180_count=alive_180_count, alive_count=alive_count,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
@@ -243,7 +291,7 @@ def approved():
 
         endpoints = models.Endpoints.objects.filter(tag="approved")
 
-        return render_template('/admin/manage/approved_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/approved_endpoints.html', endpoints=endpoints,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -260,7 +308,7 @@ def pending():
 
         endpoints = models.Endpoints.objects.filter(tag="pending")
 
-        return render_template('/admin/manage/pending_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/pending_endpoints.html', endpoints=endpoints,
                                pending_count=len(endpoints))
     except TemplateNotFound:
         abort(404)
@@ -277,7 +325,7 @@ def suspended():
 
         endpoints = models.Endpoints.objects.filter(tag="suspended")
 
-        return render_template('/admin/manage/suspended_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/suspended_endpoints.html', endpoints=endpoints,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -294,7 +342,7 @@ def removed():
 
         endpoints = models.Endpoints.objects.filter(tag="removed")
 
-        return render_template('/admin/manage/removed_endpoints.html', endpoints=endpoints,
+        return render_template('./admin/manage/removed_endpoints.html', endpoints=endpoints,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -312,7 +360,7 @@ def log_exceptions():
         logs = sorted(models.Logs.objects.filter(levelname="ERROR"),
                       key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_exceptions.html', logs=logs,
+        return render_template('./admin/logs/log_exceptions.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -330,8 +378,26 @@ def log_crawler():
         logs = sorted(models.Logs.objects.filter(funcName="crawl"),
                       key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_crawler.html', logs=logs,
+        return render_template('./admin/logs/log_crawler.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/logs/status', methods=['GET', 'POST'])
+@login_required
+def log_status():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        logs = sorted(models.Logs.objects.filter(funcName='check_endpoints'),
+                      key=lambda instance: instance.time, reverse=True)
+
+        return render_template('./admin/logs/log_status.html', logs=logs,
+                               pending_count=len(models.Endpoints.objects.filter(tag='pending')))
     except TemplateNotFound:
         abort(404)
     except:
@@ -349,7 +415,7 @@ def log_authentications():
                             models.Logs.objects.filter(funcName="logout")),
                       key=lambda instance: instance.time, reverse=True)
 
-        return render_template('/admin/logs/log_authentications.html', logs=logs,
+        return render_template('./admin/logs/log_authentications.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -367,11 +433,118 @@ def log_guests():
         logs = list(models.Logs.objects.filter(funcName="index").aggregate(
             [{"$sortByCount": "$message"}]))
 
-        return render_template('/admin/logs/log_guests.html', logs=logs, total_count=len(list(logs)),
+        return render_template('./admin/logs/log_guests.html', logs=logs,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:
+        abort(500)
+
+
+@app.route('/admin/keywords/crawl_keys', methods=['GET', 'POST'])
+@login_required
+def crawl_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('crawl_keys')
+
+        return render_template('./admin/keywords/crawl_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/keywords/second_crawl_keys', methods=['GET', 'POST'])
+@login_required
+def second_crawl_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('second_crawl_keys')
+
+        return render_template('./admin/keywords/second_crawl_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/keywords/wanted_keys', methods=['GET', 'POST'])
+@login_required
+def wanted_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('wanted_keys')
+
+        return render_template('./admin/keywords/wanted_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.route('/admin/keywords/unwanted_keys', methods=['GET', 'POST'])
+@login_required
+def unwanted_keys():
+    try:
+        if not current_user.is_authenticated():
+            return render_template('index.html')
+
+        keywords = Database.get_keywords('unwanted_keys')
+
+        return render_template('./admin/keywords/unwanted_keys.html', keywords=keywords,
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
+    except TemplateNotFound:
+        abort(404)
+    except:
+        abort(500)
+
+
+@app.post('/insert_keyword')
+@login_required
+def insert_keyword():
+    try:
+        if request.method == 'POST':
+            keys = set()
+            keyword_textarea = request.form.get('keyword_textarea').split("\r\n")
+            [keys.add(keyword.strip()) for keyword in keyword_textarea]
+
+            for key in keys.copy():
+                if key in Database.get_keywords(request.referrer.rsplit('/', 1)[-1]):
+                    keys.remove(key)
+
+            if '' in keys:
+                keys.remove('')
+
+            if not keys:
+                flash(f'No Keywords provided.', 'error')
+            else:
+                Database.insert_keyword(request.referrer.rsplit('/', 1)[-1], list(keys))
+                flash(f'Keywords has added.', 'info')
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
+    except Exception as e:
+        logger.error(f"Err, Insert_Keyword. {e}")
+        abort(500)
+
+
+@app.post('/remove_keyword')
+@login_required
+def remove_keyword():
+    try:
+        if request.method == 'POST':
+            Database.remove_keyword(request.referrer.rsplit('/', 1)[-1], request.form.get('remove_key'))
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
+    except Exception as e:
+        logger.error(f'Err, Remove_Keyword. {e}')
         abort(500)
 
 
@@ -380,7 +553,7 @@ def log_guests():
 def approve():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
+            Database.update_one("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
         return redirect(url_for("pending"))
     except Exception as e:
         logger.error(f"Err, Approve_EP. {e}")
@@ -392,11 +565,8 @@ def approve():
 def suspend():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
-        if request.referrer.endswith("approved"):
-            return redirect(url_for("approved"))
-        if request.referrer.endswith("pending"):
-            return redirect(url_for("pending"))
+            Database.update_one("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Suspend_EP. {e}")
         abort(500)
@@ -407,7 +577,7 @@ def suspend():
 def unsuspend():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
+            Database.update_one("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("suspended"))
     except Exception as e:
         logger.error(f"Err, Unsuspend_EP. {e}")
@@ -419,13 +589,8 @@ def unsuspend():
 def remove():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
-        if request.referrer.endswith("approved"):
-            return redirect(url_for("approved"))
-        elif request.referrer.endswith("pending"):
-            return redirect(url_for("pending"))
-        elif request.referrer.endswith("suspended"):
-            return redirect(url_for("suspended"))
+            Database.update_one("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
+            return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Remove_EP. {e}")
         abort(500)
@@ -436,7 +601,7 @@ def remove():
 def recover():
     try:
         if request.method == 'POST':
-            Database.update("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
+            Database.update_one("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("removed"))
     except Exception as e:
         logger.error(f"Err, Recover_EP. {e}")
@@ -448,19 +613,21 @@ def recover():
 def remove_log():
     try:
         if request.method == 'POST':
-            if request.referrer.endswith("guests"):
-                Database.delete_many("logs", {"msg": request.form.get("remove_log")})
+            if 'guests' in request.referrer:
+                Database.delete_many('logs', {'msg': request.form.get('remove_log')})
                 return redirect(url_for("log_guests"))
             else:
-                Database.delete_one("logs", {"_id": ObjectId(request.form.get("remove_log"))})
-        if request.referrer.endswith("exceptions"):
-            return redirect(url_for("log_exceptions"))
-        elif request.referrer.endswith("crawler"):
-            return redirect(url_for("log_crawler"))
-        elif request.referrer.endswith("authentications"):
-            return redirect(url_for("log_authentications"))
+                Database.delete_one('logs', {'_id': ObjectId(request.form.get('remove_log'))})
+        if 'exceptions' in request.referrer:
+            return redirect(url_for('log_exceptions'))
+        elif 'crawler' in request.referrer:
+            return redirect(url_for('log_crawler'))
+        elif 'authentications' in request.referrer:
+            return redirect(url_for('log_authentications'))
+        elif 'status' in request.referrer:
+            return redirect(url_for('log_status'))
     except Exception as e:
-        logger.error(f"Err, Remove_Log. {e}")
+        logger.error(f'Err, Remove_Log. {e}')
         abort(500)
 
 
@@ -476,30 +643,24 @@ def remove_task():
         abort(500)
 
 
-@app.post('/resume_auto')
+@app.post('/resume_task')
 @login_required
-def resume_auto():
+def resume_task():
     try:
         if request.method == 'POST':
-            if 'resume_ep_check' in request.form:
-                scheduler.resume_job('endpoint_check')
-            elif 'resume_auto_crawl' in request.form:
-                scheduler.resume_job('auto_crawl')
+            scheduler.resume_job(request.form.get('resume_task'))
         return redirect(url_for("scheduled_tasks"))
     except Exception as e:
         logger.error(f"Err, Resume_Task. {e}")
         abort(500)
 
 
-@app.post('/pause_auto')
+@app.post('/pause_task')
 @login_required
-def pause_auto():
+def pause_task():
     try:
         if request.method == 'POST':
-            if 'pause_ep_check' in request.form:
-                scheduler.pause_job('endpoint_check')
-            elif 'pause_auto_crawl' in request.form:
-                scheduler.pause_job('auto_crawl')
+            scheduler.pause_job(request.form.get('pause_task'))
         return redirect(url_for("scheduled_tasks"))
     except Exception as e:
         logger.error(f"Err, Pause_Task. {e}")

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask_bcrypt import check_password_hash
+from flask_bcrypt import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 
 from src.frontend import db
@@ -50,8 +50,8 @@ class Logs(db.Document):
 
 class User(UserMixin, db.Document):
     meta = {'collection': 'users'}
-    username = db.StringField(unique=True)
-    password = db.StringField(default=True)
+    username = db.StringField(unique=True, nullable=False)
+    password = db.StringField(default=True, nullable=False)
     active = db.BooleanField(default=True)
 
     def __repr__(self):
@@ -59,6 +59,9 @@ class User(UserMixin, db.Document):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    def change_pass(self, password):
+        self.password = generate_password_hash(password).decode()
 
     def is_authenticated(self):
         return True
