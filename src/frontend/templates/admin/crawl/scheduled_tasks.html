@@ -16,22 +16,14 @@
                style="text-align: center">
             <thead>
             <tr>
-                <th style="text-align: left">
-                    <span class="icon"><i class="fas fa-tasks"></i></span>
-                    Task
-                </th>
+                <th style="text-align: left"><span class="icon"><i class="fas fa-tasks"></i></span>Task</th>
                 <th>
                     <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                    <abbr title="UTC +0">Trigger Date</abbr>
+                    <span class="has-tooltip-arrow has-tooltip-bottom"
+                          data-tooltip="UTC +0">Trigger Date</span>
                 </th>
-                <th>
-                    <i class="fas fa-sliders-h fa-rotate-90"></i>
-                    Args
-                </th>
-                <th>
-                    <span class="icon"><i class="fas fa-cogs"></i></span>
-                    Actions
-                </th>
+                <th><i class="fas fa-sliders-h fa-rotate-90"></i>Args</th>
+                <th><span class="icon"><i class="fas fa-cogs"></i></span>Actions</th>
             </tr>
             </thead>
             <tbody>
@@ -40,7 +32,8 @@
                     <tr>
                         <td style="text-align: left">
                             {% if task.name == 'status_check' %}
-                                <abbr title="Checks if endpoints are responding">{{ task.name }}</abbr>
+                                <span class="has-tooltip-arrow has-tooltip-right"
+                                      data-tooltip="Checks if endpoints are responding">{{ task.name }}</span>
                             {% else %}
                                 {{ task.name }}
                             {% endif %}
@@ -49,12 +42,15 @@
                             {% if task.next_run_time == None %}
                                 <p style="color: red">Task Paused</p>
                             {% elif task.name == "status_check" %}
-                                <abbr title="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">{{ 'Hourly' }}</abbr>
+                                <span class="has-tooltip-arrow has-tooltip-right"
+                                      data-tooltip="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">Hourly</span>
                             {% elif task.name == "auto_crawl" %}
-                                <abbr title="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">{{ 'Daily' }}</abbr>
+                                <span class="has-tooltip-arrow has-tooltip-right"
+                                      data-tooltip="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">Daily</span>
                             {% elif task.name == "interval_crawl" %}
-                                <abbr title="{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">
-                                    Every {{ task.trigger.interval.days }} days</abbr>
+                                <span class="has-tooltip-arrow has-tooltip-right" data-tooltip=
+                                        "{{ task.next_run_time.strftime("%d.%m | %H:%M") }}">
+                                        Every {{ task.trigger.interval.days }} days</span>
                             {% else %}
                                 {{ task.next_run_time.strftime("%d.%m.%y | %H:%M") }}
                             {% endif %}
@@ -63,46 +59,46 @@
                             {% if task.name == 'status_check' %}
                                 {{ '-' }}
                             {% elif task.name == 'auto_crawl' %}
-                                <abbr title="All SE & KW">Default</abbr>
+                                <span class="has-tooltip-arrow has-tooltip-right"
+                                      data-tooltip="All SE & KW">Default</span>
                             {% else %}
-                                <abbr title="{% for se in task.args[0] %}{{ (se.name +'\n') | capitalize }}{% endfor %}"
-                                      style="font-weight: bold">Search Engines</abbr>
+                                <span class="has-tooltip-arrow has-tooltip-right" data-tooltip=
+                                        "{% for se in task.args[0] %}{{ (se.name +'\n') | capitalize }}{% endfor %}">
+                                    <b>Search Engines</b></span>
                                 {{ '|' }}
-                                <abbr title="{% for keys in task.args[1] %}{{ keys + '\n' }}{% endfor %}"
-                                      style="font-weight: bold">Keywords</abbr>
+                                <span class="has-tooltip-arrow has-tooltip-right"
+                                      data-tooltip="{% for keys in task.args[1] %}{{ keys + '\n' }}{% endfor %}">
+                                    <b>Keywords</b></span>
                             {% endif %}
                         </td>
                         <td>
-                            <button class="button is-small is-info" name="postpone_task"
-                                    value="{{ task.id }}" formaction="/postpone_task"
-                                    title="Postpone by one day">
-                                        <span class="icon">
-                                            <i class="fas fa-calendar-plus"></i>
-                                        </span>
-                            </button>
-                            {% if task.name in ['status_check', 'auto_crawl', 'interval_crawl'] %}
-                                <button class="button is-small is-success" name="resume_task"
-                                        value="{{ task.id }}" formaction="/resume_task" title="Resume"
-                                        style="margin-left:5px;">
-                                        <span class="icon">
-                                            <i class="fas fa-play"></i>
-                                        </span>
-                                </button>
-                                <button class="button is-small is-warning" name="pause_task"
-                                        value="{{ task.id }}" formaction="/pause_task" title="Pause"
-                                        style="margin-left:5px;">
-                                        <span class="icon">
-                                            <i class="fas fa-pause"></i>
-                                        </span>
+                            {% if task.next_run_time != None %}
+                                <button class="button is-small is-info has-tooltip-bottom" name="postpone_task"
+                                        value="{{ task.id }}" formaction="/postpone_task"
+                                        data-tooltip="Postpone by one day">
+                                    <span class="icon"><i class="fas fa-calendar-plus"></i></span>
                                 </button>
                             {% endif %}
+                            {% if task.name in ['status_check', 'auto_crawl', 'interval_crawl'] %}
+                                {% if task.next_run_time == None %}
+                                    <button class="button is-small is-success has-tooltip-bottom" name="resume_task"
+                                            value="{{ task.id }}" formaction="/resume_task"
+                                            data-tooltip="Resume" style="margin-left:5px;">
+                                        <span class="icon"><i class="fas fa-play"></i></span>
+                                    </button>
+                                {% else %}
+                                    <button class="button is-small is-warning has-tooltip-bottom" name="pause_task"
+                                            value="{{ task.id }}" formaction="/pause_task"
+                                            data-tooltip="Pause" style="margin-left:5px;">
+                                        <span class="icon"><i class="fas fa-pause"></i></span>
+                                    </button>
+                                {% endif %}
+                            {% endif %}
                             {% if task.name != 'status_check' %}
-                                <button class="button is-small is-danger" name="remove_task"
-                                        value="{{ task.id }}" formaction="/remove_task" title="Remove"
-                                        style="margin-left:5px;">
-                                        <span class="icon">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
+                                <button class="button is-small is-danger has-tooltip-bottom" name="remove_task"
+                                        value="{{ task.id }}" formaction="/remove_task"
+                                        data-tooltip="Remove" style="margin-left:5px;">
+                                    <span class="icon"><i class="fas fa-trash"></i></span>
                                 </button>
                             {% endif %}
                         </td>

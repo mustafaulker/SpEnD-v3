@@ -150,7 +150,8 @@ def change_password():
             flash('Password has changed.', 'info')
             logger.info(f"({request.remote_addr}) has changed the password of {current_user.username}.")
 
-        return render_template('./admin/users/change_password.html')
+        return render_template('./admin/users/change_password.html',
+                               pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
     except:

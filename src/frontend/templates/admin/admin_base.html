@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.2/css/bulma.min.css"/>
     <link rel="stylesheet" href="/static/css/admin/admin.css">
     <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.css">
 
     {% block head %}{% endblock %}
     <title>Admin | SpEnD</title>
@@ -31,16 +33,14 @@
             <div class="navbar-end">
                 <div class="navbar-item">
                     <a href="/">
-                        <span class="icon" title="Home Page">
-                            <i class="fas fa-home fa-2x"></i>
-                        </span>
+                        <span class="icon has-tooltip-bottom" data-tooltip="Home Page">
+                            <i class="fas fa-home fa-2x"></i></span>
                     </a>
                 </div>
                 <div class="navbar-item">
                     <a href="/logout">
-                        <span class="icon" style="margin-left:5px;" title="Log out">
-                            <i class="fas fa-sign-out-alt fa-2x"></i>
-                        </span>
+                        <span class="icon has-tooltip-bottom" style="margin-left:5px;" data-tooltip="Log out">
+                            <i class="fas fa-sign-out-alt fa-2x"></i></span>
                     </a>
                 </div>
             </div>
@@ -59,107 +59,88 @@
                 </p>
                 <ul class="menu-list">
                     <li><a href="/admin/dashboard">
-                        <span class="icon"><i class="fab fa-watchman-monitoring"></i></span>
-                        Dashboard</a>
+                        <span class="icon"><i class="fab fa-watchman-monitoring"></i></span>Dashboard</a>
                     </li>
                     <li><a href="/admin/manage/approved">
-                        <span class="icon"><i class="fas fa-check-double"></i></span>
-                        Approved</a>
+                        <span class="icon"><i class="fas fa-check-double"></i></span>Approved</a>
                     </li>
                     <li><a href="/admin/manage/pending">
                         <span class="icon"><i class="fas fa-hourglass-half"></i></span>
                         Pending
-                        <span class="icon"><i class="far fa-bell"></i></span>
-                        {{ pending_count }}</a>
+                        {% if pending_count > 1 %}
+                            <span class="icon"><i class="far fa-bell"></i></span>{{ pending_count }}
+                        {% endif %}</a>
                     </li>
                     <li><a href="/admin/manage/suspended">
-                        <span class="icon"><i class="fas fa-stop"></i></span>
-                        Suspended</a>
+                        <span class="icon"><i class="fas fa-stop"></i></span>Suspended</a>
                     </li>
                     <li><a href="/admin/manage/removed">
-                        <span class="icon"><i class="fas fa-trash-alt"></i></span>
-                        Removed</a>
+                        <span class="icon"><i class="fas fa-trash-alt"></i></span>Removed</a>
                     </li>
                 </ul>
                 <p class="menu-label">
-                    <span class="icon"><i class="fas fa-microchip"></i></span>
-                    Crawling
+                    <span class="icon"><i class="fas fa-microchip"></i></span>Crawling
                 </p>
                 <ul class="menu-list">
                     <li><a href="/admin/crawl/crawler">
-                        <span class="icon"><i class="fas fa-spider"></i></span>
-                        Crawler</a>
+                        <span class="icon"><i class="fas fa-spider"></i></span>Crawler</a>
                     </li>
                     <li><a href="/admin/crawl/scheduled_tasks">
-                        <span class="icon"><i class="far fa-clock"></i></span>
-                        Scheduled Tasks</a>
+                        <span class="icon"><i class="far fa-clock"></i></span>Scheduled Tasks</a>
                     </li>
                 </ul>
                 <p class="menu-label">
-                    <span class="icon"><i class="fas fa-file-medical-alt"></i></span>
-                    Logs
+                    <span class="icon"><i class="fas fa-file-medical-alt"></i></span>Logs
                 </p>
                 <ul class="menu-list">
                     <li><a href="/admin/logs/exceptions">
-                        <span class="icon"><i class="fas fa-bug"></i></span>
-                        Exceptions/Errors</a>
+                        <span class="icon"><i class="fas fa-bug"></i></span>Exceptions/Errors</a>
                     </li>
                     <li><a href="/admin/logs/crawler">
-                        <span class="icon"><i class="fas fa-file-signature"></i></span>
-                        Crawler Logs</a>
+                        <span class="icon"><i class="fas fa-file-signature"></i></span>Crawler Logs</a>
                     </li>
                     <li><a href="/admin/logs/status">
-                        <span class="icon"><i class="fas fa-heartbeat"></i></span>
-                        Status Check Logs</a>
+                        <span class="icon"><i class="fas fa-heartbeat"></i></span>Status Check Logs</a>
                     </li>
                     <li><a href="/admin/logs/authentications">
-                        <span class="icon"><i class="fas fa-fingerprint"></i></span>
-                        Authentications</a>
+                        <span class="icon"><i class="fas fa-fingerprint"></i></span>Authentications</a>
                     </li>
                     <li><a href="/admin/logs/guests">
-                        <span class="icon"><i class="fas fa-users"></i></span>
-                        Guests</a>
+                        <span class="icon"><i class="fas fa-users"></i></span>Guests</a>
                     </li>
                 </ul>
                 <p class="menu-label">
-                    <span class="icon"><i class="fas fa-keyboard"></i></span>
-                    Keyword Management
+                    <span class="icon"><i class="fas fa-keyboard"></i></span>Keyword Management
                 </p>
                 <ul class="menu-list">
                     <li><a href="/admin/keywords/crawl_keys">
-                        <span class="icon"><i class="fas fa-i-cursor"></i></span>
-                        Crawl Keys</a>
+                        <span class="icon"><i class="fas fa-i-cursor"></i></span>Crawl Keys</a>
                     </li>
                     <li><a href="/admin/keywords/second_crawl_keys">
-                        <span class="icon"><i class="fas fa-sync"></i></span>
-                        Inner Keys</a>
+                        <span class="icon"><i class="fas fa-sync"></i></span>Inner Keys</a>
                     </li>
                     <li><a href="/admin/keywords/wanted_keys">
-                        <span class="icon"><i class="fas fa-star"></i></span>
-                        Wanted Keys</a>
+                        <span class="icon"><i class="fas fa-star"></i></span>Wanted Keys</a>
                     </li>
                     <li><a href="/admin/keywords/unwanted_keys">
-                        <span class="icon"><i class="fas fa-exclamation"></i></span>
-                        Unwanted Keys</a>
+                        <span class="icon"><i class="fas fa-exclamation"></i></span>Unwanted Keys</a>
                     </li>
                 </ul>
                 <p class="menu-label">
-                    <span class="icon"><i class="fas fa-users-cog"></i></span>
-                    User Management
+                    <span class="icon"><i class="fas fa-users-cog"></i></span>User Management
                 </p>
                 <ul class="menu-list">
                     <li><a href="/admin/users/change_password">
-                        <span class="icon"><i class="fas fa-user-lock"></i></span>
-                        Change Password</a>
+                        <span class="icon"><i class="fas fa-user-lock"></i></span>Change Password</a>
                     </li>
                 </ul>
             </aside>
         </div>
 
-        <div class="column is-9" id="content_column">
-            <!-- body block -->
-            {% block body %}{% endblock %}
-        </div>
+
+        <!-- body block -->
+        <div class="column is-9" id="content_column">{% block body %}{% endblock %}</div>
+
     </div>
 </div>
 </body>

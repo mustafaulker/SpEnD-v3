@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-social@2/css/all.min.css">
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-divider@1.1.0/dist/bulma-divider.css">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@creativebulma/bulma-tooltip@1.2.0/dist/bulma-tooltip.css">
 
     {% block head %}{% endblock %}
     <title>SpEnD | SparQL Endpoints</title>
@@ -33,40 +35,27 @@
         <div id="nav-menu" class="navbar-menu">
             <div class="navbar-start">
                 <a class="navbar-item" href="/" target="_self">
-                <span class="icon" style="margin-right: 5px">
-                    <i class="fas fa-home"></i>
-                </span>
-                    Home
+                    <span class="icon" style="margin-right: 5px"><i class="fas fa-home"></i></span>Home
                 </a>
-                <div class="navbar-item has-dropdown is-hoverable">
-                    <a class="navbar-link">
-                        More
-                    </a>
+                <div class="navbar-item has-dropdown is-hoverable"><a class="navbar-link">More</a>
                     <div class="navbar-dropdown">
                         <a class="navbar-item" href="/about" target="_self">
-                        <span class="icon" style="margin-right: 5px">
-                            <i class="fas fa-info"></i>
-                        </span>
-                            About
+                            <span class="icon" style="margin-right: 5px"><i class="fas fa-info"></i></span>About
                         </a>
                         <a class="navbar-item" href="/contact" target="_self">
-                        <span class="icon" style="margin-right: 5px">
-                            <i class="fas fa-envelope-open-text"></i>
-                        </span>
-                            Contact Us
+                            <span class="icon" style="margin-right: 5px">
+                                <i class="fas fa-envelope-open-text"></i></span>Contact Us
                         </a>
                     </div>
                 </div>
             </div>
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <h4 class="bd-footer-title">
-                        Contribute on <strong>Github</strong>&emsp;
-                    </h4>
+                    <h4 class="bd-footer-title">Contribute on <strong>Github</strong>&emsp;</h4>
                     <iframe src="https://ghbtns.com/github-btn.html?user=mustafaulker&amp;repo=SpEnD-v3&amp;type=star&amp;count=false&amp;size=large"
                             allowtransparency="true" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
                 </div>
-                <a class="navbar-item" href="/login" target="_self" title="Log in">
+                <a class="navbar-item has-tooltip-bottom" href="/login" target="_self" data-tooltip="Log in">
                     <i class="fas fa-sign-in-alt fa-lg"></i>
                 </a>
             </div>

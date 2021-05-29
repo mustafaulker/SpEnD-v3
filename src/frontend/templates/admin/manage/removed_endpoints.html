@@ -10,16 +10,12 @@
 {% block noendpoint %}There are no removed objects.{% endblock %}
 
 {% block tablehead %}
-    <th style="text-align: left">
-        <span class="icon"><i class="fas fa-link"></i></span>
-        Link
-    </th>
+    <th style="text-align: left"><span class="icon"><i class="fas fa-link"></i></span>Link</th>
     <th>
         <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-        <abbr title="DD/MM/YYYY - UTC +0">Create Date</abbr>
+        <span class="has-tooltip-bottom" data-tooltip="DD/MM/YYYY - UTC +0">Create Date</span>
     </th>
 {% endblock %}
-
 
 {% block tablebody %}
     <form action="/admin/manage/removed" method="POST">
@@ -27,25 +23,19 @@
             <tr>
                 <td style="text-align: left">
                     <a href="{{ endpoint.url }}" target="_blank">
-                        {{ endpoint.url | truncate(80, True) |
-                                        replace("https://", "") | replace("http://", "") }}
+                        {{ endpoint.url | truncate(80, True) | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>
                 <td>{{ endpoint.date_created.strftime("%d.%m.%y %H:%M") }}</td>
                 <td>
-                    <button class="button is-small is-info" name="inspect" title="Inspect"
-                            value="{{ endpoint.url }}" formtarget="_blank"
+                    <button class="button is-small is-info has-tooltip-bottom" name="inspect"
+                            data-tooltip="Inspect" value="{{ endpoint.url }}" formtarget="_blank"
                             formaction="{{ url_for('endpoint', ep_url = endpoint.url) }}">
-                                        <span class="icon">
-                                            <i class="fas fa-search"></i>
-                                        </span>
+                        <span class="icon"><i class="fas fa-search"></i></span>
                     </button>
-                    <button class="button is-small is-primary" name="recover" title="Recover"
-                            value="{{ endpoint.url }}" formaction="/recover"
-                            style="margin-left:5px;">
-                                        <span class="icon">
-                                            <i class="fas fa-trash-restore"></i>
-                                        </span>
+                    <button class="button is-small is-primary has-tooltip-bottom" name="recover" data-tooltip="Recover"
+                            value="{{ endpoint.url }}" formaction="/recover" style="margin-left:5px;">
+                        <span class="icon"><i class="fas fa-trash-restore"></i></span>
                     </button>
                 </td>
             </tr>
