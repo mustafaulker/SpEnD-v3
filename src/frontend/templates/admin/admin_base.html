@@ -21,13 +21,14 @@
 <!-- navBar -->
 <nav class="navbar is-white" role="navigation" aria-label="main navigation">
     <div class="container">
+        <input type="checkbox" id="toggler" role="button" class="toggler" aria-label="menu" aria-expanded="false"
+               data-target="adminNavMenu"/>
         <div class="navbar-brand">
             <a class="navbar-item brand-text" href="/admin/dashboard" target="_self"
                style="font-weight: bold; font-size: large; color: #0865AE">SpEnD | Admin</a>
-            <div class="navbar-burger burger" data-target="adminNavMenu"
-                 onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
+            <label for="toggler" class="navbar-burger burger">
                 <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-            </div>
+            </label>
         </div>
         <div id="adminNavMenu" class="navbar-menu">
             <div class="navbar-end">

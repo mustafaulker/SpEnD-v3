@@ -23,13 +23,14 @@
 <!-- navBar -->
 <nav class="navbar is-light" role="navigation" aria-label="main navigation">
     <div class="container">
+        <input type="checkbox" id="toggler" role="button" class="toggler" aria-label="menu" aria-expanded="false"
+               data-target="nav-menu"/>
         <div class="navbar-brand">
             <a class="navbar-item" href="/" target="_self"
                style="background: url(/static/images/header_logo.png) no-repeat center center; background-size: cover; width: 152px;"></a>
-            <a role="button" id="nav-burger" class="navbar-burger" aria-label="menu" aria-expanded="false"
-               data-target="nav-menu" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active')">
+            <label for="toggler" class="navbar-burger burger">
                 <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
-            </a>
+            </label>
         </div>
 
         <div id="nav-menu" class="navbar-menu">
