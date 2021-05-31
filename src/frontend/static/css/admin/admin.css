@@ -176,8 +176,12 @@ nav.navbar {
     width: 20px;
 }
 
-.sidebar #leftside-navigation ul li a i .fa-angle-down, .sidebar #leftside-navigation ul li a i .fa-angle-up {
+.sidebar #leftside-navigation ul li a i .fa-angle-down {
     padding-top: 3px;
+}
+
+i.arrow.fa.fa-angle-down.toogle {
+    transform: rotateX(180deg);
 }
 
 .sidebar #leftside-navigation ul ul {
