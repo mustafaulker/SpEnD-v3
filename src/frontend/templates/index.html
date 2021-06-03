@@ -11,7 +11,6 @@
                        style="width: 15%" id="endpointSearch" onkeyup="search_filter()">
                 <span class="icon is-left"><i class="fa fa-search"></i></span>
             </label>
-
             <label class="checkbox" id="alive_checkbox" style="margin-left: 1%; margin-top: 0.6%">
                 <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">
                 List only alive
@@ -28,60 +27,37 @@
                     <a href="/contact">Contact page.</a>
                 </h1>
             {% else %}
-                <table class="table is-fullwidth is-striped is-hoverable"
-                       id="endpointTable" style="text-align: center">
+                <table class="table is-fullwidth is-striped is-hoverable" id="endpointTable" style="text-align: center">
                     <thead>
                     <tr>
-                        <th>
-                            <abbr title="Order">
-                                <span class="icon"><i class="fas fa-list-ol"></i></span>
-                            </abbr>
-                        </th>
-                        <th style="text-align: left">
-                            <span class="icon"><i class="fas fa-link"></i></span>
-                            Endpoint
-                        </th>
+                        <th><span class="has-tooltip-bottom" data-tooltip="Order">
+                            <span class="icon"><i class="fas fa-list-ol"></i></span></span></th>
+                        <th style="text-align: left"><span class="icon"><i class="fas fa-link"></i></span>Endpoint</th>
                         <th>
                             <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                            <abbr title="DD/MM/YYYY">Create Date</abbr>
+                            <span class="has-tooltip-bottom" data-tooltip="DD/MM/YYYY">Create Date</span>
                         </th>
-                        <th>
-                            <span class="icon"><i class="far fa-clock"></i></span>
-                            <abbr title="UTC +0">Last Check</abbr>
-                        </th>
-                        <th>
-                            <span class="icon"><i class="fas fa-heartbeat"></i></span>
-                            Status
-                        </th>
+                        <th><span class="icon"><i class="far fa-clock"></i></span>
+                            <span class="has-tooltip-bottom" data-tooltip="UTC +0">Last Check</span>
+                        <th><span class="icon"><i class="fas fa-heartbeat"></i></span>Status</th>
                     </tr>
                     </thead>
                     <tfoot>
                     <tr>
-                        <th>
-                            <abbr title="Order">
-                                <span class="icon"><i class="fas fa-list-ol"></i></span>
-                            </abbr>
-                        </th>
-                        <th style="text-align: left">
-                            <span class="icon"><i class="fas fa-link"></i></span>
-                            Endpoint
-                        </th>
+                        <th><span class="has-tooltip-bottom" data-tooltip="Order">
+                            <span class="icon"><i class="fas fa-list-ol"></i></span></span></th>
+                        <th style="text-align: left"><span class="icon"><i class="fas fa-link"></i></span>Endpoint</th>
                         <th>
                             <span class="icon"><i class="fas fa-calendar-alt"></i></span>
-                            <abbr title="DD/MM/YYYY">Create Date</abbr>
+                            <span class="has-tooltip-bottom" data-tooltip="DD/MM/YYYY">Create Date</span>
                         </th>
-                        <th>
-                            <span class="icon"><i class="far fa-clock"></i></span>
-                            <abbr title="UTC +0">Last Check</abbr>
+                        <th><span class="icon"><i class="far fa-clock"></i></span>
+                            <span class="has-tooltip-bottom" data-tooltip="UTC +0">Last Check</span>
                         </th>
-                        <th>
-                            <span class="icon"><i class="fas fa-heartbeat"></i></span>
-                            Status
-                        </th>
+                        <th><span class="icon"><i class="fas fa-heartbeat"></i></span>Status</th>
                     </tr>
                     </tfoot>
                     <tbody>
-
                     {% set count = namespace(value=1) %}
                     {% for endpoint in endpoints %}
                         <tr>
@@ -94,13 +70,11 @@
                             <td>{{ endpoint.date_created.date().strftime("%d.%m.%y") }}</td>
                             <td>{{ endpoint.date_checked.strftime("%H:%M") }}</td>
                             <td>{% if endpoint.up_now %}
-                                <span class="icon" title="Live">
-                        <i class="fas fa-check-circle fa-lg" style="color:green;"></i>
-                    </span>
+                                <span class="icon has-tooltip-success has-tooltip-bottom" data-tooltip="Live">
+                                <i class="fas fa-check-circle fa-lg" style="color:green;"></i></span>
                             {% else %}
-                                <span class="icon" title="Not Responding">
-                        <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i>
-                    </span>
+                                <span class="icon has-tooltip-danger has-tooltip-bottom" data-tooltip="Not Responding">
+                                <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i></span>
                             {% endif %}
                             </td>
                         </tr>

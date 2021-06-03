@@ -17,42 +17,32 @@
             <tr>
                 <td style="text-align: left">
                     <a href="{{ endpoint.url }}" target="_blank">
-                        {{ endpoint.url | truncate(80, True) |
-                                        replace("https://", "") | replace("http://", "") }}
+                        {{ endpoint.url | truncate(70, True) | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>
                 <td>{{ endpoint.date_created.strftime("%d.%m.%y %H:%M") }}</td>
                 <td>{% if endpoint.up_now %}
-                    <span class="icon" title="Live">
-                                        <i class="fas fa-check-circle fa-lg" style="color:green;"></i>
-                                    </span>
+                    <span class="icon has-tooltip-success has-tooltip-bottom" data-tooltip="Live">
+                        <i class="fas fa-check-circle fa-lg" style="color:green;"></i></span>
                 {% else %}
-                    <span class="icon" title="Not Responding">
-                                        <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i>
-                                    </span>
+                    <span class="icon has-tooltip-danger has-tooltip-bottom" data-tooltip="Not Responding">
+                        <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i></span>
                 {% endif %}
                 </td>
                 <td>
-                    <button class="button is-small is-info" name="inspect" title="Inspect"
+                    <button class="button is-small is-info has-tooltip-bottom" name="inspect" data-tooltip="Inspect"
                             value="{{ endpoint.url }}" formtarget="_blank"
                             formaction="{{ url_for('endpoint', ep_url = endpoint.url) }}">
-                                        <span class="icon">
-                                            <i class="fas fa-search"></i>
-                                        </span>
+                        <span class="icon"><i class="fas fa-search"></i></span>
                     </button>
-                    <button class="button is-small is-primary" name="unsuspend"
-                            value="{{ endpoint.url }}"
-                            formaction="/unsuspend" style="margin-left:5px;" title="Unsuspend">
-                                        <span class="icon">
-                                            <i class="fas fa-play"></i>
-                                        </span>
+                    <button class="button is-small is-primary has-tooltip-bottom" name="unsuspend"
+                            formaction="/unsuspend" value="{{ endpoint.url }}"
+                            style="margin-left:5px;" data-tooltip="Unsuspend">
+                        <span class="icon"><i class="fas fa-play"></i></span>
                     </button>
-                    <button class="button is-small is-danger" name="remove" title="Remove"
-                            value="{{ endpoint.url }}" formaction="/remove"
-                            style="margin-left:5px;">
-                                        <span class="icon">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
+                    <button class="button is-small is-danger has-tooltip-bottom" name="remove" data-tooltip="Remove"
+                            value="{{ endpoint.url }}" formaction="/remove" style="margin-left:5px;">
+                        <span class="icon"><i class="fas fa-trash"></i></span>
                     </button>
                 </td>
             </tr>

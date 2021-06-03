@@ -7,8 +7,7 @@
 {% block nolog %}There are no Authentications yet.{% endblock %}
 
 {% block firstcolhead %}
-    <span class="icon"><i class="fas fa-key"></i></span>
-    Log-in/Log-out
+    <span class="icon"><i class="fas fa-key"></i></span>Log-in/Log-out
 {% endblock %}
 
 {% block secondcolhead %}{{ super() }}{% endblock %}
@@ -23,9 +22,8 @@
             <td>{{ log.time.strftime("%d.%m.%y %H:%M") }}</td>
             <td>
                 <form action="/remove_log" method="POST">
-                    <button class="button is-small is-danger" name="remove_log"
-                            value="{{ log.id }}" title="Remove">
-                            <span class="icon"><i class="fas fa-trash"></i></span>
+                    <button class="button is-small is-danger has-tooltip-bottom" name="remove_log" value="{{ log.id }}"
+                            data-tooltip="Remove"><span class="icon"><i class="fas fa-trash"></i></span>
                     </button>
                 </form>
             </td>

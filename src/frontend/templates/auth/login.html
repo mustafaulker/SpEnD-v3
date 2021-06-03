@@ -2,6 +2,7 @@
 
 {% block head %}
     <link rel="stylesheet" href="/static/css/auth/login.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <title>Log-in | SpEnD</title>
 {% endblock %}
 
@@ -19,20 +20,18 @@
                                     <label for="loginEmail">
                                         <input class="input is-large" type="text" autofocus="" id="loginEmail"
                                                placeholder="username" name="username" required>
-                                        <span class="icon is-small is-left">
-                                      <i class="fa fa-user"></i>
-                                    </span>
+                                        <span class="icon is-small is-left"><i class="fa fa-user"></i></span>
                                     </label>
                                 </div>
                             </div>
                             <div class="field">
-                                <div class="control has-icons-left">
+                                <div class="control has-icons-left has-icons-right">
                                     <label for="loginPassword">
                                         <input class="input is-large" type="password" id="loginPassword"
                                                placeholder="password" name="userpass" required>
-                                        <span class="icon is-small is-left">
-                                      <i class="fa fa-lock"></i>
-                                    </span>
+                                        <span class="icon is-small is-left"><i class="fa fa-lock"></i></span>
+                                        <span class="icon is-small is-right"><i class="eye fas fa-eye-slash"
+                                                                                style="pointer-events: all; cursor: pointer"></i></span>
                                     </label>
                                 </div>
                             </div>
@@ -53,4 +52,5 @@
             </div>
         </section>
     </form>
+    <script type="text/javascript" src="../../../static/js/password-toggler.js"></script>
 {% endblock %}

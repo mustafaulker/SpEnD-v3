@@ -1,3 +1,36 @@
+@import url('//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css');
+
+/* navbar */
+@media screen and (max-width: 1024px) {
+    .navbar-menu {
+        display: none;
+    }
+}
+
+.toggler {
+    display: none;
+}
+
+.navbar .toggler:checked + .navbar-brand .burger span:nth-child(1) {
+    -webkit-transform: translateY(5px) rotate(45deg);
+    transform: translateY(5px) rotate(45deg);
+}
+
+.navbar .toggler:checked + .navbar-brand .burger span:nth-child(2) {
+    opacity: 0;
+}
+
+.navbar .toggler:checked + .navbar-brand .burger span:nth-child(3) {
+    -webkit-transform: translateY(-5px) rotate(-45deg);
+    transform: translateY(-5px) rotate(-45deg);
+}
+
+@media screen and (max-width: 1024px) {
+    .navbar .toggler:checked ~ .navbar-menu {
+        display: block;
+    }
+}
+
 /* Flash message colors */
 .error {
     color: red
@@ -7,16 +40,19 @@
     color: green;
 }
 
+/* General */
 html, body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     font-size: 16px;
     line-height: 1.5;
     height: 100%;
     background: #ECF0F3;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
 }
 
 nav.navbar {
-    border-top: 4px solid #276cda;
+    border-top: 4px solid #293949;
     margin-bottom: 1rem;
 }
 
@@ -33,29 +69,6 @@ nav.navbar {
     width: 100%;
     height: 100%;
     margin-left: 0;
-}
-
-.menu-label {
-    color: #8F99A3;
-    letter-spacing: 1px;
-    font-weight: 700;
-}
-
-.menu-list a {
-    color: #0F1D38;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.menu-list a:hover {
-    background-color: transparent;
-    color: #276cda;
-}
-
-.menu-list a.is-active {
-    background-color: transparent;
-    color: #276cda;
-    font-weight: 700;
 }
 
 .card {
@@ -75,16 +88,6 @@ nav.navbar {
 .info-tiles .subtitle {
     font-weight: 300;
     color: #8F99A3;
-}
-
-.hero.welcome.is-info {
-    background: #36D1DC;
-    background: -webkit-linear-gradient(to right, #5B86E5, #36D1DC);
-    background: linear-gradient(to right, #5B86E5, #36D1DC);
-}
-
-.hero.welcome .title, .hero.welcome .subtitle {
-    color: hsl(192, 17%, 99%);
 }
 
 .card .content {
@@ -107,4 +110,98 @@ nav.navbar {
 .events-card .card-table {
     max-height: 250px;
     overflow-y: scroll;
+}
+
+/* Side Menu */
+.sidebar-toggle {
+    margin-left: -240px;
+}
+
+.sidebar {
+    width: 240px;
+    height: auto;
+    background: #ECF0F3;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out;
+    z-index: 100;
+}
+
+.sidebar #leftside-navigation ul, .sidebar #leftside-navigation ul ul {
+    margin: -2px 0 0;
+    padding: 0;
+}
+
+.sidebar #leftside-navigation ul li {
+    list-style-type: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar #leftside-navigation ul li.active > a {
+    color: #1BC5A3;
+}
+
+.sidebar #leftside-navigation ul li.active ul {
+    display: block;
+}
+
+/* Menu content */
+.sidebar #leftside-navigation ul li a {
+    color: #001524;
+    text-decoration: none;
+    display: block;
+    padding: 18px 0 18px 25px;
+    outline: 0;
+    -webkit-transition: all 200ms ease-in;
+    -moz-transition: all 200ms ease-in;
+    -o-transition: all 200ms ease-in;
+    -ms-transition: all 200ms ease-in;
+    transition: all 200ms ease-in;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* Menu element hover effect */
+.sidebar #leftside-navigation ul li a:hover {
+    color: #1BC5A3;
+}
+
+.sidebar #leftside-navigation ul li a span {
+    display: inline-block;
+}
+
+.sidebar #leftside-navigation ul li a i {
+    width: 20px;
+}
+
+.sidebar #leftside-navigation ul li a i .fa-angle-down {
+    padding-top: 3px;
+}
+
+i.arrow.fa.fa-angle-down.toogle {
+    transform: rotateX(180deg);
+}
+
+.sidebar #leftside-navigation ul ul {
+    display: none;
+}
+
+/* Submenu */
+.sidebar #leftside-navigation ul ul li {
+    background: #E6EBEF;
+    margin-bottom: 0;
+    margin-left: 15%;
+    margin-right: 0;
+    border-bottom: none;
+}
+
+/* Submenu content */
+.sidebar #leftside-navigation ul ul li a {
+    font-size: 13px;
+    font-weight: 650;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    color: #104C56;
 }

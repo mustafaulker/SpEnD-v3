@@ -1,8 +1,6 @@
 {% extends 'admin/admin_base.html' %}
 
-{% block head %}
-    <title>{% block tabtitle %}{% endblock %}</title>
-{% endblock %}
+{% block head %}<title>{% block tabtitle %}{% endblock %}</title>{% endblock %}
 
 {% block body %}
     <section class="info-tiles">
@@ -26,11 +24,9 @@
                                       placeholder="Separate multiple keywords with a line"
                                       style="resize:none; overflow: auto; font-size: 15px"></textarea>
                             </label>
-                            <button class="button is-small is-info" name="insert_key"
-                                    title="Insert" style="margin-left:15px;">
-                                <span class="icon">
-                                    <i class="fas fa-plus"></i>
-                                </span>
+                            <button class="button is-small is-info has-tooltip-bottom" name="insert_key"
+                                    data-tooltip="Insert" style="margin-left:15px;">
+                                <span class="icon"><i class="fas fa-plus"></i></span>
                             </button>
                         </div>
                     </form>
@@ -61,35 +57,26 @@
                 <div class="content">
                     <div id="table-scroll" style="height: 500px; overflow: auto; margin: auto;">
                         {% if keywords|length < 1 %}
-                            <h1 class="title is-4" style="text-align: center">
-                                There are no Keywords yet.</h1>
+                            <h1 class="title is-4" style="text-align: center">There are no Keywords yet.</h1>
                         {% else %}
                             <table class="table is-fullwidth is-striped is-hoverable" style="text-align: center">
                                 <thead>
                                 <tr>
                                     <th style="text-align: left">
-                                        <span class="icon"><i class="fas fa-i-cursor"></i></span>
-                                        Keywords
+                                        <span class="icon"><i class="fas fa-i-cursor"></i></span>Keywords
                                     </th>
-                                    <th>
-                                        <span class="icon"><i class="fas fa-cogs"></i></span>
-                                        Actions
-                                    </th>
+                                    <th><span class="icon"><i class="fas fa-cogs"></i></span>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 {% for keyword in keywords %}
                                     <tr>
-                                        <td style="text-align: left">
-                                            {{ keyword }}
-                                        </td>
+                                        <td style="text-align: left">{{ keyword }}</td>
                                         <td>
                                             <form action="/remove_keyword" method="POST">
-                                                <button class="button is-small is-danger" name="remove_key"
-                                                        value="{{ keyword }}" title="Remove">
-                                        <span class="icon">
-                                            <i class="fas fa-trash"></i>
-                                        </span>
+                                                <button class="button is-small is-danger has-tooltip-bottom"
+                                                        name="remove_key" value="{{ keyword }}" data-tooltip="Remove">
+                                                    <span class="icon"><i class="fas fa-trash"></i></span>
                                                 </button>
                                             </form>
                                         </td>
