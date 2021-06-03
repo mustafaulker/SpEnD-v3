@@ -57,9 +57,8 @@
             <aside class="sidebar">
                 <div id="leftside-navigation" class="nano">
                     <ul class="nano-content">
-                        <li>
-                            <a href="/admin/dashboard">
-                                <span class="icon"><i class="fab fa-watchman-monitoring"></i></span>Dashboard</a>
+                        <li><a href="/admin/dashboard">
+                            <span class="icon"><i class="fab fa-watchman-monitoring"></i></span>Dashboard</a>
                         </li>
                         <li class="sub-menu">
                             <a><span class="icon"><i class="fas fa-stream"></i></span>Endpoint Management
@@ -69,8 +68,7 @@
                                     <span class="icon"><i class="fas fa-check-double"></i></span>Approved</a>
                                 </li>
                                 <li><a href="/admin/manage/pending">
-                                    <span class="icon"><i class="fas fa-hourglass-half"></i></span>
-                                    Pending
+                                    <span class="icon"><i class="fas fa-hourglass-half"></i></span>Pending
                                     {% if pending_count > 1 %}
                                         <span style="margin-left: 20px">| {{ pending_count }} |</span>
                                         <span class="icon"><i class="far fa-bell"></i></span>
