@@ -16,7 +16,8 @@
         {% for endpoint in endpoints %}
             <tr>
                 <td style="text-align: left">
-                    <a href="{{ endpoint.url }}" target="_blank">
+                    <a class="has-tooltip-right" href="{{ endpoint.url }}" target="_blank"
+                       data-tooltip="{{ endpoint.spider|capitalize }} | {{ endpoint.keyword }}">
                         {{ endpoint.url | truncate(70, True) | replace("https://", "") | replace("http://", "") }}
                     </a>
                 </td>

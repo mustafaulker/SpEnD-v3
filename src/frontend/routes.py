@@ -632,6 +632,31 @@ def remove_log():
         abort(500)
 
 
+@app.post('/remove_logs')
+@login_required
+def remove_logs():
+    try:
+        if request.method == 'POST':
+            if 'exceptions' in request.referrer:
+                Database.delete_many('logs', {'levelname': 'ERROR'})
+                return redirect(url_for('log_exceptions'))
+            elif 'crawler' in request.referrer:
+                Database.delete_many('logs', {'funcName': 'crawler'})
+                return redirect(url_for('log_crawler'))
+            elif 'authentications' in request.referrer:
+                Database.delete_many('logs', {'funcName': {'$in': ["login", "logout"]}})
+                return redirect(url_for('log_authentications'))
+            elif 'status' in request.referrer:
+                Database.delete_many('logs', {'funcName': 'check_endpoints'})
+                return redirect(url_for('log_status'))
+            elif 'guests' in request.referrer:
+                Database.delete_many('logs', {'funcName': 'index'})
+                return redirect(url_for('log_guests'))
+    except Exception as e:
+        logger.error(f'Err, Remove_Logs. {e}')
+        abort(500)
+
+
 @app.post('/remove_task')
 @login_required
 def remove_task():

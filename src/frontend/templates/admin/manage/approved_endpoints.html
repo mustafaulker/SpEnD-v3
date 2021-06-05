@@ -16,7 +16,8 @@
         {% for endpoint in endpoints %}
             <tr>
                 <td style="text-align: left">
-                    <a href="{{ endpoint.url }}" target="_blank">
+                    <a class="has-tooltip-right" href="{{ endpoint.url }}" target="_blank"
+                       data-tooltip="{{ endpoint.spider|capitalize }} | {{ endpoint.keyword }}">
                         {{ endpoint.url | truncate(70, True) | replace("https://", "") | replace("http://","") }}
                     </a>
                 </td>
@@ -33,15 +34,15 @@
                     <button class="button is-small is-info has-tooltip-bottom" name="inspect"
                             value="{{ endpoint.url }}" formaction="{{ url_for('endpoint', ep_url = endpoint.url) }}"
                             formtarget="_blank" data-tooltip="Inspect">
-                                        <span class="icon"><i class="fas fa-search"></i></span>
+                        <span class="icon"><i class="fas fa-search"></i></span>
                     </button>
                     <button class="button is-small is-warning has-tooltip-bottom" name="suspend" data-tooltip="Suspend"
                             value="{{ endpoint.url }}" formaction="/suspend" style="margin-left:5px;">
-                                        <span class="icon"><i class="fas fa-pause"></i></span>
+                        <span class="icon"><i class="fas fa-pause"></i></span>
                     </button>
                     <button class="button is-small is-danger has-tooltip-bottom" name="remove" data-tooltip="Remove"
                             value="{{ endpoint.url }}" formaction="/remove" style="margin-left:5px;">
-                                        <span class="icon"><i class="fas fa-trash"></i></span>
+                        <span class="icon"><i class="fas fa-trash"></i></span>
                     </button>
                 </td>
             </tr>
