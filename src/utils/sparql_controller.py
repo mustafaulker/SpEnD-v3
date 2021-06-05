@@ -6,8 +6,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 from SPARQLWrapper.SPARQLExceptions import *
 from urllib3.exceptions import *
 
-import src.frontend
-from src.utils.database_controller import Database
+import src.frontend as fe
 from src.utils.util import is_alive
 
 logging.getLogger("py.warnings").setLevel(logging.ERROR)
@@ -29,13 +28,13 @@ class Sparql:
             try:
                 # Execute query and convert results to the returnFormat which is JSON.
                 query_result = sparql.queryAndConvert()
-                if query_result["boolean"] and not Database.in_the_collection("endpoints", link_domain):
-                    Database.insert_endpoint(link, link_domain, spider_name, keyword, page)
+                if query_result["boolean"] and not fe.db.in_the_collection("endpoints", link_domain):
+                    fe.db.insert_endpoint(link, link_domain, spider_name, keyword, page)
                     # print(f"Endpoint written on DB. site : {link}\n") # Debug print.
                 else:
-                    if Database.in_the_collection("endpoints", link_domain):
+                    if fe.db.in_the_collection("endpoints", link_domain):
                         if query_result["boolean"]:
-                            Database.endpoint_alive_or_not(link, True)
+                            fe.db.endpoint_alive_or_not(link, True)
                         # print(f"Endpoint already exist in DB. site : {link}\n") # Debug print.
                     else:
                         # print(f"This site isn't a SPARQL endpoint. site : {link}\n") # Debug print.
@@ -43,12 +42,12 @@ class Sparql:
 
             except (EndPointNotFound, EndPointInternalError, QueryBadFormed) as e:
                 if first_crawl:  # first crawl
-                    if is_alive(link) and not Database.in_the_collection("endpoints", link_domain) \
-                            and not Database.in_the_collection("second_crawl_domains", link_domain):
-                        Database.insert_crawl_domain(link_domain)
+                    if is_alive(link) and not fe.db.in_the_collection("endpoints", link_domain) \
+                            and not fe.db.in_the_collection("second_crawl_domains", link_domain):
+                        fe.db.insert_crawl_domain(link_domain)
                         # print(f"This site's domain is added for second crawl. site : {link_domain}\n") # Debug print.
-                    elif Database.in_the_collection("endpoints", link_domain) \
-                            or Database.in_the_collection("second_crawl_domains", link_domain):
+                    elif fe.db.in_the_collection("endpoints", link_domain) \
+                            or fe.db.in_the_collection("second_crawl_domains", link_domain):
                         # print(f"This domain already exist in DB. site : {link_domain}\n") # Debug print.
                         continue
                     else:
@@ -63,9 +62,9 @@ class Sparql:
                         # print(f"This site is not alive. site : {link}\n") # Debug print.
                         continue
                     elif "certificate verify failed" in str(UrllibError) \
-                            and not Database.in_the_collection("endpoints", link_domain) \
-                            and not Database.in_the_collection("second_crawl_domains", link_domain):
-                        Database.insert_crawl_domain(link_domain)
+                            and not fe.db.in_the_collection("endpoints", link_domain) \
+                            and not fe.db.in_the_collection("second_crawl_domains", link_domain):
+                        fe.db.insert_crawl_domain(link_domain)
                         # print(f"This site's domain is added for second crawl. site : {link_domain}\n") # Debug print.
                     else:
                         Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
@@ -114,16 +113,16 @@ class Sparql:
         alive = is_alive(link)
 
         if alive:
-            if Sparql.is_missed_endpoint(link) and not Database.in_the_collection("endpoints", link_domain) \
-                    and not Database.in_the_collection("second_crawl_domains", link_domain):
-                Database.insert_endpoint(link, link_domain, spider_name, keyword, page)
+            if Sparql.is_missed_endpoint(link) and not fe.db.in_the_collection("endpoints", link_domain) \
+                    and not fe.db.in_the_collection("second_crawl_domains", link_domain):
+                fe.db.insert_endpoint(link, link_domain, spider_name, keyword, page)
                 # print(f"Endpoint written on DB. site : {link}\n") # Debug print.
-            elif Database.in_the_collection("endpoints", link_domain) \
-                    or Database.in_the_collection("second_crawl_domains", link_domain):
+            elif fe.db.in_the_collection("endpoints", link_domain) \
+                    or fe.db.in_the_collection("second_crawl_domains", link_domain):
                 # print(f"This domain already exist in DB. site : {link_domain}\n") # Debug print.
                 pass
             else:
-                Database.insert_crawl_domain(link_domain)
+                fe.db.insert_crawl_domain(link_domain)
                 # print(f"This site's domain is added for second crawl. site : {link_domain}\n") # Debug print.
 
     @staticmethod
@@ -132,8 +131,8 @@ class Sparql:
         alive = is_alive(link)
 
         if alive:
-            if Sparql.is_missed_endpoint(link) and not Database.in_the_collection("endpoints", link_domain):
-                Database.insert_endpoint(link, link_domain, spider_name, keyword, page)
+            if Sparql.is_missed_endpoint(link) and not fe.db.in_the_collection("endpoints", link_domain):
+                fe.db.insert_endpoint(link, link_domain, spider_name, keyword, page)
                 # print(f"Endpoint written on DB. site : {link}\n") # Debug print.
 
     @staticmethod
@@ -144,10 +143,10 @@ class Sparql:
 
         :return: None
         """
-        src.frontend.logger.info('Status check has started.')
-        for endpoint in Database.get_endpoints():
+        fe.logger.info('Status check has started.')
+        for endpoint in fe.db.get_endpoints():
             if is_alive(endpoint):
-                Database.endpoint_alive_or_not(endpoint, True)
+                fe.db.endpoint_alive_or_not(endpoint, True)
             else:
-                Database.endpoint_alive_or_not(endpoint, False)
-        src.frontend.logger.info('Status check has stopped.')
+                fe.db.endpoint_alive_or_not(endpoint, False)
+        fe.logger.info('Status check has stopped.')

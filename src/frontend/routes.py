@@ -201,7 +201,7 @@ def crawler():
 
             # Instant crawl button pressed.
             if 'manuel_crawl' in request.form:
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, "Manuel Crawl", inner_crawl],
                                   id='manuel_crawl', run_date=datetime.datetime.now())
 
             # Schedule a crawl button pressed.
@@ -212,7 +212,7 @@ def crawler():
                     flash('- Past date/time selected.', 'error')
                     return redirect(url_for('crawler'))
 
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, "Scheduled Crawl", inner_crawl],
                                   id=None, name='schedule_crawl', run_date=f'{date} {time}')
 
                 flash(f'- Crawl will be triggered on '
@@ -222,7 +222,7 @@ def crawler():
             elif 'schedule_interval' in request.form:
                 interval = request.form.get('crawl_interval')
 
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, "Scheduled Interval Crawl", inner_crawl],
                                   id=None, name='interval_crawl', trigger='interval', days=int(interval))
                 flash(f'- Crawl will be triggered {interval} days apart', 'info')
 
