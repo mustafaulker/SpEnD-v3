@@ -8,9 +8,8 @@ from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict, logger, scheduler
+from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict, logger, scheduler, db
 from src.main_crawl import endpoint_crawler
-from src.utils.database_controller import Database
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -169,7 +168,7 @@ def crawler():
     try:
         if not current_user.is_authenticated():
             return render_template('index.html')
-        keywords = Database.get_keywords('crawl_keys')
+        keywords = db.get_keywords('crawl_keys')
 
         if request.method == 'POST':
             selected_search_engines = request.form.getlist('cb_se')
@@ -185,9 +184,9 @@ def crawler():
                 keyword_input.remove('')
             if keyword_input:
                 for key in keyword_input.copy():
-                    if key in Database.get_keywords('crawl_keys'):
+                    if key in db.get_keywords('crawl_keys'):
                         keyword_input.remove(key)
-                Database.insert_keyword('crawl_keys', list(keyword_input))
+                db.insert_keyword('crawl_keys', list(keyword_input))
 
             # SE and KW selection control.
             if not selected_search_engines or not selected_keywords:
@@ -449,7 +448,7 @@ def crawl_keys():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('crawl_keys')
+        keywords = db.get_keywords('crawl_keys')
 
         return render_template('./admin/keywords/crawl_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
@@ -466,7 +465,7 @@ def second_crawl_keys():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('second_crawl_keys')
+        keywords = db.get_keywords('second_crawl_keys')
 
         return render_template('./admin/keywords/second_crawl_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
@@ -483,7 +482,7 @@ def wanted_keys():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('wanted_keys')
+        keywords = db.get_keywords('wanted_keys')
 
         return render_template('./admin/keywords/wanted_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
@@ -500,7 +499,7 @@ def unwanted_keys():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('unwanted_keys')
+        keywords = db.get_keywords('unwanted_keys')
 
         return render_template('./admin/keywords/unwanted_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
@@ -520,7 +519,7 @@ def insert_keyword():
             [keys.add(keyword.strip()) for keyword in keyword_textarea]
 
             for key in keys.copy():
-                if key in Database.get_keywords(request.referrer.rsplit('/', 1)[-1]):
+                if key in db.get_keywords(request.referrer.rsplit('/', 1)[-1]):
                     keys.remove(key)
 
             if '' in keys:
@@ -529,7 +528,7 @@ def insert_keyword():
             if not keys:
                 flash(f'No Keywords provided.', 'error')
             else:
-                Database.insert_keyword(request.referrer.rsplit('/', 1)[-1], list(keys))
+                db.insert_keyword(request.referrer.rsplit('/', 1)[-1], list(keys))
                 flash(f'Keywords has added.', 'info')
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
@@ -542,7 +541,7 @@ def insert_keyword():
 def remove_keyword():
     try:
         if request.method == 'POST':
-            Database.remove_keyword(request.referrer.rsplit('/', 1)[-1], request.form.get('remove_key'))
+            db.remove_keyword(request.referrer.rsplit('/', 1)[-1], request.form.get('remove_key'))
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f'Err, Remove_Keyword. {e}')
@@ -554,7 +553,7 @@ def remove_keyword():
 def approve():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
+            db.update_one("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
         return redirect(url_for("pending"))
     except Exception as e:
         logger.error(f"Err, Approve_EP. {e}")
@@ -566,7 +565,7 @@ def approve():
 def suspend():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+            db.update_one("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Suspend_EP. {e}")
@@ -578,7 +577,7 @@ def suspend():
 def unsuspend():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
+            db.update_one("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("suspended"))
     except Exception as e:
         logger.error(f"Err, Unsuspend_EP. {e}")
@@ -590,7 +589,7 @@ def unsuspend():
 def remove():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
+            db.update_one("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Remove_EP. {e}")
@@ -602,7 +601,7 @@ def remove():
 def recover():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
+            db.update_one("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("removed"))
     except Exception as e:
         logger.error(f"Err, Recover_EP. {e}")
@@ -615,10 +614,10 @@ def remove_log():
     try:
         if request.method == 'POST':
             if 'guests' in request.referrer:
-                Database.delete_many('logs', {'msg': request.form.get('remove_log')})
+                db.delete_many('logs', {'msg': request.form.get('remove_log')})
                 return redirect(url_for("log_guests"))
             else:
-                Database.delete_one('logs', {'_id': ObjectId(request.form.get('remove_log'))})
+                db.delete_one('logs', {'_id': ObjectId(request.form.get('remove_log'))})
         if 'exceptions' in request.referrer:
             return redirect(url_for('log_exceptions'))
         elif 'crawler' in request.referrer:
@@ -638,19 +637,19 @@ def remove_logs():
     try:
         if request.method == 'POST':
             if 'exceptions' in request.referrer:
-                Database.delete_many('logs', {'levelname': 'ERROR'})
+                db.delete_many('logs', {'levelname': 'ERROR'})
                 return redirect(url_for('log_exceptions'))
             elif 'crawler' in request.referrer:
-                Database.delete_many('logs', {'funcName': 'crawler'})
+                db.delete_many('logs', {'funcName': 'crawler'})
                 return redirect(url_for('log_crawler'))
             elif 'authentications' in request.referrer:
-                Database.delete_many('logs', {'funcName': {'$in': ["login", "logout"]}})
+                db.delete_many('logs', {'funcName': {'$in': ["login", "logout"]}})
                 return redirect(url_for('log_authentications'))
             elif 'status' in request.referrer:
-                Database.delete_many('logs', {'funcName': 'check_endpoints'})
+                db.delete_many('logs', {'funcName': 'check_endpoints'})
                 return redirect(url_for('log_status'))
             elif 'guests' in request.referrer:
-                Database.delete_many('logs', {'funcName': 'index'})
+                db.delete_many('logs', {'funcName': 'index'})
                 return redirect(url_for('log_guests'))
     except Exception as e:
         logger.error(f'Err, Remove_Logs. {e}')

@@ -6,14 +6,12 @@ from sys import stderr
 import requests
 from urllib3.exceptions import *
 
-from src.utils.database_controller import Database
+import src.frontend as fe
 
-Database.initialize()
-
-default_unwanted_keys = Database.get_keywords("unwanted_keys")
-default_wanted_keys = Database.get_keywords("wanted_keys")
-default_second_crawl_keys = Database.get_keywords("second_crawl_keys")
-second_crawl_domains = Database.get_second_crawl_domains()
+default_unwanted_keys = fe.db.get_keywords("unwanted_keys")
+default_wanted_keys = fe.db.get_keywords("wanted_keys")
+default_second_crawl_keys = fe.db.get_keywords("second_crawl_keys")
+second_crawl_domains = fe.db.get_second_crawl_domains()
 
 
 def link_filter(incoming_links: list) -> list:
