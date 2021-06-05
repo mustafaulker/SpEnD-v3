@@ -99,29 +99,29 @@ def fill_start_urls_list_for_second_crawl(spider, query):
                 if "last_crawl" in domain:
                     if domain["last_crawl"] < date:
                         add_element_for_second_crawl(spider, query, domain)
-                        Database.update_one("second_crawl_domains", {"domain": domain["domain"]},
-                                            {"$set": {"last_crawl": datetime.datetime.utcnow()}})
+                        fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                                         {"$set": {"last_crawl": datetime.datetime.utcnow()}})
                     else:
                         continue
                 else:
                     add_element_for_second_crawl(spider, query, domain)
-                    Database.update_one("second_crawl_domains", {"domain": domain["domain"]},
-                                        {"$set": {"last_crawl": datetime.datetime.utcnow()}})
+                    fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                                     {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         elif isinstance(query, tuple):
             for domain in second_crawl_domains:
                 if "last_crawl" in domain:
                     if domain["last_crawl"] < date:
                         for key in query:
                             add_element_for_second_crawl(spider, key, domain)
-                        Database.update_one("second_crawl_domains", {"domain": domain["domain"]},
-                                            {"$set": {"last_crawl": datetime.datetime.utcnow()}})
+                        fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                                         {"$set": {"last_crawl": datetime.datetime.utcnow()}})
                     else:
                         continue
                 else:
                     for key in query:
                         add_element_for_second_crawl(spider, key, domain)
-                    Database.update_one("second_crawl_domains", {"domain": domain["domain"]},
-                                        {"$set": {"last_crawl": datetime.datetime.utcnow()}})
+                    fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                                     {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         else:
             raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or tuple.")
     except ValueError as valueError:

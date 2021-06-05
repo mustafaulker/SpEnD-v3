@@ -640,7 +640,7 @@ def remove_logs():
                 db.delete_many('logs', {'levelname': 'ERROR'})
                 return redirect(url_for('log_exceptions'))
             elif 'crawler' in request.referrer:
-                db.delete_many('logs', {'funcName': 'crawler'})
+                db.delete_many('logs', {'funcName': 'crawl'})
                 return redirect(url_for('log_crawler'))
             elif 'authentications' in request.referrer:
                 db.delete_many('logs', {'funcName': {'$in': ["login", "logout"]}})

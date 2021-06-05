@@ -3,6 +3,7 @@ services:
   spend:
     build: .
     container_name: spend
+    image: spend-image
     environment:
       - MONGODB_HOST=mongo
       - MONGODB_PORT=27017
