@@ -47,7 +47,7 @@ class Google(scrapy.Spider):
 
         links = response.css("div.kCrYT a::attr(href)").getall()
 
-        Sparql.is_endpoint(util.link_filter(util.link_regulator_for_google(links)), Google.name, keyword, page,
+        Sparql.is_endpoint(util.link_filter(util.link_regulator(links)), Google.name, keyword, page,
                            first_crawl=Google.is_first_crawl)
 
         next_page = response.css("a.nBDE1b.G5eFlf::attr(href)").get()

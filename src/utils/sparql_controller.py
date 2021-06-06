@@ -16,9 +16,18 @@ class Sparql:
 
     @staticmethod
     def is_endpoint(links: list, spider_name: str, keyword: str, page: int, first_crawl=True):
+        """
+        Sends an ASK query to the provided links to check if they are endpoints.
+
+        :param links: Links to be checked
+        :param spider_name: Spider name that found the endpoint
+        :param keyword: Keywords that found the endpoint
+        :param page: Search engine page info that endpoint found on
+        :param first_crawl: Is it first crawl
+        :return: None
+        """
         for link in links:
-            # print(f"Current Website : {link}\n") # Debug print.
-            # Site to be checked & Query & Timeout configuration
+            # Query configurations
             sparql = SPARQLWrapper(link, returnFormat=JSON)
             sparql.setQuery("ASK WHERE { ?s ?p ?o. }")
             sparql.setTimeout(30)
@@ -26,78 +35,72 @@ class Sparql:
             link_domain = urlparse(link).netloc
 
             try:
-                # Execute query and convert results to the returnFormat which is JSON.
+                # Execute query and convert the result to JSON format.
                 query_result = sparql.queryAndConvert()
                 if query_result["boolean"] and not fe.db.in_the_collection("endpoints", link_domain):
                     fe.db.insert_endpoint(link, link_domain, spider_name, keyword, page)
-                    # print(f"Endpoint written on DB. site : {link}\n") # Debug print.
                 else:
                     if fe.db.in_the_collection("endpoints", link_domain):
                         if query_result["boolean"]:
                             fe.db.endpoint_alive_or_not(link, True)
-                        # print(f"Endpoint already exist in DB. site : {link}\n") # Debug print.
                     else:
-                        # print(f"This site isn't a SPARQL endpoint. site : {link}\n") # Debug print.
                         continue
 
-            except (EndPointNotFound, EndPointInternalError, QueryBadFormed) as e:
-                if first_crawl:  # first crawl
+            except (EndPointNotFound, EndPointInternalError, QueryBadFormed):
+                if first_crawl:
                     if is_alive(link) and not fe.db.in_the_collection("endpoints", link_domain) \
                             and not fe.db.in_the_collection("inner_domains", link_domain):
                         fe.db.insert_crawl_domain(link_domain)
-                        # print(f"This site's domain is added for inner crawl. site : {link_domain}\n") # Debug print.
                     elif fe.db.in_the_collection("endpoints", link_domain) \
                             or fe.db.in_the_collection("inner_domains", link_domain):
-                        # print(f"This domain already exist in DB. site : {link_domain}\n") # Debug print.
                         continue
                     else:
-                        # print(f"This site is not alive. site : {link}\n") # Debug print.
                         continue
                 else:  # inner crawl
                     continue
 
             except (HTTPError, URLError) as UrllibError:
-                if first_crawl:  # first crawl
+                if first_crawl:
                     if "503" in str(UrllibError):
-                        # print(f"This site is not alive. site : {link}\n") # Debug print.
                         continue
                     elif "certificate verify failed" in str(UrllibError) \
                             and not fe.db.in_the_collection("endpoints", link_domain) \
                             and not fe.db.in_the_collection("inner_domains", link_domain):
                         fe.db.insert_crawl_domain(link_domain)
-                        # print(f"This site's domain is added for inner crawl. site : {link_domain}\n") # Debug print.
                     else:
-                        Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
-                        # print("Urllib Error.\n") # Debug print.
+                        Sparql.control_missed_endpoint(link, link_domain, spider_name, keyword, page)
                 else:  # inner crawl
-                    Sparql.general_control_for_missed_endpoint_in_inner_crawl(link, link_domain, spider_name, keyword,
-                                                                              page)
+                    Sparql.control_missed_endpoint_for_inner(link, link_domain, spider_name, keyword,
+                                                             page)
                     continue
 
             except (SPARQLWrapperException, URITooLong, Unauthorized) as WrapperException:
                 print(f"Error while wrapping endpoint: {WrapperException} site : {link}\n")
-                # print("WrapperException\n") # Debug print.
 
             except TypeError:
-                if first_crawl:  # first crawl
-                    Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
-                    # print("Type Error\n") # Debug print.
+                if first_crawl:
+                    Sparql.control_missed_endpoint(link, link_domain, spider_name, keyword, page)
                 else:  # inner crawl
-                    Sparql.general_control_for_missed_endpoint_in_inner_crawl(link, link_domain, spider_name, keyword,
-                                                                              page)
+                    Sparql.control_missed_endpoint_for_inner(link, link_domain, spider_name, keyword,
+                                                             page)
                     continue
 
             except Exception:
-                if first_crawl:  # first crawl
-                    Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
-                    # print('Exception: \n') # Debug print.
+                if first_crawl:
+                    Sparql.control_missed_endpoint(link, link_domain, spider_name, keyword, page)
                 else:  # inner crawl
-                    Sparql.general_control_for_missed_endpoint_in_inner_crawl(link, link_domain, spider_name, keyword,
-                                                                              page)
+                    Sparql.control_missed_endpoint_for_inner(link, link_domain, spider_name, keyword,
+                                                             page)
                     continue
 
     @staticmethod
     def is_missed_endpoint(link: str) -> bool:
+        """
+        Checks if the link is can be a missed endpoint.
+
+        :param link: Link to be checked
+        :return: Is endpoint missed or not
+        """
         missed = True
         path = urlparse(link).path
         domain = urlparse(link).netloc
@@ -109,31 +112,46 @@ class Sparql:
         return missed
 
     @staticmethod
-    def general_control_for_missed_endpoint(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
+    def control_missed_endpoint(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
+        """
+        Checks if any endpoint missed.
+
+        :param link: Link to be checked
+        :param link_domain: Domain of the link
+        :param spider_name: Spider name that found the endpoint
+        :param keyword: Keywords that found the endpoint
+        :param page: Search engine page info that endpoint found on
+        :return: None
+        """
         alive = is_alive(link)
 
         if alive:
             if Sparql.is_missed_endpoint(link) and not fe.db.in_the_collection("endpoints", link_domain) \
                     and not fe.db.in_the_collection("inner_domains", link_domain):
                 fe.db.insert_endpoint(link, link_domain, spider_name, keyword, page)
-                # print(f"Endpoint written on DB. site : {link}\n") # Debug print.
             elif fe.db.in_the_collection("endpoints", link_domain) \
                     or fe.db.in_the_collection("inner_domains", link_domain):
-                # print(f"This domain already exist in DB. site : {link_domain}\n") # Debug print.
                 pass
             else:
                 fe.db.insert_crawl_domain(link_domain)
-                # print(f"This site's domain is added for inner crawl. site : {link_domain}\n") # Debug print.
 
     @staticmethod
-    def general_control_for_missed_endpoint_in_inner_crawl(link: str, link_domain: str, spider_name: str, keyword: str,
-                                                           page: int):
+    def control_missed_endpoint_for_inner(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
+        """
+        Checks if any endpoint missed for inner_crawl.
+
+        :param link: Link to be checked
+        :param link_domain: Domain of the link
+        :param spider_name: Spider name that found the endpoint
+        :param keyword: Keywords that found the endpoint
+        :param page: Search engine page info that endpoint found on
+        :return: None
+        """
         alive = is_alive(link)
 
         if alive:
             if Sparql.is_missed_endpoint(link) and not fe.db.in_the_collection("endpoints", link_domain):
                 fe.db.insert_endpoint(link, link_domain, spider_name, keyword, page)
-                # print(f"Endpoint written on DB. site : {link}\n") # Debug print.
 
     @staticmethod
     def check_endpoints():
