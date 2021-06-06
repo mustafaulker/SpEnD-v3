@@ -15,6 +15,7 @@ class Mojeek(scrapy.Spider):
         logging.getLogger("scrapy.middleware").setLevel(logging.WARNING)
         logging.getLogger("scrapy.extensions").setLevel(logging.WARNING)
         logging.getLogger("scrapy.statscollectors").setLevel(logging.WARNING)
+        logging.getLogger("scrapy.crawler").setLevel(logging.WARNING)
         super().__init__(*args, **kwargs)
 
     name = "mojeek"
@@ -23,10 +24,10 @@ class Mojeek(scrapy.Spider):
     is_first_crawl = True
 
     custom_settings = {
-        "CONCURRENT_REQUESTS": 4,
-        "CONCURRENT_REQUESTS_PER_IP": 4,
-        "DOWNLOAD_DELAY": 7,
         "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+        "CONCURRENT_REQUESTS": 1,
+        "CONCURRENT_REQUESTS_PER_IP": 1,
+        "DOWNLOAD_DELAY": 10,
     }
 
     start_urls = []

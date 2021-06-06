@@ -15,6 +15,7 @@ class Google(scrapy.Spider):
         logging.getLogger("scrapy.middleware").setLevel(logging.WARNING)
         logging.getLogger("scrapy.extensions").setLevel(logging.WARNING)
         logging.getLogger("scrapy.statscollectors").setLevel(logging.WARNING)
+        logging.getLogger("scrapy.crawler").setLevel(logging.WARNING)
         super().__init__(*args, **kwargs)
 
     name = "google"
@@ -23,6 +24,7 @@ class Google(scrapy.Spider):
     is_first_crawl = True
 
     custom_settings = {
+        "USER_AGENT": "",
         "CONCURRENT_REQUESTS": 1,
         "CONCURRENT_REQUESTS_PER_IP": 1,
         "DOWNLOAD_DELAY": 40,

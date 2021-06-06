@@ -15,12 +15,20 @@ class Ask(scrapy.Spider):
         logging.getLogger("scrapy.middleware").setLevel(logging.WARNING)
         logging.getLogger("scrapy.extensions").setLevel(logging.WARNING)
         logging.getLogger("scrapy.statscollectors").setLevel(logging.WARNING)
+        logging.getLogger("scrapy.crawler").setLevel(logging.WARNING)
         super().__init__(*args, **kwargs)
 
     name = "ask"
     base_url = "https://www.ask.com/web?q="
     search_parameters = ""
     is_first_crawl = True
+
+    custom_settings = {
+        "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0",
+        "CONCURRENT_REQUESTS": 1,
+        "CONCURRENT_REQUESTS_PER_IP": 1,
+        "DOWNLOAD_DELAY": 7,
+    }
 
     start_urls = []
 
