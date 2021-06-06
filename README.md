@@ -17,7 +17,7 @@ Checks if gathered websites is an Endpoint or not, if so stores them in the data
 
 ### Project Layout
 
-    .   
+    .
     ├── src/
     │   ├── frontend/
     │   │   ├── static/
@@ -56,10 +56,11 @@ Checks if gathered websites is an Endpoint or not, if so stores them in the data
     │   │   ├── sparql_controller.py
     │   │   └── util.py
     │   ├── main_crawl.py
-    │   ├── second_crawl.py
+    │   ├── inner_crawl.py
     │   └── scrapy.cfg
-    ├── run.py  
-    ├── Docker-compose.yml  
-    ├── Dockerfile  
-    ├── requirements.txt  
+    ├── run.py
+    ├── docker-compose.yml
+    ├── Dockerfile
+    ├── .dockerignore
+    ├── requirements.txt
     └── README.md

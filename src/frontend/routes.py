@@ -212,7 +212,8 @@ def crawler():
                     flash('- Past date/time selected.', 'error')
                     return redirect(url_for('crawler'))
 
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, "Scheduled Crawl", inner_crawl],
+                scheduler.add_job(func=endpoint_crawler,
+                                  args=[spiders, selected_keywords, "Scheduled Crawl", inner_crawl],
                                   id=None, name='schedule_crawl', run_date=f'{date} {time}')
 
                 flash(f'- Crawl will be triggered on '
@@ -222,7 +223,8 @@ def crawler():
             elif 'schedule_interval' in request.form:
                 interval = request.form.get('crawl_interval')
 
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, "Scheduled Interval Crawl", inner_crawl],
+                scheduler.add_job(func=endpoint_crawler,
+                                  args=[spiders, selected_keywords, "Scheduled Interval Crawl", inner_crawl],
                                   id=None, name='interval_crawl', trigger='interval', days=int(interval))
                 flash(f'- Crawl will be triggered {interval} days apart', 'info')
 
@@ -458,16 +460,16 @@ def crawl_keys():
         abort(500)
 
 
-@app.route('/admin/keywords/second_crawl_keys', methods=['GET', 'POST'])
+@app.route('/admin/keywords/inner_keys', methods=['GET', 'POST'])
 @login_required
-def second_crawl_keys():
+def inner_keys():
     try:
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = db.get_keywords('second_crawl_keys')
+        keywords = db.get_keywords('inner_keys')
 
-        return render_template('./admin/keywords/second_crawl_keys.html', keywords=keywords,
+        return render_template('./admin/keywords/inner_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)

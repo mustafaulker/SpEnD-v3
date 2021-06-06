@@ -43,17 +43,17 @@ class Sparql:
             except (EndPointNotFound, EndPointInternalError, QueryBadFormed) as e:
                 if first_crawl:  # first crawl
                     if is_alive(link) and not fe.db.in_the_collection("endpoints", link_domain) \
-                            and not fe.db.in_the_collection("second_crawl_domains", link_domain):
+                            and not fe.db.in_the_collection("inner_domains", link_domain):
                         fe.db.insert_crawl_domain(link_domain)
-                        # print(f"This site's domain is added for second crawl. site : {link_domain}\n") # Debug print.
+                        # print(f"This site's domain is added for inner crawl. site : {link_domain}\n") # Debug print.
                     elif fe.db.in_the_collection("endpoints", link_domain) \
-                            or fe.db.in_the_collection("second_crawl_domains", link_domain):
+                            or fe.db.in_the_collection("inner_domains", link_domain):
                         # print(f"This domain already exist in DB. site : {link_domain}\n") # Debug print.
                         continue
                     else:
                         # print(f"This site is not alive. site : {link}\n") # Debug print.
                         continue
-                else:  # second crawl
+                else:  # inner crawl
                     continue
 
             except (HTTPError, URLError) as UrllibError:
@@ -63,15 +63,15 @@ class Sparql:
                         continue
                     elif "certificate verify failed" in str(UrllibError) \
                             and not fe.db.in_the_collection("endpoints", link_domain) \
-                            and not fe.db.in_the_collection("second_crawl_domains", link_domain):
+                            and not fe.db.in_the_collection("inner_domains", link_domain):
                         fe.db.insert_crawl_domain(link_domain)
-                        # print(f"This site's domain is added for second crawl. site : {link_domain}\n") # Debug print.
+                        # print(f"This site's domain is added for inner crawl. site : {link_domain}\n") # Debug print.
                     else:
                         Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
                         # print("Urllib Error.\n") # Debug print.
-                else:  # second crawl
-                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain, spider_name, keyword,
-                                                                               page)
+                else:  # inner crawl
+                    Sparql.general_control_for_missed_endpoint_in_inner_crawl(link, link_domain, spider_name, keyword,
+                                                                              page)
                     continue
 
             except (SPARQLWrapperException, URITooLong, Unauthorized) as WrapperException:
@@ -82,18 +82,18 @@ class Sparql:
                 if first_crawl:  # first crawl
                     Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
                     # print("Type Error\n") # Debug print.
-                else:  # second crawl
-                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain, spider_name, keyword,
-                                                                               page)
+                else:  # inner crawl
+                    Sparql.general_control_for_missed_endpoint_in_inner_crawl(link, link_domain, spider_name, keyword,
+                                                                              page)
                     continue
 
             except Exception:
                 if first_crawl:  # first crawl
                     Sparql.general_control_for_missed_endpoint(link, link_domain, spider_name, keyword, page)
                     # print('Exception: \n') # Debug print.
-                else:  # second crawl
-                    Sparql.general_control_for_missed_endpoint_in_second_crawl(link, link_domain, spider_name, keyword,
-                                                                               page)
+                else:  # inner crawl
+                    Sparql.general_control_for_missed_endpoint_in_inner_crawl(link, link_domain, spider_name, keyword,
+                                                                              page)
                     continue
 
     @staticmethod
@@ -114,20 +114,20 @@ class Sparql:
 
         if alive:
             if Sparql.is_missed_endpoint(link) and not fe.db.in_the_collection("endpoints", link_domain) \
-                    and not fe.db.in_the_collection("second_crawl_domains", link_domain):
+                    and not fe.db.in_the_collection("inner_domains", link_domain):
                 fe.db.insert_endpoint(link, link_domain, spider_name, keyword, page)
                 # print(f"Endpoint written on DB. site : {link}\n") # Debug print.
             elif fe.db.in_the_collection("endpoints", link_domain) \
-                    or fe.db.in_the_collection("second_crawl_domains", link_domain):
+                    or fe.db.in_the_collection("inner_domains", link_domain):
                 # print(f"This domain already exist in DB. site : {link_domain}\n") # Debug print.
                 pass
             else:
                 fe.db.insert_crawl_domain(link_domain)
-                # print(f"This site's domain is added for second crawl. site : {link_domain}\n") # Debug print.
+                # print(f"This site's domain is added for inner crawl. site : {link_domain}\n") # Debug print.
 
     @staticmethod
-    def general_control_for_missed_endpoint_in_second_crawl(link: str, link_domain: str, spider_name: str, keyword: str,
-                                                            page: int):
+    def general_control_for_missed_endpoint_in_inner_crawl(link: str, link_domain: str, spider_name: str, keyword: str,
+                                                           page: int):
         alive = is_alive(link)
 
         if alive:

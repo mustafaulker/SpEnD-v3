@@ -71,7 +71,7 @@ class Database:
     def get_keywords(self, keys: str) -> tuple:
         """
         Gets keywords for desired keyword list.
-        Possible params = ["crawl_keys", "second_crawl_keys", "wanted_keys", "unwanted_keys"]
+        Possible params = ["crawl_keys", "inner_keys", "wanted_keys", "unwanted_keys"]
 
         :param keys: Desired keyword lists name
         :return: Tuple of keywords
@@ -93,14 +93,14 @@ class Database:
          in self.db['endpoints'].find({'tag': {'$not': {'$eq': 'removed'}}}, {'_id': 0, 'url': 1})]
         return endpoints
 
-    def get_second_crawl_domains(self) -> list:
+    def get_inner_domains(self) -> list:
         """
-        Gathers all second crawl domains from the database.
+        Gathers all inner crawl domains from the database.
 
-        :return: List of second crawl domains
+        :return: List of inner crawl domains
         """
         domains = list()
-        [domains.append(domain) for domain in self.db['second_crawl_domains'].find({})]
+        [domains.append(domain) for domain in self.db['inner_domains'].find({})]
         return domains
 
     def insert_endpoint(self, link: str, link_domain: str, spider_name: str, keyword: str, page: int):
@@ -130,12 +130,12 @@ class Database:
 
     def insert_crawl_domain(self, link_domain: str):
         """
-        Inserts a domain to the second_crawl_domain collection.
+        Inserts a domain to the inner_domains collection.
 
         :param link_domain: Domain to be crawled
         :return: None
         """
-        self.db['second_crawl_domains'].insert_one(
+        self.db['inner_domains'].insert_one(
             {
                 "date_created": datetime.utcnow().strftime("%d-%m-%Y %H:%M:%S"),
                 "domain": link_domain

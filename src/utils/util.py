@@ -8,10 +8,10 @@ from urllib3.exceptions import *
 
 import src.frontend as fe
 
-default_unwanted_keys = fe.db.get_keywords("unwanted_keys")
-default_wanted_keys = fe.db.get_keywords("wanted_keys")
-default_second_crawl_keys = fe.db.get_keywords("second_crawl_keys")
-second_crawl_domains = fe.db.get_second_crawl_domains()
+unwanted_keys = fe.db.get_keywords("unwanted_keys")
+wanted_keys = fe.db.get_keywords("wanted_keys")
+inner_keys = fe.db.get_keywords("inner_keys")
+inner_domains = fe.db.get_inner_domains()
 
 
 def link_filter(incoming_links: list) -> list:
@@ -31,8 +31,8 @@ def link_filter(incoming_links: list) -> list:
         if "help" in urllib.parse.urlparse(link).query:
             link = link.replace(link[link.index("?help"):len(link)], "")
 
-        if any(wanted_key in link.lower() for wanted_key in default_wanted_keys):
-            if not any(unwanted_key in link.lower() for unwanted_key in default_unwanted_keys):
+        if any(wanted_key in link.lower() for wanted_key in wanted_keys):
+            if not any(unwanted_key in link.lower() for unwanted_key in unwanted_keys):
                 filtered_links.append(link)
         else:
             continue
@@ -91,36 +91,36 @@ def fill_start_urls_list(spider, query):
         stderr.write(str(valueError))
 
 
-def fill_start_urls_list_for_second_crawl(spider, query):
+def fill_start_urls_list_for_inner_crawl(spider, query):
     try:
         date = datetime.datetime.utcnow() - datetime.timedelta(days=7)
         if isinstance(query, str):
-            for domain in second_crawl_domains:
+            for domain in inner_domains:
                 if "last_crawl" in domain:
                     if domain["last_crawl"] < date:
-                        add_element_for_second_crawl(spider, query, domain)
-                        fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                        add_element_for_inner_crawl(spider, query, domain)
+                        fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                          {"$set": {"last_crawl": datetime.datetime.utcnow()}})
                     else:
                         continue
                 else:
-                    add_element_for_second_crawl(spider, query, domain)
-                    fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                    add_element_for_inner_crawl(spider, query, domain)
+                    fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                      {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         elif isinstance(query, tuple):
-            for domain in second_crawl_domains:
+            for domain in inner_domains:
                 if "last_crawl" in domain:
                     if domain["last_crawl"] < date:
                         for key in query:
-                            add_element_for_second_crawl(spider, key, domain)
-                        fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                            add_element_for_inner_crawl(spider, key, domain)
+                        fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                          {"$set": {"last_crawl": datetime.datetime.utcnow()}})
                     else:
                         continue
                 else:
                     for key in query:
-                        add_element_for_second_crawl(spider, key, domain)
-                    fe.db.update_one("second_crawl_domains", {"domain": domain["domain"]},
+                        add_element_for_inner_crawl(spider, key, domain)
+                    fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                      {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         else:
             raise ValueError("Invalid literal for \"query\" argument. \"query\" must be str or tuple.")
@@ -128,15 +128,15 @@ def fill_start_urls_list_for_second_crawl(spider, query):
         stderr.write(str(valueError))
 
 
-def add_element_for_second_crawl(spider, query, domain):
+def add_element_for_inner_crawl(spider, query, domain):
     """
-    This method inserts link domain to spider's start_urls list for second crawl.
+    This method inserts link domain to spider's start_urls list for inner crawl.
     Firstly, the query keyword is parsed for the search engine.
     Then the parsed keyword is inserted into the specified spider's start_urls list.
 
     :param spider: Spider which start_urls list will be filled
     :param query: Keyword string for the search query
-    :param domain: JSON Object from second_crawl_domains collection
+    :param domain: JSON Object from inner_domains collection
     :return: None
     """
 
@@ -170,9 +170,9 @@ def is_alive(link: str) -> bool:
         if response == 200:
             alive = True
         else:
-            # print(f"This site is not alive. Therefore {link} will not add to Second_Crawl_Domains collection.\n") # Debug print.
+            # print(f"This site is not alive. Therefore {link} will not add to inner_domains collection.\n") # Debug print.
             pass
     except (TimeoutError, NewConnectionError, MaxRetryError, requests.ConnectionError, requests.ReadTimeout):
-        # print(f"This site is not alive. Therefore {link} will not add to Second_Crawl_Domains collection.\n") # Debug print.
+        # print(f"This site is not alive. Therefore {link} will not add to inner_domains collection.\n") # Debug print.
         pass
     return alive

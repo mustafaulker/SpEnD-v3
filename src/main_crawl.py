@@ -32,7 +32,7 @@ def crawl(spiders, query, task: str, inner_crawl: bool):
 
     if inner_crawl:
         fe.logger.info(f"{task}'s Inner Crawl has started.")
-        subprocess.call('PYTHONPATH=/SpEnD/ python3 /SpEnD/src/second_crawl.py', shell=True)
+        subprocess.call('PYTHONPATH=/SpEnD/ python3 /SpEnD/src/inner_crawl.py', shell=True)
     fe.logger.info(f"{task} has ended.")
 
 
