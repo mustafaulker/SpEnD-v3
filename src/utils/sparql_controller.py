@@ -17,7 +17,7 @@ class Sparql:
     @staticmethod
     def is_endpoint(links: list, spider_name: str, keyword: str, page: int, first_crawl=True):
         """
-        Sends an ASK query to the provided links to check if they are endpoints.
+        Sends an ASK query to the provided links to check whether they are endpoints or not.
 
         :param links: Links to be checked
         :param spider_name: Spider name that found the endpoint
@@ -68,10 +68,9 @@ class Sparql:
                             and not fe.db.in_the_collection("inner_domains", link_domain):
                         fe.db.insert_crawl_domain(link_domain)
                     else:
-                        Sparql.control_missed_endpoint(link, link_domain, spider_name, keyword, page)
+                        Sparql.missed_control(link, link_domain, spider_name, keyword, page)
                 else:  # inner crawl
-                    Sparql.control_missed_endpoint_for_inner(link, link_domain, spider_name, keyword,
-                                                             page)
+                    Sparql.inner_missed_control(link, link_domain, spider_name, keyword, page)
                     continue
 
             except (SPARQLWrapperException, URITooLong, Unauthorized) as WrapperException:
@@ -79,18 +78,16 @@ class Sparql:
 
             except TypeError:
                 if first_crawl:
-                    Sparql.control_missed_endpoint(link, link_domain, spider_name, keyword, page)
+                    Sparql.missed_control(link, link_domain, spider_name, keyword, page)
                 else:  # inner crawl
-                    Sparql.control_missed_endpoint_for_inner(link, link_domain, spider_name, keyword,
-                                                             page)
+                    Sparql.inner_missed_control(link, link_domain, spider_name, keyword, page)
                     continue
 
             except Exception:
                 if first_crawl:
-                    Sparql.control_missed_endpoint(link, link_domain, spider_name, keyword, page)
+                    Sparql.missed_control(link, link_domain, spider_name, keyword, page)
                 else:  # inner crawl
-                    Sparql.control_missed_endpoint_for_inner(link, link_domain, spider_name, keyword,
-                                                             page)
+                    Sparql.inner_missed_control(link, link_domain, spider_name, keyword, page)
                     continue
 
     @staticmethod
@@ -112,7 +109,7 @@ class Sparql:
         return missed
 
     @staticmethod
-    def control_missed_endpoint(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
+    def missed_control(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
         """
         Checks if any endpoint missed.
 
@@ -136,7 +133,7 @@ class Sparql:
                 fe.db.insert_crawl_domain(link_domain)
 
     @staticmethod
-    def control_missed_endpoint_for_inner(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
+    def inner_missed_control(link: str, link_domain: str, spider_name: str, keyword: str, page: int):
         """
         Checks if any endpoint missed for inner_crawl.
 

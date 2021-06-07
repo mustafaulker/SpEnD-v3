@@ -28,7 +28,7 @@ def crawl(spiders, query, task: str, inner_crawl: bool):
     """
     spider_names = list()
     for spider in spiders:
-        util.fill_start_urls_list(spider, query)
+        util.fill_urls(spider, query)
         spider_names.append(spider.name)
 
     for spider in spiders:

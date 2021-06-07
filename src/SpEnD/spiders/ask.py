@@ -33,6 +33,7 @@ class Ask(scrapy.Spider):
     start_urls = []
 
     def parse(self, response):
+        # Extracting query keyword from the response URL.
         if "&" in response.url:
             keyword = response.url[response.url.index("=") + 1:response.url.index("&")]
             keyword = urllib.parse.unquote_plus(keyword)
@@ -40,19 +41,23 @@ class Ask(scrapy.Spider):
             keyword = response.url[response.url.index("=") + 1:len(response.url)]
             keyword = urllib.parse.unquote_plus(keyword)
 
+        # Extracting page number from the response URL.
         if "&page=" in response.url:
             page = int(response.url[response.url.index("&page=") + 6:len(response.url)])
         else:
             page = 1
 
+        # Extracting all links from the response URL.
         links = response.css("a.PartialSearchResults-item-title-link.result-link::attr(href)").getall()
 
+        # Checking the links whether they are endpoints or not.
         Sparql.is_endpoint(util.link_filter(links), Ask.name, keyword, page, first_crawl=Ask.is_first_crawl)
 
+        # Extracting next page URL from the response URL.
         next_page = response.css("li.PartialWebPagination-next a::attr(href)").get()
 
         if next_page is not None:
             yield Request(response.urljoin(next_page), callback=self.parse)
 
     def closed(self, reason):
-        print(f"{self.name.upper()} is closed. ({reason})")
+        logging.getLogger("scrapy.core.engine").info(f"{self.name.upper()} is closed. ({reason})")

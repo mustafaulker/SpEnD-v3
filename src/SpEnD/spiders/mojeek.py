@@ -34,6 +34,7 @@ class Mojeek(scrapy.Spider):
     handle_httpstatus_list = [403]
 
     def parse(self, response):
+        # Extracting query keyword from the response URL.
         if "&" in response.url:
             keyword = response.url[response.url.index("=") + 1:response.url.index("&")]
             keyword = urllib.parse.unquote_plus(keyword)
@@ -41,6 +42,7 @@ class Mojeek(scrapy.Spider):
             keyword = response.url[response.url.index("=") + 1:len(response.url)]
             keyword = urllib.parse.unquote_plus(keyword)
 
+        # Extracting page number from the response URL.
         if "&s=" in response.url:
             page = response.url[response.url.index("s=") + 2:len(response.url)]
             if len(page) == 2:
@@ -52,10 +54,13 @@ class Mojeek(scrapy.Spider):
         else:
             page = 1
 
+        # Extracting all links from the response URL.
         links = response.css("a.ob::attr(href)").getall()
 
+        # Checking the links whether they are endpoints or not.
         Sparql.is_endpoint(util.link_filter(links), Mojeek.name, keyword, page, first_crawl=Mojeek.is_first_crawl)
 
+        # Extracting next page URL from the response URL.
         if not response.css("div.pagination a::attr(href)").getall():
             next_page = None
         else:
@@ -65,4 +70,4 @@ class Mojeek(scrapy.Spider):
             yield Request(response.urljoin(next_page), callback=self.parse)
 
     def closed(self, reason):
-        print(f"{self.name.upper()} is closed. ({reason})")
+        logging.getLogger("scrapy.core.engine").info(f"{self.name.upper()} is closed. ({reason})")

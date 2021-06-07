@@ -33,9 +33,11 @@ class Aol(scrapy.Spider):
     start_urls = []
 
     def parse(self, response):
+        # Extracting query keyword from the response URL.
         keyword = response.url[response.url.index("=") + 1:response.url.index("&")]
         keyword = urllib.parse.unquote_plus(keyword)
 
+        # Extracting page number from the response URL.
         if "&b=" in response.url:
             page = response.url[response.url.index("&b=") + 3: response.url.index("&pz=10&bct")]
             if len(page) == 2:
@@ -47,14 +49,17 @@ class Aol(scrapy.Spider):
         else:
             page = 1
 
+        # Extracting all links from the response URL.
         links = response.css("a.ac-algo.fz-l.ac-21th.lh-24::attr(href)").getall()
 
+        # Checking the links whether they are endpoints or not.
         Sparql.is_endpoint(util.link_filter(links), Aol.name, keyword, page, first_crawl=Aol.is_first_crawl)
 
+        # Extracting next page URL from the response URL.
         next_page = response.css("a.next::attr(href)").get()
 
         if next_page is not None:
             yield Request(response.urljoin(next_page), callback=self.parse)
 
     def closed(self, reason):
-        print(f"{self.name.upper()} is closed. ({reason})")
+        logging.getLogger("scrapy.core.engine").info(f"{self.name.upper()} is closed. ({reason})")

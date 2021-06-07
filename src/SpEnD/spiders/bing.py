@@ -34,6 +34,7 @@ class Bing(scrapy.Spider):
     handle_httpstatus_list = [403]
 
     def parse(self, response):
+        # Extracting query keyword from the response URL.
         if "&" in response.url:
             keyword = response.url[response.url.index("=") + 1:response.url.index("&")]
             keyword = urllib.parse.unquote_plus(keyword)
@@ -41,6 +42,7 @@ class Bing(scrapy.Spider):
             keyword = response.url[response.url.index("=") + 1:len(response.url)]
             keyword = urllib.parse.unquote_plus(keyword)
 
+        # Extracting page number from the response URL.
         if "&first=" in response.url:
             page = response.url[response.url.index("&first=") + 7: response.url.index("&FORM")]
             if len(page) == 2:
@@ -52,14 +54,17 @@ class Bing(scrapy.Spider):
         else:
             page = 1
 
+        # Extracting all links from the response URL.
         links = response.css("div.b_title a.sh_favicon::attr(href)").getall()
 
+        # Checking the links whether they are endpoints or not.
         Sparql.is_endpoint(util.link_filter(links), Bing.name, keyword, page, first_crawl=Bing.is_first_crawl)
 
+        # Extracting next page URL from the response URL.
         next_page = response.css("a.sb_pagN.sb_pagN_bp.b_widePag.sb_bp::attr(href)").get()
 
         if next_page is not None:
             yield Request(response.urljoin(next_page), callback=self.parse)
 
     def closed(self, reason):
-        print(f"{self.name.upper()} is closed. ({reason})")
+        logging.getLogger("scrapy.core.engine").info(f"{self.name.upper()} is closed. ({reason})")

@@ -62,9 +62,9 @@ def link_regulator(incoming_links: list) -> list:
     return regulated_links
 
 
-def fill_start_urls_list(spider, query):
+def fill_urls(spider, query):
     """
-    Fills the start_urls list of the specified spider.
+    Fills the start_urls list for the specified spider.
 
     Parses the query keyword for the search engine. Inserts parsed keyword into the specified spider's start_urls list.
 
@@ -86,9 +86,9 @@ def fill_start_urls_list(spider, query):
         stderr.write(str(valueError))
 
 
-def fill_start_urls_list_for_inner_crawl(spider, query):
+def fill_inner_urls(spider, query):
     """
-    Fills the start_urls list of the specified spider.
+    Fills the start_urls list of the specified spider for inner crawl.
 
     Parses the query keyword for the search engine. Inserts parsed keyword into the specified spider's start_urls list.
 
@@ -102,13 +102,13 @@ def fill_start_urls_list_for_inner_crawl(spider, query):
             for domain in inner_domains:
                 if "last_crawl" in domain:
                     if domain["last_crawl"] < date:
-                        add_element_for_inner_crawl(spider, query, domain)
+                        add_inner_element(spider, query, domain)
                         fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                          {"$set": {"last_crawl": datetime.datetime.utcnow()}})
                     else:
                         continue
                 else:
-                    add_element_for_inner_crawl(spider, query, domain)
+                    add_inner_element(spider, query, domain)
                     fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                      {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         elif isinstance(query, tuple):
@@ -116,14 +116,14 @@ def fill_start_urls_list_for_inner_crawl(spider, query):
                 if "last_crawl" in domain:
                     if domain["last_crawl"] < date:
                         for key in query:
-                            add_element_for_inner_crawl(spider, key, domain)
+                            add_inner_element(spider, key, domain)
                         fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                          {"$set": {"last_crawl": datetime.datetime.utcnow()}})
                     else:
                         continue
                 else:
                     for key in query:
-                        add_element_for_inner_crawl(spider, key, domain)
+                        add_inner_element(spider, key, domain)
                     fe.db.update_one("inner_domains", {"domain": domain["domain"]},
                                      {"$set": {"last_crawl": datetime.datetime.utcnow()}})
         else:
@@ -132,9 +132,9 @@ def fill_start_urls_list_for_inner_crawl(spider, query):
         stderr.write(str(valueError))
 
 
-def add_element_for_inner_crawl(spider, query, domain):
+def add_inner_element(spider, query, domain):
     """
-    Inserts domain to spider's start_urls list for inner crawl.
+    Inserts domain to specified spider's start_urls list for inner crawl.
 
     Parses the query keyword for the search engine. Inserts parsed keyword into the specified spider's start_urls list.
 
@@ -147,9 +147,9 @@ def add_element_for_inner_crawl(spider, query, domain):
     spider.start_urls.append(spider.base_url + query + spider.search_parameters)
 
 
-def clear_start_urls_list(spider):
+def clear_urls(spider):
     """
-    Clears the spider's start_urls list.
+    Clears the start_urls list for the specified spider.
 
     :param spider: Spider which start_urls list to be cleaned
     :return: None
@@ -159,7 +159,7 @@ def clear_start_urls_list(spider):
 
 def is_alive(link: str) -> bool:
     """
-    Checks whether site is alive or not.
+    Checks whether specified site is alive or not.
 
     :param link: Link of the site to be checked
     :return: Boolean based on the site's response

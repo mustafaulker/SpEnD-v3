@@ -11,8 +11,8 @@ from utils import util
 spiders = [Aol, Ask, Bing, Google, Mojeek]
 
 for spider in spiders:
-    util.clear_start_urls_list(spider)
-    util.fill_start_urls_list_for_inner_crawl(spider, fe.db.get_keywords("inner_keys"))
+    util.clear_urls(spider)
+    util.fill_inner_urls(spider, fe.db.get_keywords("inner_keys"))
     spider.is_first_crawl = False
 
 process = CrawlerProcess()
