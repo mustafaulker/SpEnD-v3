@@ -2,8 +2,8 @@
 
 ## SparQL Endpoint Crawler & Analyzer
 
-Crawls various search engines (e.g. **Google**, **Bing**, **Aol**, etc.) with given query keywords.  
-Checks if gathered websites is an Endpoint or not, if so stores them in the database. (i.e. **MongoDB**)
+Crawls various search engines (e.g., **Google**, **Bing**, **Aol**, etc.) with given query keywords.  
+Checks if gathered websites is an Endpoint or not, if so stores them in the database. (i.e., **MongoDB**)
 
 - Current discovered **_Endpoints:_** **258**
 

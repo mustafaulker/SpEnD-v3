@@ -12,8 +12,7 @@
                 <span class="icon is-left"><i class="fa fa-search"></i></span>
             </label>
             <label class="checkbox" id="alive_checkbox" style="margin-left: 1%; margin-top: 0.6%">
-                <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">
-                List only alive
+                <input type="checkbox" id="aliveCheckbox" onclick="alive_filter()">List only alive
             </label>
         </div>
     </div>
@@ -24,7 +23,7 @@
                 <h1 class="title is-2" style="text-align: center">There are no Endpoints.</h1>
                 <h1 class="subtitle is-4" style="text-align: center">
                     This must be a mistake. Please let us know about this situation at
-                    <a href="/contact">Contact page.</a>
+                    <a href="/contact">Contact page</a>.
                 </h1>
             {% else %}
                 <table class="table is-fullwidth is-striped is-hoverable" id="endpointTable" style="text-align: center">
@@ -69,13 +68,17 @@
                             </td>
                             <td>{{ endpoint.date_created.date().strftime("%d.%m.%y") }}</td>
                             <td>{{ endpoint.date_checked.strftime("%H:%M") }}</td>
-                            <td>{% if endpoint.up_now %}
-                                <span class="icon has-tooltip-success has-tooltip-bottom" data-tooltip="Live">
-                                <i class="fas fa-check-circle fa-lg" style="color:green;"></i></span>
-                            {% else %}
-                                <span class="icon has-tooltip-danger has-tooltip-bottom" data-tooltip="Not Responding">
-                                <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i></span>
-                            {% endif %}
+                            <td>
+                                {% if endpoint.up_now %}
+                                    <span class="icon has-tooltip-success has-tooltip-bottom" data-tooltip="Live">
+                                    <i class="fas fa-check-circle fa-lg" style="color:green;"></i></span>
+                                    <p hidden>Live</p>
+                                {% else %}
+                                    <span class="icon has-tooltip-danger has-tooltip-bottom"
+                                          data-tooltip="Not Responding">
+                                    <i class="fas fa-times-circle fa-lg" style="color:darkred;"></i></span>
+                                    <p hidden>Not Responding</p>
+                                {% endif %}
                             </td>
                         </tr>
                         {% set count.value = count.value + 1 %}
