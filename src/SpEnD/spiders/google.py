@@ -27,7 +27,9 @@ class Google(scrapy.Spider):
         "USER_AGENT": "",
         "CONCURRENT_REQUESTS": 1,
         "CONCURRENT_REQUESTS_PER_IP": 1,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
         "DOWNLOAD_DELAY": 40,
+        "COOKIES_ENABLED": False
     }
 
     start_urls = []

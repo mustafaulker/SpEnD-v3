@@ -27,7 +27,9 @@ class Bing(scrapy.Spider):
         "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0",
         "CONCURRENT_REQUESTS": 1,
         "CONCURRENT_REQUESTS_PER_IP": 1,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
         "DOWNLOAD_DELAY": 10,
+        "COOKIES_ENABLED": False
     }
 
     start_urls = []

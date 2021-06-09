@@ -27,7 +27,9 @@ class Mojeek(scrapy.Spider):
         "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
         "CONCURRENT_REQUESTS": 1,
         "CONCURRENT_REQUESTS_PER_IP": 1,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
         "DOWNLOAD_DELAY": 10,
+        "COOKIES_ENABLED": False
     }
 
     start_urls = []
