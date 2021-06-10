@@ -3,9 +3,7 @@ import logging
 from flask import Flask
 from flask_apscheduler import APScheduler
 from flask_login import LoginManager
-from flask_mail import Mail
 from flask_mongoengine import MongoEngine
-from flask_recaptcha import ReCaptcha
 from mongolog.handlers import MongoHandler
 
 from src.utils.database_controller import Database
@@ -25,18 +23,12 @@ from src.utils.sparql_controller import Sparql
 app = Flask(__name__)
 app.config.from_object('src.frontend.config')
 app.config.from_object('src.frontend.config.MongoConfig')
-app.config.from_object('src.frontend.config.MailConfig')
-app.config.from_object('src.frontend.config.ReCaptchaConfig')
 
 # flask_mongoengine object
 flask_db = MongoEngine(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
-mail = Mail(app)
-
-recaptcha = ReCaptcha(app)
 
 search_engine_dict = {
     "Google": Google,

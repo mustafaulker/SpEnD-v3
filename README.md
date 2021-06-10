@@ -1,19 +1,42 @@
 # SpEnD v3.0
 
-## SparQL Endpoint Crawler & Analyzer
+## SparQL Endpoint Crawler
 
-Crawls various search engines (e.g., **Google**, **Bing**, **Aol**, etc.) with given query keywords.  
-Checks if gathered websites is an Endpoint or not, if so stores them in the database. (i.e., **MongoDB**)
+Crawl process is created with the search engines selected and the keywords provided by the admin.
 
-- Current discovered **_Endpoints:_** **258**
+Crawl process can be set as, "Instant", "Crawl once on the specified date" or "Crawl continuously at certain day
+intervals".
+
+Endpoints obtained as a result of the Crawl process wait for admin control and approval on the "pending" page.
+
+Endpoints appear on the Home page after admin approval.
+
+---
+
+#### Crawlable Search Engine
+
+- Google
+- Bing
+- Mojeek
+- Aol
+- Ask
 
 ## Execution
 
 `$ docker compose up`
 
+---
+
 ### UI
 
 [`localhost:5000`](http://localhost:5000/)
+
+#### Login
+
+> ID: `admin`  
+Password: `pass`
+
+---
 
 ### Project Layout
 

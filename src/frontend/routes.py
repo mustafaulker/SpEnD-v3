@@ -4,11 +4,10 @@ from itertools import chain
 from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import current_user, login_required, login_user, logout_user
-from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict, logger, scheduler, db
+from src.frontend import app, models, login_manager, search_engine_dict, logger, scheduler, db
 from src.main_crawl import endpoint_crawler
 
 
@@ -28,41 +27,6 @@ def index():
 def about():
     try:
         return render_template('about.html')
-    except TemplateNotFound:
-        abort(404)
-    except:
-        abort(500)
-
-
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    try:
-        if request.method == 'POST':
-            if request.form.get('cont_subject'):
-                flash('Not configured yet, please use GitHub Issues', 'error')
-                return redirect(url_for("contact"))
-            else:
-                if recaptcha.verify():
-                    cont_name = request.form.get('cont_name')
-                    cont_subject = request.form.get('cont_subject')
-                    cont_email = request.form.get('cont_email')
-                    cont_message = request.form.get('cont_message')
-                    msg = Message(
-                        subject=cont_subject,
-                        sender=app.config['MAIL_USERNAME'][0],
-                        recipients=app.config['MAIL_RECIPIENTS'],
-                        body=f"""
-                                          From: {cont_name} \n
-                                          Mail: {cont_email} \n
-                                          Message: {cont_message} \n
-                                          """
-                    )
-                    mail.send(msg)
-                    flash('Your message has been sent successfully.', 'info')
-                    return redirect(url_for("contact"))
-                else:
-                    flash('Please complete the reCaptcha.', 'error')
-        return render_template('contact.html')
     except TemplateNotFound:
         abort(404)
     except:
