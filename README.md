@@ -2,7 +2,7 @@
 
 ## SparQL Endpoint Crawler
 
-Crawl process is created with the search engines selected and the keywords provided by the admin.
+Crawl process created with the search engines selected, and the keywords provided by the admin.
 
 Crawl process can be set as, "Instant", "Crawl once on the specified date" or "Crawl continuously at certain day
 intervals".
@@ -25,8 +25,6 @@ Endpoints appear on the Home page after admin approval.
 
 `$ docker compose up`
 
----
-
 ### UI
 
 [`localhost:5000`](http://localhost:5000/)
@@ -35,8 +33,6 @@ Endpoints appear on the Home page after admin approval.
 
 > ID: `admin`  
 Password: `pass`
-
----
 
 ### Project Layout
 

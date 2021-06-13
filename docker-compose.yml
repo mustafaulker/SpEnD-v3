@@ -7,8 +7,6 @@ services:
     environment:
       - MONGODB_HOST=mongo
       - MONGODB_PORT=27017
-      - MONGODB_USERNAME=[username]
-      - MONGODB_PASSWORD=[password]
     links:
       - mongo
     ports:

@@ -13,12 +13,7 @@ class Database:
         try:
             self.MONGODB_HOST = os.environ["MONGODB_HOST"]
             self.MONGODB_PORT = os.environ["MONGODB_PORT"]
-            self.MONGODB_USERNAME = os.environ["MONGODB_USERNAME"]
-            self.MONGODB_PASSWORD = os.environ["MONGODB_PASSWORD"]
             self.URI = f"mongodb://{self.MONGODB_HOST}:{self.MONGODB_PORT}/"
-            # Authentication will be added.
-            # self.URI = f"mongodb://{self.MONGODB_USERNAME}:{self.MONGODB_PASSWORD}" \
-            #            f"@{self.MONGODB_HOST}:{self.MONGODB_PORT}/"
         except:
             print("Environment variables not found. Connecting to default URI")
             self.URI = "mongodb://localhost:27017/"
