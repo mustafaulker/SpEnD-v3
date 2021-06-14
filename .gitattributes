@@ -1,2 +1,3 @@
-*.html linguist-detectable=false
-*.css linguist-detectable=false
+/src/frontend/templates/errors/* linguist-vendored
+/src/frontend/templates/auth/* linguist-vendored
+/src/frontend/templates/admin/users/* linguist-vendored
