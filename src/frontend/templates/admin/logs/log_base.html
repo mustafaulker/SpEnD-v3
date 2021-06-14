@@ -7,9 +7,16 @@
 {% block body %}
     <div class="column is-vcentered">
         <div class="card">
-            <header class="card-header">
-                <p class="card-header-title is-centered title is-5">{% block title %}{% endblock %}</p>
-            </header>
+            <form action="/remove_logs" method="POST">
+                <header class="card-header">
+                    <p class="card-header-title is-centered title is-5">{% block title %}{% endblock %}</p>
+                    <button class="button is-small is-danger has-tooltip-bottom"
+                            name="remove_all_logs" style="margin-right: 5%;margin-top: 2%"
+                            data-tooltip="Remove All">
+                        <span class="icon"><i class="far fa-trash-alt"></i></span>
+                    </button>
+                </header>
+            </form>
             <hr>
             <div class="card-table">
                 <div class="content">

@@ -3,56 +3,56 @@ from datetime import datetime
 from flask_bcrypt import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 
-from src.frontend import db
+from src.frontend import flask_db
 
 
-class Endpoints(db.Document):
+class Endpoints(flask_db.Document):
     meta = {'collection': 'endpoints'}
-    url = db.StringField()
-    domain = db.StringField()
-    date_created = db.DateTimeField(default=datetime.utcnow())
-    date_checked = db.DateTimeField(default=datetime.utcnow())
-    date_alive = db.DateTimeField(default=datetime.utcnow())
-    up_now = db.BooleanField()
-    tag = db.StringField()
-    spider = db.StringField()
-    keyword = db.StringField()
-    page = db.IntField()
+    url = flask_db.StringField()
+    domain = flask_db.StringField()
+    date_created = flask_db.DateTimeField(default=datetime.utcnow())
+    date_checked = flask_db.DateTimeField(default=datetime.utcnow())
+    date_alive = flask_db.DateTimeField(default=datetime.utcnow())
+    up_now = flask_db.BooleanField()
+    tag = flask_db.StringField()
+    spider = flask_db.StringField()
+    keyword = flask_db.StringField()
+    page = flask_db.IntField()
 
 
-class Logs(db.Document):
+class Logs(flask_db.Document):
     meta = {'collection': 'logs'}
-    name = db.StringField()
-    message = db.StringField()
-    time = db.DateTimeField(default=datetime.utcnow())
-    funcName = db.StringField()
-    levelname = db.StringField()
-    levelno = db.IntField()
-    filename = db.StringField()
-    pathname = db.StringField()
-    module = db.StringField()
-    username = db.StringField()
-    host = db.StringField()
-    msg = db.StringField()
-    args = db.ListField()
-    thread = db.IntField()
-    threadName = db.StringField()
-    process = db.IntField()
-    processName = db.StringField()
-    lineno = db.IntField()
-    created = db.DecimalField()
-    msecs = db.DecimalField()
-    relativeCreated = db.DecimalField()
-    exc_info = db.StringField()
-    exc_text = db.StringField()
-    stack_info = db.StringField()
+    name = flask_db.StringField()
+    message = flask_db.StringField()
+    time = flask_db.DateTimeField(default=datetime.utcnow())
+    funcName = flask_db.StringField()
+    levelname = flask_db.StringField()
+    levelno = flask_db.IntField()
+    filename = flask_db.StringField()
+    pathname = flask_db.StringField()
+    module = flask_db.StringField()
+    username = flask_db.StringField()
+    host = flask_db.StringField()
+    msg = flask_db.StringField()
+    args = flask_db.ListField()
+    thread = flask_db.IntField()
+    threadName = flask_db.StringField()
+    process = flask_db.IntField()
+    processName = flask_db.StringField()
+    lineno = flask_db.IntField()
+    created = flask_db.DecimalField()
+    msecs = flask_db.DecimalField()
+    relativeCreated = flask_db.DecimalField()
+    exc_info = flask_db.StringField()
+    exc_text = flask_db.StringField()
+    stack_info = flask_db.StringField()
 
 
-class User(UserMixin, db.Document):
+class User(UserMixin, flask_db.Document):
     meta = {'collection': 'users'}
-    username = db.StringField(unique=True, nullable=False)
-    password = db.StringField(default=True, nullable=False)
-    active = db.BooleanField(default=True)
+    username = flask_db.StringField(unique=True, nullable=False)
+    password = flask_db.StringField(default=True, nullable=False)
+    active = flask_db.BooleanField(default=True)
 
     def __repr__(self):
         return f'<User {self.username}>'

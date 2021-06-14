@@ -41,7 +41,7 @@
                 </div>
                 <div class="navbar-item">
                     <a href="/logout">
-                        <span class="icon has-tooltip-bottom" style="margin-left:5px;" data-tooltip="Log out">
+                        <span class="icon has-tooltip-bottom" data-tooltip="Log out">
                             <i class="fas fa-sign-out-alt fa-lg" style="color: #293949"></i></span>
                     </a>
                 </div>
@@ -69,7 +69,7 @@
                                 </li>
                                 <li><a href="/admin/manage/pending">
                                     <span class="icon"><i class="fas fa-hourglass-half"></i></span>Pending
-                                    {% if pending_count > 1 %}
+                                    {% if pending_count > 0 %}
                                         <span style="margin-left: 20px">| {{ pending_count }} |</span>
                                         <span class="icon"><i class="far fa-bell"></i></span>
                                     {% endif %}</a>
@@ -122,7 +122,7 @@
                                 <li><a href="/admin/keywords/crawl_keys">
                                     <span class="icon"><i class="fas fa-i-cursor"></i></span>Crawl Keys</a>
                                 </li>
-                                <li><a href="/admin/keywords/second_crawl_keys">
+                                <li><a href="/admin/keywords/inner_keys">
                                     <span class="icon"><i class="fas fa-sync"></i></span>Inner Keys</a>
                                 </li>
                                 <li><a href="/admin/keywords/wanted_keys">

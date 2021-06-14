@@ -4,13 +4,11 @@ from itertools import chain
 from bson import ObjectId
 from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import current_user, login_required, login_user, logout_user
-from flask_mail import Message
 from jinja2 import TemplateNotFound
 from werkzeug.urls import url_parse
 
-from src.frontend import app, models, login_manager, mail, recaptcha, search_engine_dict, logger, scheduler
+from src.frontend import app, models, login_manager, search_engine_dict, logger, scheduler, db
 from src.main_crawl import endpoint_crawler
-from src.utils.database_controller import Database
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -29,41 +27,6 @@ def index():
 def about():
     try:
         return render_template('about.html')
-    except TemplateNotFound:
-        abort(404)
-    except:
-        abort(500)
-
-
-@app.route('/contact', methods=['GET', 'POST'])
-def contact():
-    try:
-        if request.method == 'POST':
-            if request.form.get('cont_subject'):
-                flash('Not configured yet, please use GitHub Issues', 'error')
-                return redirect(url_for("contact"))
-            else:
-                if recaptcha.verify():
-                    cont_name = request.form.get('cont_name')
-                    cont_subject = request.form.get('cont_subject')
-                    cont_email = request.form.get('cont_email')
-                    cont_message = request.form.get('cont_message')
-                    msg = Message(
-                        subject=cont_subject,
-                        sender=app.config['MAIL_USERNAME'][0],
-                        recipients=app.config['MAIL_RECIPIENTS'],
-                        body=f"""
-                                          From: {cont_name} \n
-                                          Mail: {cont_email} \n
-                                          Message: {cont_message} \n
-                                          """
-                    )
-                    mail.send(msg)
-                    flash('Your message has been sent successfully.', 'info')
-                    return redirect(url_for("contact"))
-                else:
-                    flash('Please complete the reCaptcha.', 'error')
-        return render_template('contact.html')
     except TemplateNotFound:
         abort(404)
     except:
@@ -169,7 +132,7 @@ def crawler():
     try:
         if not current_user.is_authenticated():
             return render_template('index.html')
-        keywords = Database.get_keywords('crawl_keys')
+        keywords = db.get_keywords('crawl_keys')
 
         if request.method == 'POST':
             selected_search_engines = request.form.getlist('cb_se')
@@ -185,9 +148,9 @@ def crawler():
                 keyword_input.remove('')
             if keyword_input:
                 for key in keyword_input.copy():
-                    if key in Database.get_keywords('crawl_keys'):
+                    if key in db.get_keywords('crawl_keys'):
                         keyword_input.remove(key)
-                Database.insert_keyword('crawl_keys', list(keyword_input))
+                db.insert_keyword('crawl_keys', list(keyword_input))
 
             # SE and KW selection control.
             if not selected_search_engines or not selected_keywords:
@@ -202,7 +165,7 @@ def crawler():
 
             # Instant crawl button pressed.
             if 'manuel_crawl' in request.form:
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
+                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, "Manuel Crawl", inner_crawl],
                                   id='manuel_crawl', run_date=datetime.datetime.now())
 
             # Schedule a crawl button pressed.
@@ -213,8 +176,8 @@ def crawler():
                     flash('- Past date/time selected.', 'error')
                     return redirect(url_for('crawler'))
 
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
-                                  id=None, name='schedule_crawl', run_date=f'{date} {time}')
+                scheduler.add_job(func=endpoint_crawler, id=None, name='schedule_crawl', run_date=f'{date} {time}',
+                                  args=[spiders, selected_keywords, "Scheduled Crawl", inner_crawl])
 
                 flash(f'- Crawl will be triggered on '
                       f'{datetime.datetime.strptime(date, "%Y-%m-%d").date().strftime("%d.%m.%y")} at {time}', 'info')
@@ -223,8 +186,8 @@ def crawler():
             elif 'schedule_interval' in request.form:
                 interval = request.form.get('crawl_interval')
 
-                scheduler.add_job(func=endpoint_crawler, args=[spiders, selected_keywords, inner_crawl],
-                                  id=None, name='interval_crawl', trigger='interval', days=int(interval))
+                scheduler.add_job(func=endpoint_crawler, name='interval_crawl', trigger='interval', days=int(interval),
+                                  id=None, args=[spiders, selected_keywords, "Scheduled Interval Crawl", inner_crawl])
                 flash(f'- Crawl will be triggered {interval} days apart', 'info')
 
             return redirect(url_for('crawler'))
@@ -449,7 +412,7 @@ def crawl_keys():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('crawl_keys')
+        keywords = db.get_keywords('crawl_keys')
 
         return render_template('./admin/keywords/crawl_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
@@ -459,16 +422,16 @@ def crawl_keys():
         abort(500)
 
 
-@app.route('/admin/keywords/second_crawl_keys', methods=['GET', 'POST'])
+@app.route('/admin/keywords/inner_keys', methods=['GET', 'POST'])
 @login_required
-def second_crawl_keys():
+def inner_keys():
     try:
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('second_crawl_keys')
+        keywords = db.get_keywords('inner_keys')
 
-        return render_template('./admin/keywords/second_crawl_keys.html', keywords=keywords,
+        return render_template('./admin/keywords/inner_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
     except TemplateNotFound:
         abort(404)
@@ -483,7 +446,7 @@ def wanted_keys():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('wanted_keys')
+        keywords = db.get_keywords('wanted_keys')
 
         return render_template('./admin/keywords/wanted_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
@@ -500,7 +463,7 @@ def unwanted_keys():
         if not current_user.is_authenticated():
             return render_template('index.html')
 
-        keywords = Database.get_keywords('unwanted_keys')
+        keywords = db.get_keywords('unwanted_keys')
 
         return render_template('./admin/keywords/unwanted_keys.html', keywords=keywords,
                                pending_count=len(models.Endpoints.objects.filter(tag="pending")))
@@ -520,7 +483,7 @@ def insert_keyword():
             [keys.add(keyword.strip()) for keyword in keyword_textarea]
 
             for key in keys.copy():
-                if key in Database.get_keywords(request.referrer.rsplit('/', 1)[-1]):
+                if key in db.get_keywords(request.referrer.rsplit('/', 1)[-1]):
                     keys.remove(key)
 
             if '' in keys:
@@ -529,7 +492,7 @@ def insert_keyword():
             if not keys:
                 flash(f'No Keywords provided.', 'error')
             else:
-                Database.insert_keyword(request.referrer.rsplit('/', 1)[-1], list(keys))
+                db.insert_keyword(request.referrer.rsplit('/', 1)[-1], list(keys))
                 flash(f'Keywords has added.', 'info')
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
@@ -542,7 +505,7 @@ def insert_keyword():
 def remove_keyword():
     try:
         if request.method == 'POST':
-            Database.remove_keyword(request.referrer.rsplit('/', 1)[-1], request.form.get('remove_key'))
+            db.remove_keyword(request.referrer.rsplit('/', 1)[-1], request.form.get('remove_key'))
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f'Err, Remove_Keyword. {e}')
@@ -554,7 +517,7 @@ def remove_keyword():
 def approve():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
+            db.update_one("endpoints", {"url": request.form.get('approve')}, {"$set": {"tag": "approved"}})
         return redirect(url_for("pending"))
     except Exception as e:
         logger.error(f"Err, Approve_EP. {e}")
@@ -566,7 +529,7 @@ def approve():
 def suspend():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
+            db.update_one("endpoints", {"url": request.form.get('suspend')}, {"$set": {"tag": "suspended"}})
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Suspend_EP. {e}")
@@ -578,7 +541,7 @@ def suspend():
 def unsuspend():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
+            db.update_one("endpoints", {"url": request.form.get('unsuspend')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("suspended"))
     except Exception as e:
         logger.error(f"Err, Unsuspend_EP. {e}")
@@ -590,7 +553,7 @@ def unsuspend():
 def remove():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
+            db.update_one("endpoints", {"url": request.form.get('remove')}, {"$set": {"tag": "removed"}})
             return redirect(url_for(request.referrer.rsplit('/', 1)[-1]))
     except Exception as e:
         logger.error(f"Err, Remove_EP. {e}")
@@ -602,7 +565,7 @@ def remove():
 def recover():
     try:
         if request.method == 'POST':
-            Database.update_one("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
+            db.update_one("endpoints", {"url": request.form.get('recover')}, {"$set": {"tag": "pending"}})
         return redirect(url_for("removed"))
     except Exception as e:
         logger.error(f"Err, Recover_EP. {e}")
@@ -615,10 +578,10 @@ def remove_log():
     try:
         if request.method == 'POST':
             if 'guests' in request.referrer:
-                Database.delete_many('logs', {'msg': request.form.get('remove_log')})
+                db.delete_many('logs', {'msg': request.form.get('remove_log')})
                 return redirect(url_for("log_guests"))
             else:
-                Database.delete_one('logs', {'_id': ObjectId(request.form.get('remove_log'))})
+                db.delete_one('logs', {'_id': ObjectId(request.form.get('remove_log'))})
         if 'exceptions' in request.referrer:
             return redirect(url_for('log_exceptions'))
         elif 'crawler' in request.referrer:
@@ -629,6 +592,31 @@ def remove_log():
             return redirect(url_for('log_status'))
     except Exception as e:
         logger.error(f'Err, Remove_Log. {e}')
+        abort(500)
+
+
+@app.post('/remove_logs')
+@login_required
+def remove_logs():
+    try:
+        if request.method == 'POST':
+            if 'exceptions' in request.referrer:
+                db.delete_many('logs', {'levelname': 'ERROR'})
+                return redirect(url_for('log_exceptions'))
+            elif 'crawler' in request.referrer:
+                db.delete_many('logs', {'funcName': 'crawl'})
+                return redirect(url_for('log_crawler'))
+            elif 'authentications' in request.referrer:
+                db.delete_many('logs', {'funcName': {'$in': ["login", "logout"]}})
+                return redirect(url_for('log_authentications'))
+            elif 'status' in request.referrer:
+                db.delete_many('logs', {'funcName': 'check_endpoints'})
+                return redirect(url_for('log_status'))
+            elif 'guests' in request.referrer:
+                db.delete_many('logs', {'funcName': 'index'})
+                return redirect(url_for('log_guests'))
+    except Exception as e:
+        logger.error(f'Err, Remove_Logs. {e}')
         abort(500)
 
 

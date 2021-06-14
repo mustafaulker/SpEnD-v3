@@ -14,6 +14,7 @@ $('.sub-menu').each(function () {
         if ($(this).find('a').attr('href') === location.pathname) {
             $dropdownmenu.find('ul').is(":visible") || $dropdownmenu.find('ul').slideDown()
             $dropdownmenu.find("i.arrow").toggleClass("toogle")
+            $(this).find('a').css('color', '#18B495')
         }
     });
 });

@@ -180,7 +180,15 @@ nav.navbar {
     padding-top: 3px;
 }
 
-i.arrow.fa.fa-angle-down.toogle {
+.fa-angle-down {
+    -moz-transition: all 500ms linear;
+    -webkit-transition: all 500ms linear;
+    transition: all 500ms linear;
+}
+
+.fa-angle-down.toogle {
+    -moz-transform: rotateX(180deg);
+    -webkit-transform: rotateX(180deg);
     transform: rotateX(180deg);
 }
 

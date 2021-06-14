@@ -15,6 +15,7 @@ class Mojeek(scrapy.Spider):
         logging.getLogger("scrapy.middleware").setLevel(logging.WARNING)
         logging.getLogger("scrapy.extensions").setLevel(logging.WARNING)
         logging.getLogger("scrapy.statscollectors").setLevel(logging.WARNING)
+        logging.getLogger("scrapy.crawler").setLevel(logging.WARNING)
         super().__init__(*args, **kwargs)
 
     name = "mojeek"
@@ -23,16 +24,19 @@ class Mojeek(scrapy.Spider):
     is_first_crawl = True
 
     custom_settings = {
-        "CONCURRENT_REQUESTS": 4,
-        "CONCURRENT_REQUESTS_PER_IP": 4,
-        "DOWNLOAD_DELAY": 7,
         "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36",
+        "CONCURRENT_REQUESTS": 1,
+        "CONCURRENT_REQUESTS_PER_IP": 1,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
+        "DOWNLOAD_DELAY": 10,
+        "COOKIES_ENABLED": False
     }
 
     start_urls = []
     handle_httpstatus_list = [403]
 
     def parse(self, response):
+        # Extracting query keyword from the response URL.
         if "&" in response.url:
             keyword = response.url[response.url.index("=") + 1:response.url.index("&")]
             keyword = urllib.parse.unquote_plus(keyword)
@@ -40,6 +44,7 @@ class Mojeek(scrapy.Spider):
             keyword = response.url[response.url.index("=") + 1:len(response.url)]
             keyword = urllib.parse.unquote_plus(keyword)
 
+        # Extracting page number from the response URL.
         if "&s=" in response.url:
             page = response.url[response.url.index("s=") + 2:len(response.url)]
             if len(page) == 2:
@@ -51,10 +56,13 @@ class Mojeek(scrapy.Spider):
         else:
             page = 1
 
+        # Extracting all links from the response URL.
         links = response.css("a.ob::attr(href)").getall()
 
+        # Checking the links whether they are endpoints or not.
         Sparql.is_endpoint(util.link_filter(links), Mojeek.name, keyword, page, first_crawl=Mojeek.is_first_crawl)
 
+        # Extracting next page URL from the response URL.
         if not response.css("div.pagination a::attr(href)").getall():
             next_page = None
         else:
@@ -64,4 +72,4 @@ class Mojeek(scrapy.Spider):
             yield Request(response.urljoin(next_page), callback=self.parse)
 
     def closed(self, reason):
-        print(f"{self.name.upper()} is closed. ({reason})")
+        logging.getLogger("scrapy.core.engine").info(f"{self.name.upper()} is closed. ({reason})")

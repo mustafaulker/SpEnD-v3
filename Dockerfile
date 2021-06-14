@@ -1,7 +1,7 @@
 FROM python
 
-COPY . /app
-WORKDIR /app
+COPY . /SpEnD
+WORKDIR /SpEnD
 
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt

@@ -15,6 +15,7 @@ class Google(scrapy.Spider):
         logging.getLogger("scrapy.middleware").setLevel(logging.WARNING)
         logging.getLogger("scrapy.extensions").setLevel(logging.WARNING)
         logging.getLogger("scrapy.statscollectors").setLevel(logging.WARNING)
+        logging.getLogger("scrapy.crawler").setLevel(logging.WARNING)
         super().__init__(*args, **kwargs)
 
     name = "google"
@@ -23,17 +24,22 @@ class Google(scrapy.Spider):
     is_first_crawl = True
 
     custom_settings = {
+        "USER_AGENT": "",
         "CONCURRENT_REQUESTS": 1,
         "CONCURRENT_REQUESTS_PER_IP": 1,
+        "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
         "DOWNLOAD_DELAY": 40,
+        "COOKIES_ENABLED": False
     }
 
     start_urls = []
 
     def parse(self, response):
+        # Extracting query keyword from the response URL.
         keyword = response.url[response.url.index("=") + 1:response.url.index("&")]
         keyword = urllib.parse.unquote_plus(keyword)
 
+        # Extracting page number from the response URL.
         if "&start=" in response.url:
             page = response.url[response.url.index("start=") + 6:response.url.index("&sa")]
             if len(page) == 3:
@@ -45,11 +51,14 @@ class Google(scrapy.Spider):
         else:
             page = 1
 
+        # Extracting all links from the response URL.
         links = response.css("div.kCrYT a::attr(href)").getall()
 
-        Sparql.is_endpoint(util.link_filter(util.link_regulator_for_google(links)), Google.name, keyword, page,
+        # Checking the links whether they are endpoints or not.
+        Sparql.is_endpoint(util.link_filter(util.link_regulator(links)), Google.name, keyword, page,
                            first_crawl=Google.is_first_crawl)
 
+        # Extracting next page URL from the response URL.
         next_page = response.css("a.nBDE1b.G5eFlf::attr(href)").get()
 
         if "&start=100" in response.url:
@@ -62,4 +71,4 @@ class Google(scrapy.Spider):
             yield Request(response.urljoin(next_page), callback=self.parse)
 
     def closed(self, reason):
-        print(f"{self.name.upper()} is closed. ({reason})")
+        logging.getLogger("scrapy.core.engine").info(f"{self.name.upper()} is closed. ({reason})")
