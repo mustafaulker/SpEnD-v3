@@ -11,9 +11,7 @@ Endpoints obtained as a result of the Crawl process wait for admin control and a
 
 Endpoints appear on the Home page after admin approval.
 
----
-
-#### Crawlable Search Engine
+### Crawlable Search Engines
 
 - Google
 - Bing
@@ -29,12 +27,12 @@ Endpoints appear on the Home page after admin approval.
 
 [`localhost:5000`](http://localhost:5000/)
 
-#### Login
+### Login
 
-> ID: `admin`  
+> Username: `admin`  
 Password: `pass`
 
-### Project Layout
+## Project Layout
 
     .
     ├── src/
@@ -81,5 +79,6 @@ Password: `pass`
     ├── docker-compose.yml
     ├── Dockerfile
     ├── .dockerignore
+    ├── .gitattributes
     ├── requirements.txt
     └── README.md
