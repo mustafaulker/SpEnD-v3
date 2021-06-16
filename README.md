@@ -2,6 +2,8 @@
 
 ## SparQL Endpoint Crawler
 
+Collects SparQL Endpoints by crawling search engines with different crawling options.
+
 Crawl process created with the search engines selected, and the keywords provided by the admin.
 
 Crawl process can be set as, "Instant", "Crawl once on the specified date" or "Crawl continuously at certain day
@@ -30,7 +32,7 @@ Endpoints appear on the Home page after admin approval.
 ### Login
 
 > Username: `admin`  
-Password: `pass`
+> Password: `pass`
 
 ## Project Layout
 
@@ -80,5 +82,6 @@ Password: `pass`
     ├── Dockerfile
     ├── .dockerignore
     ├── .gitattributes
+    ├── .gitignore
     ├── requirements.txt
     └── README.md
