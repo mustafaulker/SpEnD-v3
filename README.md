@@ -84,4 +84,8 @@ Endpoints appear on the Home page after admin approval.
     ├── .gitattributes
     ├── .gitignore
     ├── requirements.txt
+    ├── LICENSE
     └── README.md
+
+## License
+**SpEnD-v3** is licensed under [MIT License](https://github.com/mustafaulker/SpEnD-v3/blob/master/LICENSE).
