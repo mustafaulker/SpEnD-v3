@@ -24,7 +24,7 @@ class Aol(scrapy.Spider):
     is_first_crawl = True
 
     custom_settings = {
-        "USER_AGENT": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0",
+        "USER_AGENT": "",
         "CONCURRENT_REQUESTS": 1,
         "CONCURRENT_REQUESTS_PER_IP": 1,
         "CONCURRENT_REQUESTS_PER_DOMAIN": 1,
